@@ -1,0 +1,14 @@
+{
+  "test_id": "89e03a23-42dd-4bb0-a198-4d9fbe6b8d4b",
+  "timestamp_utc": "2025-12-02T14:52:31.887480+00:00",
+  "scenario_id": "S009",
+  "scenario_title": "Postventa otras consultas",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Montaje",
+  "reached_queue_name": "Resolution Montaje",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 103.975,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-02T14:51:28.259473+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-02T14:51:53.959644+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-02T14:52:08.353143+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"4\", \"timestamp\": \"2025-12-02T14:52:21.624844+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-02T14:52:31.886658+00:00\"}]"
+}
