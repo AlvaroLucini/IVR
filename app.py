@@ -8,6 +8,7 @@ import base64
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components   # 👈 AÑADE ESTA LÍNEA
 
 
 # =========================
@@ -609,4 +610,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
