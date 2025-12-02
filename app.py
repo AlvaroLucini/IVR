@@ -283,70 +283,39 @@ def play_node_audio(node: dict) -> bool:
 # CARGA DE CONFIGURACIÓN
 # =========================
 
-def load_nodes():
+ def load_nodes():
     """
     Carga ivr_nodes.csv y construye el diccionario NODES.
 
-    Está pensada para aguantar el caso en el que pandas crea un MultiIndex
-    con (NODE_ID, NODE_LABEL) y deja en la columna NODE_ID valores como
-    'MENU' / 'QUEUE'.
+    Usa directamente la columna NODE_ID como identificador:
+      - ROOT
+      - Global_Menu_B2B
+      - Menu_ES_SalesOpen
+      - ...
     """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
+    # Leemos el CSV tal cual
     df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
-    nodes: dict[str, dict] = {}
-
-    for idx, row in df.iterrows():
-        # --- ID y label reales, sacados del índice ---
-        if isinstance(idx, tuple):
-            raw_id = idx[0]
-            raw_label = idx[1] if len(idx) > 1 else ""
-        else:
-            raw_id = idx
-            raw_label = row.get("NODE_LABEL", "")
-
-        node_id = str(raw_id).strip()
-        node_label = str(raw_label).strip()
-
+    nodes = {}
+    for _, row in df.iterrows():
+        node_id = str(row.get("NODE_ID", "")).strip()
         if not node_id:
-            # Fallback extremo: usamos la columna NODE_ID
-            node_id = str(row.get("NODE_ID", "")).strip()
-        if not node_id:
-            continue
+            continue  # por si hubiera filas vacías
 
-        # --- Tipo de nodo (MENU / QUEUE) ---
-        # En tu caso, pandas ha metido el tipo en la columna NODE_ID
-        node_type = str(row.get("NODE_ID", "") or "").strip().upper()
-        if node_type not in ("MENU", "QUEUE"):
-            # Si por lo que sea no cuadra, usamos la columna NODE_TYPE normal
-            node_type = str(row.get("NODE_TYPE", "") or "").strip().upper()
+        node_label = str(row.get("NODE_LABEL", "") or "")
+        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE
+        is_entry_flag = str(row.get("IS_ENTRY", "") or "").strip().upper() == "YES"
 
-        # --- Flag de entrada ---
-        # Cuando se descolocan columnas, IS_ENTRY suele acabar en NODE_LABEL
-        raw_is_entry = row.get("NODE_LABEL", "") if isinstance(idx, tuple) else row.get("IS_ENTRY", "")
-        is_entry_flag = str(raw_is_entry or "").strip().upper() == "YES"
+        prompt_text = str(row.get("PROMPT_TEXT", "") or "")
+        audio_url = str(row.get("AUDIO_URL", "") or "")
+        queue_id = str(row.get("QUEUE_ID", "") or "")
+        queue_name = str(row.get("QUEUE_NAME", "") or "")
 
-        # --- Prompt de voz ---
-        # El texto largo del nodo está en la columna NODE_TYPE cuando se desplaza
-        prompt_text = str(row.get("NODE_TYPE", "") or "").strip()
-        if not prompt_text:
-            prompt_text = str(row.get("PROMPT_TEXT", "") or "").strip()
-
-        # --- Queue_ID / Queue_Name ---
-        # Para los nodos QUEUE, en tu CSV los valores están justo después del prompt,
-        # que con el desplazamiento acaban en PROMPT_TEXT / AUDIO_URL.
-        if node_type == "QUEUE":
-            queue_id = str(row.get("PROMPT_TEXT", "") or "").strip()
-            queue_name = str(row.get("AUDIO_URL", "") or "").strip()
-        else:
-            queue_id = str(row.get("QUEUE_ID", "") or "").strip()
-            queue_name = str(row.get("QUEUE_NAME", "") or "").strip()
-
-        # --- Rutas por dígito ---
-        next_map: dict[str, str] = {}
+        next_map = {}
         for d in range(10):
             col_name = f"OPT_{d}_NEXT_NODE"
             next_map[str(d)] = str(row.get(col_name, "") or "").strip()
@@ -354,19 +323,20 @@ def load_nodes():
         nodes[node_id] = {
             "NODE_ID":     node_id,
             "NODE_LABEL":  node_label,
-            "NODE_TYPE":   node_type,         # MENU / QUEUE
+            "NODE_TYPE":   node_type,
             "IS_ENTRY":    is_entry_flag,
             "PROMPT_TEXT": prompt_text,
-            "AUDIO_URL":   row.get("AUDIO_URL", ""),
+            "AUDIO_URL":   audio_url,
             "QUEUE_ID":    queue_id,
             "QUEUE_NAME":  queue_name,
             "NEXT":        next_map,
         }
 
-    # DEBUG para que veas lo que realmente ha cargado
+    # DEBUG para comprobar que ahora sí salen ROOT, Global_Menu_B2B, etc.
     st.sidebar.write("DEBUG NODE_IDs:", list(nodes.keys()))
 
     return nodes
+
 
 
 
@@ -393,9 +363,6 @@ def load_scenarios():
 NODES = load_nodes()
 SCENARIOS = load_scenarios()
 
-# DEBUG en sidebar: ver qué IDs se han cargado
-st.sidebar.write("DEBUG NODE_IDs:", list(NODES.keys()))
-
 # Nodo raíz para '#'
 if "ROOT" in NODES:
     ROOT_NODE_ID = "ROOT"
@@ -404,6 +371,7 @@ else:
         (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
         None,
     )
+
 
 
 # =========================
@@ -698,5 +666,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
