@@ -280,10 +280,15 @@ NODES = load_nodes()
 SCENARIOS = load_scenarios()
 
 # Nodo raíz para '#'
+ 
 if "ROOT" in NODES:
     ROOT_NODE_ID = "ROOT"
 else:
-    ROOT_NODE_ID = next((nid for nid, n) in NODES.items() if n.get("IS_ENTRY"))
+    ROOT_NODE_ID = next(
+        (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
+        None,
+    )
+
 
 
 # =========================
@@ -587,3 +592,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
