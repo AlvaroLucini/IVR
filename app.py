@@ -118,7 +118,7 @@ def play_ringtone_once():
     if ring_file:
         play_hidden_audio(ring_file)
     else:
-        # Si no hay fichero, no molestamos con reproductor visible ni warning
+        # No molestamos con reproductor visible ni warning gordo
         st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
 
 
@@ -128,24 +128,31 @@ def play_node_audio(node: dict) -> bool:
 
     Prioridad:
       1) tts_audio/{NODE_ID}_es.wav
-      2) audio/{NODE_ID}.wav
-      3) AUDIO_URL (http/https o similar)
+      2) audio/{NODE_ID}_es.wav
+      3) audio/{NODE_ID}.wav
+      4) AUDIO_URL (HTTP/HTTPS o ruta accesible)
     """
     node_id = node["NODE_ID"]
 
-    # 1) TTS local
+    # 1) tts_audio/{NODE_ID}_es.wav
     tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
     if tts_path.exists():
         if play_hidden_audio(tts_path):
             return True
 
-    # 2) audio/{NODE_ID}.wav
-    local_audio = BASE_DIR / "audio" / f"{node_id}.wav"
-    if local_audio.exists():
-        if play_hidden_audio(local_audio):
+    # 2) audio/{NODE_ID}_es.wav
+    audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
+    if audio_es_path.exists():
+        if play_hidden_audio(audio_es_path):
             return True
 
-    # 3) AUDIO_URL
+    # 3) audio/{NODE_ID}.wav
+    audio_plain_path = BASE_DIR / "audio" / f"{node_id}.wav"
+    if audio_plain_path.exists():
+        if play_hidden_audio(audio_plain_path):
+            return True
+
+    # 4) AUDIO_URL (por si queremos usar URLs externas o rutas raras)
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
         # Si es URL http/https, la usamos tal cual
@@ -163,7 +170,7 @@ def play_node_audio(node: dict) -> bool:
                 if play_hidden_audio_url(audio_url):
                     return True
 
-    # Si no hay audio, simplemente no hacemos nada (sin mensajes molestos)
+    # Si no hay audio, simplemente no hacemos nada (sin mensajes)
     return False
 
 
@@ -273,7 +280,7 @@ def init_session():
 def reset_session():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
-    # No hace falta llamar manualmente a rerun, Streamlit lo hará en el siguiente click
+    # No llamamos a rerun aquí, se regenerará en el siguiente click
 
 
 def start_new_test():
