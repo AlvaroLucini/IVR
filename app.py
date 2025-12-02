@@ -133,13 +133,13 @@ def play_node_audio(node: dict) -> bool:
       3) tts_audio/{NODE_ID}_es.wav
       4) AUDIO_URL
 
-    Además de intentar autoplay oculto, mostramos un reproductor visible
-    como fallback, por si el navegador bloquea el autoplay.
+    Intento 1: usar <audio> con JS (audio.play()) en un componente oculto.
+    Fallback: reproductor visible st.audio por si el navegador bloquea el autoplay.
     """
     node_id = node["NODE_ID"]
 
+    # --- Local paths candidatos ---
     candidatos: list[Path] = []
-
     audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
     candidatos.append(audio_es_path)
 
@@ -154,24 +154,48 @@ def play_node_audio(node: dict) -> bool:
         if p.exists():
             st.caption(f"Reproduciendo audio: {p.relative_to(BASE_DIR)}")
 
-            # Intento de autoplay oculto
-            _ = play_hidden_audio(p)
-
-            # Fallback visible: reproductor para que puedas darle a Play
+            # Leemos y generamos data:URL para inyectar en un componente HTML+JS
             try:
                 audio_bytes = p.read_bytes()
+                b64 = base64.b64encode(audio_bytes).decode("utf-8")
                 ext = p.suffix.lower()
                 if ext == ".wav":
-                    fmt = "audio/wav"
+                    mime = "audio/wav"
                 elif ext in (".mp3", ".mpeg"):
-                    fmt = "audio/mpeg"
+                    mime = "audio/mpeg"
                 elif ext == ".ogg":
-                    fmt = "audio/ogg"
+                    mime = "audio/ogg"
                 else:
-                    fmt = "audio/wav"
-                st.audio(audio_bytes, format=fmt)
+                    mime = "audio/wav"
+
+                html = f"""
+                <audio id="ivr_prompt_audio" preload="auto">
+                    <source src="data:{mime};base64,{b64}" type="{mime}">
+                </audio>
+                <script>
+                (function() {{
+                    var audio = document.getElementById("ivr_prompt_audio");
+                    if (!audio) return;
+                    // Intento de reproducir inmediatamente
+                    var playPromise = audio.play();
+                    if (playPromise !== undefined) {{
+                        playPromise.catch(function(err) {{
+                            console.log("Autoplay bloqueado o error:", err);
+                        }});
+                    }}
+                }})();
+                </script>
+                """
+                # Componente oculto (altura 0) para que se ejecute el JS en el cliente
+                components.html(html, height=0, width=0)
             except Exception as e:
-                st.caption(f"No se pudo crear reproductor visible: {e}")
+                st.caption(f"No se pudo inyectar audio vía JS: {e}")
+
+            # Fallback: reproductor visible por si el navegador bloquea todo
+            try:
+                st.audio(audio_bytes, format=mime)
+            except Exception:
+                pass
 
             return True
 
@@ -179,29 +203,33 @@ def play_node_audio(node: dict) -> bool:
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
         st.caption(f"Reproduciendo AUDIO_URL: {audio_url}")
-        if audio_url.lower().startswith(("http://", "https://")):
-            _ = play_hidden_audio_url(audio_url)
-            st.audio(audio_url)
-            return True
-        else:
-            candidate = (BASE_DIR / audio_url).resolve()
-            if candidate.exists():
-                _ = play_hidden_audio(candidate)
-                try:
-                    audio_bytes = candidate.read_bytes()
-                    st.audio(audio_bytes)
-                except Exception:
-                    pass
-                return True
-            else:
-                _ = play_hidden_audio_url(audio_url)
-                st.audio(audio_url)
-                return True
+        # Para URLs no hacemos base64, dejamos que el navegador resuelva
+        html = f"""
+        <audio id="ivr_prompt_audio_url" preload="auto">
+            <source src="{audio_url}" type="audio/mpeg">
+        </audio>
+        <script>
+        (function() {{
+            var audio = document.getElementById("ivr_prompt_audio_url");
+            if (!audio) return;
+            var playPromise = audio.play();
+            if (playPromise !== undefined) {{
+                playPromise.catch(function(err) {{
+                    console.log("Autoplay bloqueado o error (URL):", err);
+                }});
+            }}
+        }})();
+        </script>
+        """
+        components.html(html, height=0, width=0)
+        # Fallback visible
+        st.audio(audio_url)
+        return True
 
     buscados = ", ".join(str(p.relative_to(BASE_DIR)) for p in candidatos)
     st.caption(f"Sin audio para {node_id}. Buscados: {buscados} y AUDIO_URL='{audio_url}'")
     return False
-# ========== FIN CAMBIO IMPORTANTE ==========
+
 
 
 # =========================
@@ -581,3 +609,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
