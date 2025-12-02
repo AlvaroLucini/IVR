@@ -32,6 +32,18 @@ RING_PATHS = [
 
 
 # =========================
+# HELPERS GENERALES
+# =========================
+
+def do_rerun():
+    """Compatibilidad con distintas versiones de Streamlit."""
+    if hasattr(st, "rerun"):
+        st.rerun()
+    else:
+        st.experimental_rerun()
+
+
+# =========================
 # HELPERS AUDIO
 # =========================
 
@@ -54,7 +66,7 @@ def looks_like_audio_ref(s: str) -> bool:
 
 
 def play_ringtone_once():
-    """Intenta reproducir el ringtone una vez usando st.audio."""
+    """Reproduce el ringtone una vez usando st.audio."""
     ring_file = next((p for p in RING_PATHS if p.exists()), None)
     if ring_file:
         try:
@@ -69,29 +81,51 @@ def play_ringtone_once():
 def play_node_audio(node: dict) -> bool:
     """
     Reproduce el audio asociado a un nodo.
+
     Prioridad:
       1) tts_audio/{NODE_ID}_es.wav (local)
-      2) AUDIO_URL (HTTP/HTTPS o stream accesible)
+      2) audio/{NODE_ID}.wav (local)
+      3) AUDIO_URL (HTTP/HTTPS o ruta accesible)
     Devuelve True si ha podido reproducir algo.
     """
+    node_id = node["NODE_ID"]
+
     # 1) TTS local por nodo
-    local_tts = BASE_DIR / "tts_audio" / f"{node['NODE_ID']}_es.wav"
-    if local_tts.exists():
+    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
+    if tts_path.exists():
         try:
-            audio_bytes = local_tts.read_bytes()
+            audio_bytes = tts_path.read_bytes()
             st.audio(audio_bytes, format="audio/wav")
             return True
         except Exception:
-            st.warning(f"No se pudo reproducir el audio local {local_tts.name}")
+            st.warning(f"No se pudo reproducir el audio TTS local {tts_path.name}")
 
-    # 2) AUDIO_URL (pensado para URLs HTTP/HTTPS)
+    # 2) audio/{NODE_ID}.wav
+    local_audio = BASE_DIR / "audio" / f"{node_id}.wav"
+    if local_audio.exists():
+        try:
+            audio_bytes = local_audio.read_bytes()
+            st.audio(audio_bytes, format="audio/wav")
+            return True
+        except Exception:
+            st.warning(f"No se pudo reproducir el audio local {local_audio.name}")
+
+    # 3) AUDIO_URL (por si queremos usar URLs externas)
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
         try:
-            # Si es URL HTTP/HTTPS, se pasa tal cual.
-            # Si fuera una ruta de fichero accesible en el contenedor,
-            # Streamlit también la puede servir.
-            st.audio(audio_url)
+            if audio_url.lower().startswith(("http://", "https://")):
+                # URL directa
+                st.audio(audio_url)
+            else:
+                # Intentamos resolver ruta relativa sobre BASE_DIR
+                candidate = (BASE_DIR / audio_url).resolve()
+                if candidate.exists():
+                    audio_bytes = candidate.read_bytes()
+                    st.audio(audio_bytes)
+                else:
+                    # Último intento: pasar la cadena tal cual
+                    st.audio(audio_url)
             return True
         except Exception:
             st.warning(f"No se pudo reproducir el AUDIO_URL: {audio_url}")
@@ -206,7 +240,7 @@ def init_session():
 def reset_session():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
-    st.rerun()
+    do_rerun()
 
 
 def start_new_test():
@@ -267,6 +301,7 @@ def handle_key(key: str):
         ss.last_message = "Repitiendo el mensaje del nodo."
         # Forzamos a que se vuelva a reproducir el audio en el render
         ss.last_played_node_id = None
+        do_rerun()
         return
 
     # '#': ir al ROOT
@@ -274,6 +309,7 @@ def handle_key(key: str):
         if not ROOT_NODE_ID or ROOT_NODE_ID not in NODES:
             ss.last_action = "error"
             ss.last_message = "No se ha encontrado el nodo raíz (ROOT) en la configuración."
+            do_rerun()
             return
 
         ss.route.append(
@@ -288,12 +324,14 @@ def handle_key(key: str):
         ss.last_action = "goto_root"
         ss.last_message = "Has vuelto al menú principal."
         ss.last_played_node_id = None
+        do_rerun()
         return
 
     # 0..9
     if key not in "0123456789":
         ss.last_action = "error"
         ss.last_message = "Tecla no reconocida."
+        do_rerun()
         return
 
     next_id = current_node["NEXT"].get(key, "")
@@ -301,6 +339,7 @@ def handle_key(key: str):
     if not next_id:
         ss.last_action = "invalid"
         ss.last_message = "Opción no válida en este menú."
+        do_rerun()
         return
 
     ss.route.append(
@@ -318,6 +357,7 @@ def handle_key(key: str):
     if not new_node:
         ss.last_action = "error"
         ss.last_message = f"Nodo destino '{next_id}' no definido en ivr_nodes.csv."
+        do_rerun()
         return
 
     ss.last_action = None
@@ -326,6 +366,9 @@ def handle_key(key: str):
 
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
+        do_rerun()
+    else:
+        do_rerun()
 
 
 def finish_test(queue_node: dict):
@@ -403,7 +446,7 @@ def main():
         if st.button("🎬 Empezar nuevo test"):
             start_new_test()
             if st.session_state.get("test_active", False):
-                st.rerun()
+                do_rerun()
         return
 
     scenario = ss.scenario
@@ -424,10 +467,18 @@ def main():
     if ss.finished and ss.result:
         st.subheader("✅ Gracias por completar la prueba")
 
-        st.success(
-            "Hemos registrado tu recorrido en la IVR. "
-            "Puedes hacer otra misión cuando quieras."
-        )
+        if ss.result["result"] == "SUCCESS":
+            st.success(
+                f"Llegaste a la cola correcta: `{ss.result['reached_queue_id']}` "
+                f"({ss.result.get('queue_name','')})."
+            )
+        else:
+            st.error(
+                "La cola alcanzada no coincide con la esperada.\n\n"
+                f"- Esperada: `{ss.result['expected_queue_id']}`\n"
+                f"- Alcanzada: `{ss.result['reached_queue_id']}` "
+                f"({ss.result.get('queue_name','')})"
+            )
 
         with st.expander("Ver ruta seguida (para análisis interno)"):
             st.json(ss.route)
@@ -438,16 +489,19 @@ def main():
 
         return
 
-    # Fase de ringing: tono 1 vez + descolgar
+    # Fase de ringing: tono + descolgar
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
-        play_ringtone_once()
-        st.caption("Escuchas el tono de llamada. Cuando quieras empezar la prueba, descuelga.")
+
+        if st.button("▶ Escuchar tono de llamada"):
+            play_ringtone_once()
+
+        st.caption("Cuando quieras empezar la prueba, descuelga.")
 
         if st.button("📞 Descolgar teléfono"):
             ss.phase = "ivr"
             ss.last_played_node_id = None
-            st.rerun()
+            do_rerun()
 
         return
 
