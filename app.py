@@ -8,7 +8,7 @@ import base64
 
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components   # 👈 AÑADE ESTA LÍNEA
+import streamlit.components.v1 as components  # para inyectar JS
 
 
 # =========================
@@ -31,6 +31,9 @@ RING_PATHS = [
     BASE_DIR / "audio" / "ringtone.wav",
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
+
+# Duración simulada del tono (segundos)
+RING_DURATION_SECONDS = 8
 
 
 # =========================
@@ -117,29 +120,24 @@ def play_ringtone_once():
     """Intenta reproducir el ringtone una vez (oculto)."""
     ring_file = next((p for p in RING_PATHS if p.exists()), None)
     if ring_file:
-        st.caption(f"Tono → {ring_file.relative_to(BASE_DIR)}")
         play_hidden_audio(ring_file)
     else:
         st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
 
 
-# ========== AQUÍ ESTÁ EL CAMBIO IMPORTANTE ==========
 def play_node_audio(node: dict) -> bool:
     """
-    Reproduce el audio asociado a un nodo.
+    Reproduce el audio asociado a un nodo vía JS (autoplay) sin reproductor visible.
 
     Prioridad:
       1) audio/{NODE_ID}_es.wav
       2) audio/{NODE_ID}.wav
       3) tts_audio/{NODE_ID}_es.wav
       4) AUDIO_URL
-
-    Intento 1: usar <audio> con JS (audio.play()) en un componente oculto.
-    Fallback: reproductor visible st.audio por si el navegador bloquea el autoplay.
     """
     node_id = node["NODE_ID"]
 
-    # --- Local paths candidatos ---
+    # Candidatos locales
     candidatos: list[Path] = []
     audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
     candidatos.append(audio_es_path)
@@ -153,9 +151,6 @@ def play_node_audio(node: dict) -> bool:
     # 1–3) Ficheros locales
     for p in candidatos:
         if p.exists():
-            st.caption(f"Reproduciendo audio: {p.relative_to(BASE_DIR)}")
-
-            # Leemos y generamos data:URL para inyectar en un componente HTML+JS
             try:
                 audio_bytes = p.read_bytes()
                 b64 = base64.b64encode(audio_bytes).decode("utf-8")
@@ -177,7 +172,6 @@ def play_node_audio(node: dict) -> bool:
                 (function() {{
                     var audio = document.getElementById("ivr_prompt_audio");
                     if (!audio) return;
-                    // Intento de reproducir inmediatamente
                     var playPromise = audio.play();
                     if (playPromise !== undefined) {{
                         playPromise.catch(function(err) {{
@@ -187,24 +181,15 @@ def play_node_audio(node: dict) -> bool:
                 }})();
                 </script>
                 """
-                # Componente oculto (altura 0) para que se ejecute el JS en el cliente
                 components.html(html, height=0, width=0)
+                return True
             except Exception as e:
-                st.caption(f"No se pudo inyectar audio vía JS: {e}")
-
-            # Fallback: reproductor visible por si el navegador bloquea todo
-            try:
-                st.audio(audio_bytes, format=mime)
-            except Exception:
-                pass
-
-            return True
+                st.caption(f"No se pudo reproducir audio de nodo {node_id}: {e}")
+                return False
 
     # 4) AUDIO_URL
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
-        st.caption(f"Reproduciendo AUDIO_URL: {audio_url}")
-        # Para URLs no hacemos base64, dejamos que el navegador resuelva
         html = f"""
         <audio id="ivr_prompt_audio_url" preload="auto">
             <source src="{audio_url}" type="audio/mpeg">
@@ -223,14 +208,9 @@ def play_node_audio(node: dict) -> bool:
         </script>
         """
         components.html(html, height=0, width=0)
-        # Fallback visible
-        st.audio(audio_url)
         return True
 
-    buscados = ", ".join(str(p.relative_to(BASE_DIR)) for p in candidatos)
-    st.caption(f"Sin audio para {node_id}. Buscados: {buscados} y AUDIO_URL='{audio_url}'")
     return False
-
 
 
 # =========================
@@ -327,6 +307,8 @@ def init_session():
         ss.last_message = ""
         ss.phase = "idle"          # idle | ringing | ivr | done
         ss.last_played_node_id = None
+        ss.ring_started_at = None  # timestamp ISO de inicio de tono
+        ss.ring_played = False     # si ya se lanzó el audio de tono
 
 
 def reset_session():
@@ -362,6 +344,8 @@ def start_new_test():
     ss.last_message = ""
     ss.phase = "ringing"
     ss.last_played_node_id = None
+    ss.ring_started_at = None
+    ss.ring_played = False
 
 
 def handle_key(key: str):
@@ -390,7 +374,7 @@ def handle_key(key: str):
         )
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
-        ss.last_played_node_id = None
+        ss.last_played_node_id = None  # se volverá a reproducir
         return
 
     # '#': ir al ROOT
@@ -446,7 +430,7 @@ def handle_key(key: str):
 
     ss.last_action = None
     ss.last_message = ""
-    ss.last_played_node_id = None
+    ss.last_played_node_id = None  # nuevo nodo -> repro audio
 
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
@@ -567,21 +551,45 @@ def main():
 
         return
 
-    # ===== FASE RINGING =====
+    # ===== FASE RINGING (llamando, obligatorio) =====
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
-        play_ringtone_once()
-        st.caption("Escuchas el tono de llamada…")
 
-        if st.button("📞 Descolgar teléfono"):
+        # Inicializar timestamp si hace falta
+        if ss.ring_started_at is None:
+            ss.ring_started_at = datetime.utcnow().isoformat()
+
+        # Solo lanzamos el audio de tono una vez
+        if not ss.ring_played:
+            play_ringtone_once()
+            ss.ring_played = True
+
+        # Calcular tiempo restante
+        try:
+            started = datetime.fromisoformat(ss.ring_started_at)
+        except Exception:
+            started = datetime.utcnow()
+            ss.ring_started_at = started.isoformat()
+
+        elapsed = (datetime.utcnow() - started).total_seconds()
+        remaining = max(0, int(RING_DURATION_SECONDS - elapsed))
+
+        st.caption(f"Llamando... ({remaining} s)")
+
+        if remaining > 0:
+            # Recarga automática cada segundo mientras siga sonando el tono
+            st.markdown(
+                "<meta http-equiv='refresh' content='1'>",
+                unsafe_allow_html=True,
+            )
+            st.divider()
+            if st.button("❌ Cancelar test"):
+                reset_session()
+            return
+        else:
+            # Tono terminado → pasamos a IVR
             ss.phase = "ivr"
             ss.last_played_node_id = None
-
-        st.divider()
-        if st.button("❌ Cancelar test"):
-            reset_session()
-
-        return
 
     # ===== FASE IVR =====
     st.subheader("📟 Llamada IVR (simulada)")
@@ -610,5 +618,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
