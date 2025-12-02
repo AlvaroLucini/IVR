@@ -32,6 +32,13 @@ RING_PATHS = [
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
 
+# Debug suave: ver si hay secrets y si está la sección github (sin mostrar el token)
+try:
+    st.sidebar.write("DEBUG secrets keys:", list(st.secrets.keys()))
+    if "github" in st.secrets:
+        st.sidebar.write("DEBUG github keys:", list(st.secrets["github"].keys()))
+except Exception as e:
+    st.sidebar.write(f"DEBUG st.secrets error: {e}")
 
 # =========================
 # HELPERS AUDIO
@@ -652,4 +659,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
