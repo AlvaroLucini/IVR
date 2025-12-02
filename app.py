@@ -41,7 +41,7 @@ def looks_like_audio_ref(s: str) -> bool:
     """Heurística para saber si AUDIO_URL parece fichero/URL de audio."""
     if not s:
         return False
-    s = str(s).strip()
+    s = str(s).trim() if hasattr(str(s), "trim") else str(s).strip()
     if not s:
         return False
 
@@ -283,7 +283,6 @@ def play_node_audio(node: dict) -> bool:
 # CARGA DE CONFIGURACIÓN
 # =========================
 
-@st.cache_data
 def load_nodes():
     """
     Espera un ivr_nodes.csv con columnas:
@@ -294,14 +293,13 @@ def load_nodes():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
-    # No usamos index_col, así mantenemos NODE_ID como columna normal
     df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
     nodes = {}
     for _, row in df.iterrows():
         node_id = str(row.get("NODE_ID", "")).strip()
         if not node_id:
-            continue  # por si hubiera filas vacías
+            continue
 
         node_label = row.get("NODE_LABEL", "")
         node_type = row.get("NODE_TYPE", "")       # MENU / QUEUE
@@ -319,7 +317,7 @@ def load_nodes():
         nodes[node_id] = {
             "NODE_ID":     node_id,
             "NODE_LABEL":  node_label,
-            "NODE_TYPE":   node_type,          # MENU / QUEUE
+            "NODE_TYPE":   node_type,
             "IS_ENTRY":    is_entry_flag,
             "PROMPT_TEXT": prompt_text,
             "AUDIO_URL":   row.get("AUDIO_URL", ""),
@@ -331,7 +329,6 @@ def load_nodes():
     return nodes
 
 
-@st.cache_data
 def load_scenarios():
     if not CSV_SCENARIOS.exists():
         st.error(f"No se encuentra el archivo de escenarios: {CSV_SCENARIOS}")
@@ -353,6 +350,9 @@ def load_scenarios():
 
 NODES = load_nodes()
 SCENARIOS = load_scenarios()
+
+# DEBUG en sidebar: ver qué IDs se han cargado
+st.sidebar.write("DEBUG NODE_IDs:", list(NODES.keys()))
 
 # Nodo raíz para '#'
 if "ROOT" in NODES:
