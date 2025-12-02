@@ -1,0 +1,4 @@
+SCENARIO_ID,TITLE,MISSION_TEXT,ENTRY_NODE_ID,EXPECTED_QUEUE_ID,ACTIVE
+S001,"Estado pedido online","Has realizado un pedido online que no llega. Solo quieres saber dónde está tu pedido.",ROOT,Q_PEDIDOS_ONLINE,TRUE
+S002,"Devolución compra en tienda","Compraste un producto en tienda y quieres hacer una devolución.",ROOT,Q_DEVOLUCIONES_TIENDA,TRUE
+S003,"Consulta general","No tienes claro qué departamento necesitas, quieres hablar con alguien que te guíe.",ROOT,Q_OTRAS_CONSULTAS,TRUE

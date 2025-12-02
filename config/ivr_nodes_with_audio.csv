@@ -1,0 +1,12 @@
+﻿,NODE_ID,NODE_LABEL,NODE_TYPE,IS_ENTRY,PROMPT_TEXT,AUDIO_URL,QUEUE_ID,QUEUE_NAME,OPT_0_NEXT_NODE,OPT_1_NEXT_NODE,OPT_2_NEXT_NODE,OPT_3_NEXT_NODE,OPT_4_NEXT_NODE,OPT_5_NEXT_NODE,OPT_6_NEXT_NODE,OPT_7_NEXT_NODE,OPT_8_NEXT_NODE,OPT_9_NEXT_NODE
+ROOT,Menú principal,MENU,YES,"Bienvenido a IKEA. Para pedidos pulse 1, para devoluciones pulse 2, para otras consultas pulse 3.",,tts_audio/ROOT_es.wav,,,L1_PEDIDOS,L1_DEVOLUCIONES,L1_OTRAS,,,,,,,
+L1_PEDIDOS,Menú pedidos,MENU,NO,Para pedidos online pulse 1. Para pedidos en tienda pulse 2.,,tts_audio/L1_PEDIDOS_es.wav,,,,L2_PEDIDOS_ONLINE,L2_PEDIDOS_TIENDA,,,,,,,
+L1_DEVOLUCIONES,Menú devoluciones,MENU,NO,Para devoluciones de compras online pulse 1. Para devoluciones de compras en tienda pulse 2.,,tts_audio/L1_DEVOLUCIONES_es.wav,,,,L2_DEV_ONLINE,L2_DEV_TIENDA,,,,,,,
+L1_OTRAS,Menú otras consultas,MENU,NO,Para información sobre tiendas pulse 1. Para hablar con un agente pulse 2.,,tts_audio/L1_OTRAS_es.wav,,,,L2_INFO_TIENDAS,Q_OTRAS_CONSULTAS,,,,,,,
+L2_PEDIDOS_ONLINE,Cola pedidos online,QUEUE,NO,Te vamos a pasar con un agente especializado en pedidos online.,,tts_audio/L2_PEDIDOS_ONLINE_es.wav,Pedidos online,,,,,,,,,,,
+L2_PEDIDOS_TIENDA,Cola pedidos tienda,QUEUE,NO,Te vamos a pasar con un agente de tu tienda para consultas sobre pedidos realizados en tienda.,,tts_audio/L2_PEDIDOS_TIENDA_es.wav,Pedidos en tienda,,,,,,,,,,,
+L2_DEV_ONLINE,Cola devoluciones online,QUEUE,NO,Te vamos a pasar con un agente especializado en devoluciones de compras online.,,tts_audio/L2_DEV_ONLINE_es.wav,Devoluciones online,,,,,,,,,,,
+L2_DEV_TIENDA,Cola devoluciones tienda,QUEUE,NO,Te vamos a pasar con un agente especializado en devoluciones de compras en tienda.,,tts_audio/L2_DEV_TIENDA_es.wav,Devoluciones tienda,,,,,,,,,,,
+L2_INFO_TIENDAS,Info sobre tiendas,MENU,NO,Para horario de apertura pulse 1. Para dirección pulse 2. Para volver al menú anterior pulse 9.,,tts_audio/L2_INFO_TIENDAS_es.wav,,,,L3_HORARIO,L3_DIRECCION,,,,,,,ROOT
+L3_HORARIO,Info horario tiendas (cola otras consultas),QUEUE,NO,El horario general de nuestras tiendas es de 10 a 22 horas. Ahora te pasamos con un agente si necesitas más info.,,tts_audio/L3_HORARIO_es.wav,Otras consultas,,,,,,,,,,,
+L3_DIRECCION,Info dirección tiendas (cola otras consultas),QUEUE,NO,"Puedes consultar la dirección de nuestras tiendas en ikea.es. Si lo prefieres, te pasamos con un agente.",,tts_audio/L3_DIRECCION_es.wav,Otras consultas,,,,,,,,,,,
