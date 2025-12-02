@@ -284,44 +284,90 @@ def play_node_audio(node: dict) -> bool:
 # =========================
 
 def load_nodes():
+    """
+    Carga ivr_nodes.csv y construye el diccionario NODES.
+
+    Está pensada para aguantar el caso en el que pandas crea un MultiIndex
+    con (NODE_ID, NODE_LABEL) y deja en la columna NODE_ID valores como
+    'MENU' / 'QUEUE'.
+    """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
     df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
-    nodes = {}
-    for _, row in df.iterrows():
-        node_id = str(row.get("NODE_ID", "")).strip()
+    nodes: dict[str, dict] = {}
+
+    for idx, row in df.iterrows():
+        # --- ID y label reales, sacados del índice ---
+        if isinstance(idx, tuple):
+            raw_id = idx[0]
+            raw_label = idx[1] if len(idx) > 1 else ""
+        else:
+            raw_id = idx
+            raw_label = row.get("NODE_LABEL", "")
+
+        node_id = str(raw_id).strip()
+        node_label = str(raw_label).strip()
+
+        if not node_id:
+            # Fallback extremo: usamos la columna NODE_ID
+            node_id = str(row.get("NODE_ID", "")).strip()
         if not node_id:
             continue
 
-        node_label = row.get("NODE_LABEL", "")
-        node_type = row.get("NODE_TYPE", "")       # MENU / QUEUE
-        is_entry_flag = str(row.get("IS_ENTRY", "")).strip().upper() == "YES"
+        # --- Tipo de nodo (MENU / QUEUE) ---
+        # En tu caso, pandas ha metido el tipo en la columna NODE_ID
+        node_type = str(row.get("NODE_ID", "") or "").strip().upper()
+        if node_type not in ("MENU", "QUEUE"):
+            # Si por lo que sea no cuadra, usamos la columna NODE_TYPE normal
+            node_type = str(row.get("NODE_TYPE", "") or "").strip().upper()
 
-        prompt_text = row.get("PROMPT_TEXT", "")
-        if not str(prompt_text).strip():
-            prompt_text = ""
+        # --- Flag de entrada ---
+        # Cuando se descolocan columnas, IS_ENTRY suele acabar en NODE_LABEL
+        raw_is_entry = row.get("NODE_LABEL", "") if isinstance(idx, tuple) else row.get("IS_ENTRY", "")
+        is_entry_flag = str(raw_is_entry or "").strip().upper() == "YES"
 
-        next_map = {}
+        # --- Prompt de voz ---
+        # El texto largo del nodo está en la columna NODE_TYPE cuando se desplaza
+        prompt_text = str(row.get("NODE_TYPE", "") or "").strip()
+        if not prompt_text:
+            prompt_text = str(row.get("PROMPT_TEXT", "") or "").strip()
+
+        # --- Queue_ID / Queue_Name ---
+        # Para los nodos QUEUE, en tu CSV los valores están justo después del prompt,
+        # que con el desplazamiento acaban en PROMPT_TEXT / AUDIO_URL.
+        if node_type == "QUEUE":
+            queue_id = str(row.get("PROMPT_TEXT", "") or "").strip()
+            queue_name = str(row.get("AUDIO_URL", "") or "").strip()
+        else:
+            queue_id = str(row.get("QUEUE_ID", "") or "").strip()
+            queue_name = str(row.get("QUEUE_NAME", "") or "").strip()
+
+        # --- Rutas por dígito ---
+        next_map: dict[str, str] = {}
         for d in range(10):
             col_name = f"OPT_{d}_NEXT_NODE"
-            next_map[str(d)] = row.get(col_name, "")
+            next_map[str(d)] = str(row.get(col_name, "") or "").strip()
 
         nodes[node_id] = {
             "NODE_ID":     node_id,
             "NODE_LABEL":  node_label,
-            "NODE_TYPE":   node_type,
+            "NODE_TYPE":   node_type,         # MENU / QUEUE
             "IS_ENTRY":    is_entry_flag,
             "PROMPT_TEXT": prompt_text,
             "AUDIO_URL":   row.get("AUDIO_URL", ""),
-            "QUEUE_ID":    row.get("QUEUE_ID", ""),
-            "QUEUE_NAME":  row.get("QUEUE_NAME", ""),
+            "QUEUE_ID":    queue_id,
+            "QUEUE_NAME":  queue_name,
             "NEXT":        next_map,
         }
 
+    # DEBUG para que veas lo que realmente ha cargado
+    st.sidebar.write("DEBUG NODE_IDs:", list(nodes.keys()))
+
     return nodes
+
 
 
 
@@ -652,4 +698,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
