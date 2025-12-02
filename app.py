@@ -455,12 +455,21 @@ def handle_key(key: str):
         return
 
     # 0..9
+    # 0..9
     if key not in "0123456789":
         ss.last_action = "error"
         ss.last_message = "Tecla no reconocida."
         return
 
-    next_id = current_node["NEXT"].get(key, "")
+    # Tus opciones están “corridas”: la opción del 1 está en OPT_0, la del 2 en OPT_1, etc.
+    d = int(key)
+    if d == 0:
+        lookup_digit = "0"
+    else:
+        lookup_digit = str(d - 1)
+
+    next_id = current_node["NEXT"].get(lookup_digit, "")
+
 
     if not next_id:
         ss.last_action = "invalid"
@@ -643,3 +652,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
