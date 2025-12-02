@@ -74,131 +74,181 @@ def _audio_path_to_src(path: Path) -> tuple[str, str]:
     return src, mime
 
 
-def play_hidden_audio(path: Path, loop: bool = False) -> bool:
-    """Reproduce un audio local sin controles usando <audio autoplay>."""
-    if not path.exists():
-        return False
-
-    try:
-        src, mime = _audio_path_to_src(path)
-    except Exception:
-        return False
-
-    loop_attr = "loop" if loop else ""
-    html = f"""
-    <audio autoplay {loop_attr}>
-        <source src="{src}" type="{mime}">
-    </audio>
+def get_node_audio_source(node: dict) -> tuple[str | None, str | None]:
     """
-    st.markdown(html, unsafe_allow_html=True)
-    return True
+    Devuelve (src, mime) para el audio del nodo,
+    o (None, None) si no hay audio configurado.
 
-
-def play_hidden_audio_url(url: str, loop: bool = False, mime: str = "audio/mpeg") -> bool:
-    """Reproduce una URL HTTP(S) sin controles usando <audio autoplay>."""
-    if not url:
-        return False
-
-    url = str(url).strip()
-    if not url:
-        return False
-
-    loop_attr = "loop" if loop else ""
-    html = f"""
-    <audio autoplay {loop_attr}>
-        <source src="{url}" type="{mime}">
-    </audio>
+    - src: data:URL base64 o URL http/https
+    - mime: 'audio/... ' o 'url' si src es URL remota
     """
-    st.markdown(html, unsafe_allow_html=True)
-    return True
+    node_id = node["NODE_ID"]
+
+    # Candidatos locales: audio/{NODE_ID}_es.wav, audio/{NODE_ID}.wav, tts_audio/{NODE_ID}_es.wav
+    audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
+    audio_plain_path = BASE_DIR / "audio" / f"{node_id}.wav"
+    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
+
+    for p in (audio_es_path, audio_plain_path, tts_path):
+        if p.exists():
+            try:
+                return _audio_path_to_src(p)
+            except Exception:
+                continue
+
+    # AUDIO_URL como último recurso (solo http/https)
+    audio_url = str(node.get("AUDIO_URL", "")).strip()
+    if audio_url and audio_url.lower().startswith(("http://", "https://")):
+        return audio_url, "url"
+
+    return None, None
 
 
-def play_ringtone_once():
-    """Intenta reproducir el ringtone una vez (oculto)."""
+def play_ring_and_prompt(node: dict) -> bool:
+    """
+    Reproduce primero el tono de llamada y luego el prompt del nodo
+    usando JavaScript en el navegador. No muestra reproductores visibles.
+    """
+    # Tono
     ring_file = next((p for p in RING_PATHS if p.exists()), None)
-    if ring_file:
-        play_hidden_audio(ring_file)
+    ring_src = None
+    ring_mime = None
+    if ring_file is not None:
+        try:
+            ring_src, ring_mime = _audio_path_to_src(ring_file)
+        except Exception:
+            ring_src, ring_mime = None, None
+
+    # Prompt del nodo
+    prompt_src, prompt_mime = get_node_audio_source(node)
+
+    # Si no hay ni tono ni prompt, no hacemos nada
+    if ring_src is None and prompt_src is None:
+        return False
+
+    # Caso típico: ambos en base64 (tono y prompt)
+    if prompt_src is not None and prompt_mime != "url":
+        ring_audio_html = ""
+        if ring_src is not None:
+            ring_audio_html = f"""
+            <audio id="ivr_ring" preload="auto">
+                <source src="{ring_src}" type="{ring_mime}">
+            </audio>
+            """
+        prompt_audio_html = f"""
+        <audio id="ivr_prompt" preload="auto">
+            <source src="{prompt_src}" type="{prompt_mime}">
+        </audio>
+        """
+        script = """
+        <script>
+        (function() {
+            var ring = document.getElementById("ivr_ring");
+            var prompt = document.getElementById("ivr_prompt");
+            if (!prompt) return;
+            function playPrompt() {
+                var pp = prompt.play();
+                if (pp !== undefined) {
+                    pp.catch(function(err) {
+                        console.log("Error reproduciendo prompt:", err);
+                    });
+                }
+            }
+            if (ring) {
+                var rp = ring.play();
+                if (rp !== undefined) {
+                    rp.catch(function(err) {
+                        console.log("Error reproduciendo ring:", err);
+                        // Si falla el tono, lanzamos directamente el prompt
+                        playPrompt();
+                    });
+                }
+                ring.onended = function() {
+                    playPrompt();
+                };
+            } else {
+                playPrompt();
+            }
+        })();
+        </script>
+        """
+        html = ring_audio_html + prompt_audio_html + script
+        components.html(html, height=0, width=0)
+        return True
     else:
-        st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
+        # Si el prompt viene de una URL http/https
+        ring_audio_html = ""
+        if ring_src is not None:
+            ring_audio_html = f"""
+            <audio id="ivr_ring" preload="auto">
+                <source src="{ring_src}" type="{ring_mime}">
+            </audio>
+            """
+        prompt_src_final = prompt_src if prompt_src is not None else ""
+        prompt_audio_html = f"""
+        <audio id="ivr_prompt" preload="auto">
+            <source src="{prompt_src_final}" type="audio/mpeg">
+        </audio>
+        """
+        script = """
+        <script>
+        (function() {
+            var ring = document.getElementById("ivr_ring");
+            var prompt = document.getElementById("ivr_prompt");
+            if (!prompt) return;
+            function playPrompt() {
+                var pp = prompt.play();
+                if (pp !== undefined) {
+                    pp.catch(function(err) {
+                        console.log("Error reproduciendo prompt URL:", err);
+                    });
+                }
+            }
+            if (ring) {
+                var rp = ring.play();
+                if (rp !== undefined) {
+                    rp.catch(function(err) {
+                        console.log("Error reproduciendo ring:", err);
+                        playPrompt();
+                    });
+                }
+                ring.onended = function() {
+                    playPrompt();
+                };
+            } else {
+                playPrompt();
+            }
+        })();
+        </script>
+        """
+        html = ring_audio_html + prompt_audio_html + script
+        components.html(html, height=0, width=0)
+        return True
 
 
 def play_node_audio(node: dict) -> bool:
     """
-    Reproduce el audio asociado a un nodo vía JS (autoplay) sin reproductor visible.
-
-    Prioridad:
-      1) audio/{NODE_ID}_es.wav
-      2) audio/{NODE_ID}.wav
-      3) tts_audio/{NODE_ID}_es.wav
-      4) AUDIO_URL
+    Reproduce solo el audio del nodo (sin tono) vía JS autoplay,
+    sin reproductor visible.
     """
-    node_id = node["NODE_ID"]
+    src, mime = get_node_audio_source(node)
+    if src is None:
+        return False
 
-    # Candidatos locales
-    candidatos: list[Path] = []
-    audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
-    candidatos.append(audio_es_path)
-
-    audio_plain_path = BASE_DIR / "audio" / f"{node_id}.wav"
-    candidatos.append(audio_plain_path)
-
-    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
-    candidatos.append(tts_path)
-
-    # 1–3) Ficheros locales
-    for p in candidatos:
-        if p.exists():
-            try:
-                audio_bytes = p.read_bytes()
-                b64 = base64.b64encode(audio_bytes).decode("utf-8")
-                ext = p.suffix.lower()
-                if ext == ".wav":
-                    mime = "audio/wav"
-                elif ext in (".mp3", ".mpeg"):
-                    mime = "audio/mpeg"
-                elif ext == ".ogg":
-                    mime = "audio/ogg"
-                else:
-                    mime = "audio/wav"
-
-                html = f"""
-                <audio id="ivr_prompt_audio" preload="auto">
-                    <source src="data:{mime};base64,{b64}" type="{mime}">
-                </audio>
-                <script>
-                (function() {{
-                    var audio = document.getElementById("ivr_prompt_audio");
-                    if (!audio) return;
-                    var playPromise = audio.play();
-                    if (playPromise !== undefined) {{
-                        playPromise.catch(function(err) {{
-                            console.log("Autoplay bloqueado o error:", err);
-                        }});
-                    }}
-                }})();
-                </script>
-                """
-                components.html(html, height=0, width=0)
-                return True
-            except Exception as e:
-                st.caption(f"No se pudo reproducir audio de nodo {node_id}: {e}")
-                return False
-
-    # 4) AUDIO_URL
-    audio_url = str(node.get("AUDIO_URL", "")).strip()
-    if looks_like_audio_ref(audio_url):
+    # Caso base64 local
+    if mime != "url":
         html = f"""
-        <audio id="ivr_prompt_audio_url" preload="auto">
-            <source src="{audio_url}" type="audio/mpeg">
+        <audio id="ivr_prompt_only" preload="auto">
+            <source src="{src}" type="{mime}">
         </audio>
         <script>
         (function() {{
-            var audio = document.getElementById("ivr_prompt_audio_url");
+            var audio = document.getElementById("ivr_prompt_only");
             if (!audio) return;
-            var playPromise = audio.play();
-            if (playPromise !== undefined) {{
-                playPromise.catch(function(err) {{
-                    console.log("Autoplay bloqueado o error (URL):", err);
+            var pp = audio.play();
+            if (pp !== undefined) {{
+                pp.catch(function(err) {{
+                    console.log("Error reproduciendo prompt:", err);
                 }});
             }}
         }})();
@@ -206,8 +256,27 @@ def play_node_audio(node: dict) -> bool:
         """
         components.html(html, height=0, width=0)
         return True
-
-    return False
+    else:
+        # URL http/https
+        html = f"""
+        <audio id="ivr_prompt_only_url" preload="auto">
+            <source src="{src}" type="audio/mpeg">
+        </audio>
+        <script>
+        (function() {{
+            var audio = document.getElementById("ivr_prompt_only_url");
+            if (!audio) return;
+            var pp = audio.play();
+            if (pp !== undefined) {{
+                pp.catch(function(err) {{
+                    console.log("Error reproduciendo prompt URL:", err);
+                }});
+            }}
+        }})();
+        </script>
+        """
+        components.html(html, height=0, width=0)
+        return True
 
 
 # =========================
@@ -280,7 +349,6 @@ NODES = load_nodes()
 SCENARIOS = load_scenarios()
 
 # Nodo raíz para '#'
- 
 if "ROOT" in NODES:
     ROOT_NODE_ID = "ROOT"
 else:
@@ -288,7 +356,6 @@ else:
         (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
         None,
     )
-
 
 
 # =========================
@@ -307,8 +374,8 @@ def init_session():
         ss.result = None
         ss.last_action = None      # repeat / goto_root / invalid / error / None
         ss.last_message = ""
-        ss.phase = "idle"          # idle | ringing | ivr | done
         ss.last_played_node_id = None
+        ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
 
 
 def reset_session():
@@ -317,7 +384,7 @@ def reset_session():
 
 
 def start_new_test():
-    """Elige un escenario y pasa a fase 'ringing'."""
+    """Elige un escenario y arranca directamente en IVR."""
     if not SCENARIOS:
         st.error("No hay escenarios activos en config/scenarios.csv")
         return
@@ -342,16 +409,14 @@ def start_new_test():
     ss.result = None
     ss.last_action = None
     ss.last_message = ""
-    ss.phase = "ringing"
     ss.last_played_node_id = None
+    ss.did_initial_ring = False   # aún no hemos hecho ring+prompt
 
 
 def handle_key(key: str):
     ss = st.session_state
 
     if not ss.test_active or ss.finished:
-        return
-    if ss.phase != "ivr":
         return
 
     current_node = NODES.get(ss.current_node_id)
@@ -360,7 +425,7 @@ def handle_key(key: str):
         ss.last_message = "Nodo actual no encontrado en la configuración."
         return
 
-    # '*': repetir mensaje del nodo actual
+    # '*': repetir mensaje del nodo actual (solo prompt, sin tono)
     if key == "*":
         ss.route.append(
             {
@@ -428,7 +493,7 @@ def handle_key(key: str):
 
     ss.last_action = None
     ss.last_message = ""
-    ss.last_played_node_id = None
+    ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
 
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
@@ -447,7 +512,6 @@ def finish_test(queue_node: dict):
         result = "WRONG_QUEUE"
 
     ss.finished = True
-    ss.phase = "done"
     ss.result = {
         "result": result,
         "expected_queue_id": expected_queue_id,
@@ -489,7 +553,7 @@ def render_keypad():
         for i, key in enumerate(row):
             make_button(key, cols[i])
 
-    st.caption("⭐ '*' repite el mensaje · '#' vuelve al menú principal")
+    st.caption("⭐ '*' repite el mensaje del nodo actual · '#' vuelve al menú principal")
 
 
 def main():
@@ -500,7 +564,6 @@ def main():
 
     # Estado inicial
     if not ss.test_active:
-        ss.phase = "idle"
         st.write(
             "Pulsa el botón para recibir una misión aleatoria y probar la IVR como si fueras un cliente."
         )
@@ -549,32 +612,25 @@ def main():
 
         return
 
-    # ===== FASE RINGING: Llamando + tono =====
-    if ss.phase == "ringing":
+    # ===== LÓGICA DE AUDIO INICIAL (ring + ROOT) =====
+    if not ss.did_initial_ring:
         st.subheader("☎️ Llamando a la IVR...")
-        play_ringtone_once()
-        st.caption("Escuchas el tono de llamada. Espera a que termine y luego pulsa el botón para empezar la llamada.")
-
-        if st.button("📞 Empezar llamada IVR"):
-            ss.phase = "ivr"
-            ss.last_played_node_id = None
-
-        st.divider()
-        if st.button("❌ Cancelar test"):
-            reset_session()
-
-        return
-
-    # ===== FASE IVR =====
-    st.subheader("📟 Llamada IVR (simulada)")
-
-    if ss.last_played_node_id != current_node["NODE_ID"]:
-        play_node_audio(current_node)
+        st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú principal.")
+        play_ring_and_prompt(current_node)
+        ss.did_initial_ring = True
         ss.last_played_node_id = current_node["NODE_ID"]
+    else:
+        st.subheader("📟 Llamada IVR (simulada)")
+        # Reproducir prompt solo cuando cambiamos de nodo o repetimos
+        if ss.last_played_node_id != current_node["NODE_ID"]:
+            play_node_audio(current_node)
+            ss.last_played_node_id = current_node["NODE_ID"]
 
+    # Texto del mensaje del nodo
     prompt_text = current_node.get("PROMPT_TEXT", "")
     st.write(f"🗣️ {prompt_text}")
 
+    # Mensajes de estado
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
@@ -583,6 +639,7 @@ def main():
         elif ss.last_action == "error":
             st.error(ss.last_message)
 
+    # Teclado
     render_keypad()
 
     st.divider()
@@ -592,4 +649,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
