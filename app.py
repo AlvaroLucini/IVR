@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 import base64
+import json
+from uuid import uuid4
 
+import requests
 import pandas as pd
 import streamlit as st
 import streamlit.components.v1 as components
@@ -32,13 +35,18 @@ RING_PATHS = [
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
 
-# Debug suave: ver si hay secrets y si está la sección github (sin mostrar el token)
+
+# =========================
+# DEBUG SECRETS
+# =========================
+
 try:
     st.sidebar.write("DEBUG secrets keys:", list(st.secrets.keys()))
     if "github" in st.secrets:
         st.sidebar.write("DEBUG github keys:", list(st.secrets["github"].keys()))
 except Exception as e:
     st.sidebar.write(f"DEBUG st.secrets error: {e}")
+
 
 # =========================
 # HELPERS AUDIO
@@ -404,7 +412,7 @@ def start_new_test():
     ss.scenario = scenario
     ss.current_node_id = entry_node_id
     ss.route = []
-    ss.start_ts = datetime.utcnow().isoformat()
+    ss.start_ts = datetime.now(timezone.utc).isoformat()
     ss.finished = False
     ss.result = None
     ss.last_action = None
@@ -432,7 +440,7 @@ def handle_key(key: str):
                 "step": len(ss.route) + 1,
                 "node_id": current_node["NODE_ID"],
                 "digit": "*",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         )
         ss.last_action = "repeat"
@@ -452,7 +460,7 @@ def handle_key(key: str):
                 "step": len(ss.route) + 1,
                 "node_id": current_node["NODE_ID"],
                 "digit": "#",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
         )
         ss.current_node_id = ROOT_NODE_ID
@@ -461,7 +469,6 @@ def handle_key(key: str):
         ss.last_played_node_id = None
         return
 
-    # 0..9
     # 0..9
     if key not in "0123456789":
         ss.last_action = "error"
@@ -477,7 +484,6 @@ def handle_key(key: str):
 
     next_id = current_node["NEXT"].get(lookup_digit, "")
 
-
     if not next_id:
         ss.last_action = "invalid"
         ss.last_message = "Opción no válida en este menú."
@@ -488,7 +494,7 @@ def handle_key(key: str):
             "step": len(ss.route) + 1,
             "node_id": current_node["NODE_ID"],
             "digit": key,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     )
 
@@ -509,6 +515,68 @@ def handle_key(key: str):
         finish_test(new_node)
 
 
+# =========================
+# ENVÍO RESULTADOS A GITHUB
+# =========================
+
+def send_result_to_github(row: dict):
+    """
+    Envía el resultado de un test a GitHub como un JSON individual:
+    test_results/YYYY-MM-DD/<test_id>.json
+    """
+    st.sidebar.write("DEBUG: entrando en send_result_to_github")
+
+    try:
+        gh_conf = st.secrets["github"]
+        token = gh_conf["token"]
+        repo = gh_conf["repo"]
+        branch = gh_conf.get("branch", "main")
+    except Exception as e:
+        st.sidebar.error(f"DEBUG: st.secrets['github'] no disponible: {e}")
+        return
+
+    # Carpeta y nombre de archivo
+    ts = row.get("timestamp_utc")
+    if not ts:
+        ts = datetime.now(timezone.utc).isoformat()
+        row["timestamp_utc"] = ts
+
+    date_str = ts[:10]  # YYYY-MM-DD
+    test_id = row.get("test_id")
+    if not test_id:
+        test_id = str(uuid4())
+        row["test_id"] = test_id
+
+    path = f"test_results/{date_str}/{test_id}.json"
+    st.sidebar.write(f"DEBUG: path en GitHub: {path}")
+
+    api_url = f"https://api.github.com/repos/{repo}/contents/{path}"
+
+    content_bytes = json.dumps(row, ensure_ascii=False, indent=2).encode("utf-8")
+    content_b64 = base64.b64encode(content_bytes).decode("utf-8")
+
+    payload = {
+        "message": f"Add IVR test result {test_id}",
+        "content": content_b64,
+        "branch": branch,
+    }
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+    }
+
+    try:
+        resp = requests.put(api_url, headers=headers, json=payload, timeout=15)
+        st.sidebar.write(f"DEBUG: GitHub status {resp.status_code}")
+        if resp.status_code not in (200, 201):
+            st.sidebar.error(f"GitHub error: {resp.status_code} - {resp.text[:200]}")
+        else:
+            st.sidebar.success(f"Resultado guardado en GitHub: {path}")
+    except Exception as e:
+        st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
+
+
 def finish_test(queue_node: dict):
     ss = st.session_state
     scenario = ss.scenario
@@ -521,6 +589,7 @@ def finish_test(queue_node: dict):
     else:
         result = "WRONG_QUEUE"
 
+    # Marcar como terminado en sesión
     ss.finished = True
     ss.result = {
         "result": result,
@@ -528,6 +597,39 @@ def finish_test(queue_node: dict):
         "reached_queue_id": reached_queue_id,
         "queue_name": queue_node.get("QUEUE_NAME", ""),
     }
+
+    # ===== Registro persistente del test =====
+    try:
+        start_ts_str = ss.start_ts
+        start_dt = datetime.fromisoformat(start_ts_str)
+        if start_dt.tzinfo is None:
+            start_dt = start_dt.replace(tzinfo=timezone.utc)
+
+        end_dt = datetime.now(timezone.utc)
+        duration_seconds = (end_dt - start_dt).total_seconds()
+
+        route = ss.route or []
+        route_json = json.dumps(route, ensure_ascii=False)
+
+        row = {
+            "test_id": str(uuid4()),
+            "timestamp_utc": end_dt.isoformat(),
+            "scenario_id": scenario["SCENARIO_ID"],
+            "scenario_title": scenario["TITLE"],
+            "entry_node_id": scenario["ENTRY_NODE_ID"],
+            "expected_queue_id": expected_queue_id,
+            "reached_queue_id": reached_queue_id,
+            "reached_queue_name": queue_node.get("QUEUE_NAME", ""),
+            "result": result,
+            "duration_seconds": round(duration_seconds, 3),
+            "num_steps": len(route),
+            "route_json": route_json,
+        }
+
+        send_result_to_github(row)
+
+    except Exception as e:
+        st.sidebar.error(f"Error guardando el resultado del test: {e}")
 
 
 # =========================
@@ -659,5 +761,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
