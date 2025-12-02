@@ -284,11 +284,6 @@ def play_node_audio(node: dict) -> bool:
 # =========================
 
 def load_nodes():
-    """
-    Espera un ivr_nodes.csv con columnas:
-    NODE_ID, NODE_LABEL, NODE_TYPE, IS_ENTRY, PROMPT_TEXT, AUDIO_URL,
-    QUEUE_ID, QUEUE_NAME, OPT_0_NEXT_NODE ... OPT_9_NEXT_NODE
-    """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
@@ -327,6 +322,7 @@ def load_nodes():
         }
 
     return nodes
+
 
 
 def load_scenarios():
@@ -656,3 +652,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
