@@ -122,15 +122,19 @@ def play_ringtone_once():
         st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
 
 
+# ========== AQUÍ ESTÁ EL CAMBIO IMPORTANTE ==========
 def play_node_audio(node: dict) -> bool:
     """
-    Reproduce el audio asociado a un nodo, oculto y en autoplay.
+    Reproduce el audio asociado a un nodo.
 
     Prioridad:
       1) audio/{NODE_ID}_es.wav
       2) audio/{NODE_ID}.wav
       3) tts_audio/{NODE_ID}_es.wav
       4) AUDIO_URL
+
+    Además de intentar autoplay oculto, mostramos un reproductor visible
+    como fallback, por si el navegador bloquea el autoplay.
     """
     node_id = node["NODE_ID"]
 
@@ -149,29 +153,55 @@ def play_node_audio(node: dict) -> bool:
     for p in candidatos:
         if p.exists():
             st.caption(f"Reproduciendo audio: {p.relative_to(BASE_DIR)}")
-            if play_hidden_audio(p):
-                return True
+
+            # Intento de autoplay oculto
+            _ = play_hidden_audio(p)
+
+            # Fallback visible: reproductor para que puedas darle a Play
+            try:
+                audio_bytes = p.read_bytes()
+                ext = p.suffix.lower()
+                if ext == ".wav":
+                    fmt = "audio/wav"
+                elif ext in (".mp3", ".mpeg"):
+                    fmt = "audio/mpeg"
+                elif ext == ".ogg":
+                    fmt = "audio/ogg"
+                else:
+                    fmt = "audio/wav"
+                st.audio(audio_bytes, format=fmt)
+            except Exception as e:
+                st.caption(f"No se pudo crear reproductor visible: {e}")
+
+            return True
 
     # 4) AUDIO_URL
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
         st.caption(f"Reproduciendo AUDIO_URL: {audio_url}")
         if audio_url.lower().startswith(("http://", "https://")):
-            if play_hidden_audio_url(audio_url):
-                return True
+            _ = play_hidden_audio_url(audio_url)
+            st.audio(audio_url)
+            return True
         else:
             candidate = (BASE_DIR / audio_url).resolve()
             if candidate.exists():
-                if play_hidden_audio(candidate):
-                    return True
+                _ = play_hidden_audio(candidate)
+                try:
+                    audio_bytes = candidate.read_bytes()
+                    st.audio(audio_bytes)
+                except Exception:
+                    pass
+                return True
             else:
-                if play_hidden_audio_url(audio_url):
-                    return True
+                _ = play_hidden_audio_url(audio_url)
+                st.audio(audio_url)
+                return True
 
-    # Debug suave: ver qué hemos buscado para este nodo
     buscados = ", ".join(str(p.relative_to(BASE_DIR)) for p in candidatos)
     st.caption(f"Sin audio para {node_id}. Buscados: {buscados} y AUDIO_URL='{audio_url}'")
     return False
+# ========== FIN CAMBIO IMPORTANTE ==========
 
 
 # =========================
@@ -331,7 +361,7 @@ def handle_key(key: str):
         )
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
-        ss.last_played_node_id = None  # forzamos a reproducir audio de nuevo
+        ss.last_played_node_id = None
         return
 
     # '#': ir al ROOT
@@ -387,7 +417,7 @@ def handle_key(key: str):
 
     ss.last_action = None
     ss.last_message = ""
-    ss.last_played_node_id = None  # nuevo nodo -> reproducir audio de ese nodo
+    ss.last_played_node_id = None
 
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
@@ -527,16 +557,13 @@ def main():
     # ===== FASE IVR =====
     st.subheader("📟 Llamada IVR (simulada)")
 
-    # 1) Reproducir audio del nodo actual SOLO cuando entramos al nodo
     if ss.last_played_node_id != current_node["NODE_ID"]:
         play_node_audio(current_node)
         ss.last_played_node_id = current_node["NODE_ID"]
 
-    # 2) Texto del mensaje
     prompt_text = current_node.get("PROMPT_TEXT", "")
     st.write(f"🗣️ {prompt_text}")
 
-    # 3) Mensajes de estado
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
@@ -545,7 +572,6 @@ def main():
         elif ss.last_action == "error":
             st.error(ss.last_message)
 
-    # 4) Teclado
     render_keypad()
 
     st.divider()
