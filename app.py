@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 import random
 import base64
 
@@ -31,23 +31,20 @@ RING_PATHS = [
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
 
-# Duración que simulamos de tono antes de pasar a la IVR
-RING_DURATION_SECONDS = 8
-
 
 # =========================
 # HELPERS AUDIO
 # =========================
 
 def looks_like_audio_ref(s: str) -> bool:
-    """Heurística para saber si AUDIO_URL parece realmente un fichero/URL de audio."""
+    """Heurística para saber si AUDIO_URL parece fichero/URL de audio."""
     if not s:
         return False
     s = str(s).strip()
     if not s:
         return False
 
-    if s.lower().startswith("http://") or s.lower().startswith("https://"):
+    if s.lower().startswith(("http://", "https://")):
         return True
     if "/" in s or "\\" in s:
         return True
@@ -58,7 +55,7 @@ def looks_like_audio_ref(s: str) -> bool:
 
 
 def _audio_path_to_src(path: Path) -> tuple[str, str]:
-    """Convierte un Path local a data:URL base64 + mime."""
+    """Convierte Path local a data:URL base64 + mime."""
     audio_bytes = path.read_bytes()
     b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
@@ -77,7 +74,7 @@ def _audio_path_to_src(path: Path) -> tuple[str, str]:
 
 
 def play_hidden_audio(path: Path, loop: bool = False) -> bool:
-    """Reproduce un audio local sin mostrar controles usando <audio autoplay>."""
+    """Reproduce un audio local sin controles usando <audio autoplay>."""
     if not path.exists():
         return False
 
@@ -129,51 +126,47 @@ def play_node_audio(node: dict) -> bool:
     Reproduce el audio asociado a un nodo, oculto y en autoplay.
 
     Prioridad:
-      1) tts_audio/{NODE_ID}_es.wav
-      2) audio/{NODE_ID}_es.wav
-      3) audio/{NODE_ID}.wav
-      4) AUDIO_URL (HTTP/HTTPS o ruta accesible)
+      1) audio/{NODE_ID}_es.wav
+      2) audio/{NODE_ID}.wav
+      3) tts_audio/{NODE_ID}_es.wav
+      4) AUDIO_URL
     """
     node_id = node["NODE_ID"]
 
-    # 1) tts_audio/{NODE_ID}_es.wav
-    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
-    if tts_path.exists():
-        if play_hidden_audio(tts_path):
-            return True
-
-    # 2) audio/{NODE_ID}_es.wav
+    # 1) audio/{NODE_ID}_es.wav
     audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
     if audio_es_path.exists():
         if play_hidden_audio(audio_es_path):
             return True
 
-    # 3) audio/{NODE_ID}.wav
+    # 2) audio/{NODE_ID}.wav
     audio_plain_path = BASE_DIR / "audio" / f"{node_id}.wav"
     if audio_plain_path.exists():
         if play_hidden_audio(audio_plain_path):
             return True
 
+    # 3) tts_audio/{NODE_ID}_es.wav
+    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
+    if tts_path.exists():
+        if play_hidden_audio(tts_path):
+            return True
+
     # 4) AUDIO_URL (por si queremos usar URLs externas o rutas raras)
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
-        # Si es URL http/https, la usamos tal cual
         if audio_url.lower().startswith(("http://", "https://")):
             if play_hidden_audio_url(audio_url):
                 return True
         else:
-            # Intentamos resolver ruta relativa
             candidate = (BASE_DIR / audio_url).resolve()
             if candidate.exists():
                 if play_hidden_audio(candidate):
                     return True
             else:
-                # Último intento: usar la URL tal cual
                 if play_hidden_audio_url(audio_url):
                     return True
 
-    # Si no hay audio, simplemente no hacemos nada (sin mensajes)
-    return False
+    return False  # Sin mensajes, simplemente no suena nada
 
 
 # =========================
@@ -186,7 +179,6 @@ def load_nodes():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
-    # Usamos la primera columna (NODE_ID) como índice: ROOT, L1_PEDIDOS, etc.
     df = pd.read_csv(CSV_NODES, dtype=str, index_col=0).fillna("")
 
     nodes = {}
@@ -201,7 +193,6 @@ def load_nodes():
         if not str(prompt_text).strip():
             prompt_text = row.get("IS_ENTRY", "")
 
-        # Mapeo directo de OPT_0_NEXT_NODE ... OPT_9_NEXT_NODE
         next_map = {}
         for d in range(10):
             col_name = f"OPT_{d}_NEXT_NODE"
@@ -271,8 +262,7 @@ def init_session():
         ss.last_action = None      # repeat / goto_root / invalid / error / None
         ss.last_message = ""
         ss.phase = "idle"          # idle | ringing | ivr | done
-        ss.last_played_node_id = None  # para controlar cuándo reproducir audio de nodo
-        ss.ring_end_ts = None      # momento en que termina el tono
+        ss.last_played_node_id = None
 
 
 def reset_session():
@@ -308,7 +298,6 @@ def start_new_test():
     ss.last_message = ""
     ss.phase = "ringing"
     ss.last_played_node_id = None
-    ss.ring_end_ts = (datetime.utcnow() + timedelta(seconds=RING_DURATION_SECONDS)).isoformat()
 
 
 def handle_key(key: str):
@@ -395,7 +384,6 @@ def handle_key(key: str):
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio de ese nodo
 
-    # Si es cola, terminamos test
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
 
@@ -430,7 +418,6 @@ def render_keypad():
     st.markdown("### Teclado")
 
     def make_button(label, col):
-        # Lo que se ve en el botón
         if label == "*":
             display_label = r"\*"
         elif label == "#":
@@ -516,41 +503,23 @@ def main():
 
         return
 
-    # =========================
-    # FASE RINGING (automática)
-    # =========================
+    # ===== FASE RINGING =====
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
         play_ringtone_once()
         st.caption("Escuchas el tono de llamada…")
 
-        # Autorefresco cada segundo mientras dure el tono
-        if ss.ring_end_ts:
-            try:
-                ring_end = datetime.fromisoformat(ss.ring_end_ts)
-            except Exception:
-                ring_end = datetime.utcnow()
-
-            if datetime.utcnow() < ring_end:
-                # Recarga automática de la página
-                st.markdown(
-                    "<meta http-equiv='refresh' content='1'>",
-                    unsafe_allow_html=True,
-                )
-                return
-            else:
-                # Ya ha terminado el tono → pasamos a IVR
-                ss.phase = "ivr"
-                ss.last_played_node_id = None
-
-        else:
-            # Sin ring_end_ts por lo que sea, pasamos directamente a IVR
+        if st.button("📞 Empezar llamada IVR"):
             ss.phase = "ivr"
             ss.last_played_node_id = None
 
-    # =========================
-    # FASE IVR
-    # =========================
+        st.divider()
+        if st.button("❌ Cancelar test"):
+            reset_session()
+
+        return
+
+    # ===== FASE IVR =====
     st.subheader("📟 Llamada IVR (simulada)")
 
     # 1) Reproducir audio del nodo actual SOLO cuando entramos al nodo
