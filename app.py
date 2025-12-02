@@ -285,42 +285,47 @@ def play_node_audio(node: dict) -> bool:
 
 @st.cache_data
 def load_nodes():
+    """
+    Espera un ivr_nodes.csv con columnas:
+    NODE_ID, NODE_LABEL, NODE_TYPE, IS_ENTRY, PROMPT_TEXT, AUDIO_URL,
+    QUEUE_ID, QUEUE_NAME, OPT_0_NEXT_NODE ... OPT_9_NEXT_NODE
+    """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
-    df = pd.read_csv(CSV_NODES, dtype=str, index_col=0).fillna("")
+    # NO usamos index_col, así mantenemos NODE_ID como columna
+    df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
     nodes = {}
-    for idx, row in df.iterrows():
-        node_id = str(idx).strip()  # ROOT, L1_PEDIDOS, ...
+    for _, row in df.iterrows():
+        node_id = str(row.get("NODE_ID", "")).strip()
+        if not node_id:
+            continue  # por si hubiera filas vacías
 
-        node_label = row.get("NODE_ID", "")
-        node_type = row.get("NODE_LABEL", "")
-        is_entry_flag = str(row.get("NODE_TYPE", "")).strip().upper() == "YES"
+        node_label = row.get("NODE_LABEL", "")
+        node_type = row.get("NODE_TYPE", "")       # MENU / QUEUE
+        is_entry_flag = str(row.get("IS_ENTRY", "")).strip().upper() == "YES"
 
         prompt_text = row.get("PROMPT_TEXT", "")
         if not str(prompt_text).strip():
-            prompt_text = row.get("IS_ENTRY", "")
+            prompt_text = ""
 
         next_map = {}
         for d in range(10):
             col_name = f"OPT_{d}_NEXT_NODE"
-            if col_name in row.index:
-                next_map[str(d)] = row[col_name]
-            else:
-                next_map[str(d)] = ""
+            next_map[str(d)] = row.get(col_name, "")
 
         nodes[node_id] = {
-            "NODE_ID":      node_id,
-            "NODE_LABEL":   node_label,
-            "NODE_TYPE":    node_type,          # MENU / QUEUE
-            "IS_ENTRY":     is_entry_flag,
-            "PROMPT_TEXT":  prompt_text,
-            "AUDIO_URL":    row.get("AUDIO_URL", ""),
-            "QUEUE_ID":     row.get("QUEUE_ID", ""),
-            "QUEUE_NAME":   row.get("QUEUE_NAME", ""),
-            "NEXT":         next_map,
+            "NODE_ID":     node_id,
+            "NODE_LABEL":  node_label,
+            "NODE_TYPE":   node_type,          # ahora sí: MENU / QUEUE
+            "IS_ENTRY":    is_entry_flag,
+            "PROMPT_TEXT": prompt_text,
+            "AUDIO_URL":   row.get("AUDIO_URL", ""),
+            "QUEUE_ID":    row.get("QUEUE_ID", ""),
+            "QUEUE_NAME":  row.get("QUEUE_NAME", ""),
+            "NEXT":        next_map,
         }
 
     return nodes
@@ -334,7 +339,8 @@ def load_scenarios():
 
     df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
 
-    required_cols = ["SCENARIO_ID", "TITLE", "MISSION_TEXT", "ENTRY_NODE_ID", "EXPECTED_QUEUE_ID"]
+    required_cols = ["SCENARIO_ID", "TITLE", "MISSION_TEXT",
+                     "ENTRY_NODE_ID", "EXPECTED_QUEUE_ID"]
     for col in required_cols:
         if col not in df.columns:
             st.error(f"Falta la columna '{col}' en scenarios.csv")
@@ -495,6 +501,7 @@ def handle_key(key: str):
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
 
+    # Aquí ya funciona porque NODE_TYPE viene bien del CSV (MENU / QUEUE)
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
 
@@ -615,7 +622,7 @@ def main():
     # ===== LÓGICA DE AUDIO INICIAL (ring + ROOT) =====
     if not ss.did_initial_ring:
         st.subheader("☎️ Llamando a la IVR...")
-        st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú principal.")
+        st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú correspondiente.")
         play_ring_and_prompt(current_node)
         ss.did_initial_ring = True
         ss.last_played_node_id = current_node["NODE_ID"]
