@@ -4,6 +4,7 @@
 from pathlib import Path
 from datetime import datetime
 import random
+import base64
 
 import pandas as pd
 import streamlit as st
@@ -32,18 +33,6 @@ RING_PATHS = [
 
 
 # =========================
-# HELPERS GENERALES
-# =========================
-
-def do_rerun():
-    """Compatibilidad con distintas versiones de Streamlit."""
-    if hasattr(st, "rerun"):
-        st.rerun()
-    else:
-        st.experimental_rerun()
-
-
-# =========================
 # HELPERS AUDIO
 # =========================
 
@@ -65,72 +54,116 @@ def looks_like_audio_ref(s: str) -> bool:
     return False
 
 
+def _audio_path_to_src(path: Path) -> tuple[str, str]:
+    """Convierte un Path local a data:URL base64 + mime."""
+    audio_bytes = path.read_bytes()
+    b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    ext = path.suffix.lower()
+    if ext == ".wav":
+        mime = "audio/wav"
+    elif ext in (".mp3", ".mpeg"):
+        mime = "audio/mpeg"
+    elif ext == ".ogg":
+        mime = "audio/ogg"
+    else:
+        mime = "audio/wav"
+
+    src = f"data:{mime};base64,{b64}"
+    return src, mime
+
+
+def play_hidden_audio(path: Path, loop: bool = False) -> bool:
+    """Reproduce un audio local sin mostrar controles usando <audio autoplay>."""
+    if not path.exists():
+        return False
+
+    try:
+        src, mime = _audio_path_to_src(path)
+    except Exception:
+        return False
+
+    loop_attr = "loop" if loop else ""
+    html = f"""
+    <audio autoplay {loop_attr}>
+        <source src="{src}" type="{mime}">
+    </audio>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+    return True
+
+
+def play_hidden_audio_url(url: str, loop: bool = False, mime: str = "audio/mpeg") -> bool:
+    """Reproduce una URL HTTP(S) sin controles usando <audio autoplay>."""
+    if not url:
+        return False
+
+    url = str(url).strip()
+    if not url:
+        return False
+
+    loop_attr = "loop" if loop else ""
+    html = f"""
+    <audio autoplay {loop_attr}>
+        <source src="{url}" type="{mime}">
+    </audio>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+    return True
+
+
 def play_ringtone_once():
-    """Reproduce el ringtone una vez usando st.audio."""
+    """Intenta reproducir el ringtone una vez (oculto)."""
     ring_file = next((p for p in RING_PATHS if p.exists()), None)
     if ring_file:
-        try:
-            audio_bytes = ring_file.read_bytes()
-            st.audio(audio_bytes, format="audio/wav")
-        except Exception:
-            st.info("No se pudo reproducir el ringtone, pero se simula el tono de llamada.")
+        play_hidden_audio(ring_file)
     else:
-        st.info("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
+        # Si no hay fichero, no molestamos con reproductor visible ni warning
+        st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
 
 
 def play_node_audio(node: dict) -> bool:
     """
-    Reproduce el audio asociado a un nodo.
+    Reproduce el audio asociado a un nodo, oculto y en autoplay.
 
     Prioridad:
-      1) tts_audio/{NODE_ID}_es.wav (local)
-      2) audio/{NODE_ID}.wav (local)
-      3) AUDIO_URL (HTTP/HTTPS o ruta accesible)
-    Devuelve True si ha podido reproducir algo.
+      1) tts_audio/{NODE_ID}_es.wav
+      2) audio/{NODE_ID}.wav
+      3) AUDIO_URL (http/https o similar)
     """
     node_id = node["NODE_ID"]
 
-    # 1) TTS local por nodo
+    # 1) TTS local
     tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
     if tts_path.exists():
-        try:
-            audio_bytes = tts_path.read_bytes()
-            st.audio(audio_bytes, format="audio/wav")
+        if play_hidden_audio(tts_path):
             return True
-        except Exception:
-            st.warning(f"No se pudo reproducir el audio TTS local {tts_path.name}")
 
     # 2) audio/{NODE_ID}.wav
     local_audio = BASE_DIR / "audio" / f"{node_id}.wav"
     if local_audio.exists():
-        try:
-            audio_bytes = local_audio.read_bytes()
-            st.audio(audio_bytes, format="audio/wav")
+        if play_hidden_audio(local_audio):
             return True
-        except Exception:
-            st.warning(f"No se pudo reproducir el audio local {local_audio.name}")
 
-    # 3) AUDIO_URL (por si queremos usar URLs externas)
+    # 3) AUDIO_URL
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
-        try:
-            if audio_url.lower().startswith(("http://", "https://")):
-                # URL directa
-                st.audio(audio_url)
+        # Si es URL http/https, la usamos tal cual
+        if audio_url.lower().startswith(("http://", "https://")):
+            if play_hidden_audio_url(audio_url):
+                return True
+        else:
+            # Intentamos resolver ruta relativa
+            candidate = (BASE_DIR / audio_url).resolve()
+            if candidate.exists():
+                if play_hidden_audio(candidate):
+                    return True
             else:
-                # Intentamos resolver ruta relativa sobre BASE_DIR
-                candidate = (BASE_DIR / audio_url).resolve()
-                if candidate.exists():
-                    audio_bytes = candidate.read_bytes()
-                    st.audio(audio_bytes)
-                else:
-                    # Último intento: pasar la cadena tal cual
-                    st.audio(audio_url)
-            return True
-        except Exception:
-            st.warning(f"No se pudo reproducir el AUDIO_URL: {audio_url}")
+                # Último intento: usar la URL tal cual
+                if play_hidden_audio_url(audio_url):
+                    return True
 
-    st.info("Este nodo no tiene audio configurado o no se ha podido reproducir.")
+    # Si no hay audio, simplemente no hacemos nada (sin mensajes molestos)
     return False
 
 
@@ -240,7 +273,7 @@ def init_session():
 def reset_session():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
-    do_rerun()
+    # No hace falta llamar manualmente a rerun, Streamlit lo hará en el siguiente click
 
 
 def start_new_test():
@@ -299,9 +332,7 @@ def handle_key(key: str):
         )
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
-        # Forzamos a que se vuelva a reproducir el audio en el render
-        ss.last_played_node_id = None
-        do_rerun()
+        ss.last_played_node_id = None  # forzamos a reproducir audio de nuevo
         return
 
     # '#': ir al ROOT
@@ -309,7 +340,6 @@ def handle_key(key: str):
         if not ROOT_NODE_ID or ROOT_NODE_ID not in NODES:
             ss.last_action = "error"
             ss.last_message = "No se ha encontrado el nodo raíz (ROOT) en la configuración."
-            do_rerun()
             return
 
         ss.route.append(
@@ -324,14 +354,12 @@ def handle_key(key: str):
         ss.last_action = "goto_root"
         ss.last_message = "Has vuelto al menú principal."
         ss.last_played_node_id = None
-        do_rerun()
         return
 
     # 0..9
     if key not in "0123456789":
         ss.last_action = "error"
         ss.last_message = "Tecla no reconocida."
-        do_rerun()
         return
 
     next_id = current_node["NEXT"].get(key, "")
@@ -339,7 +367,6 @@ def handle_key(key: str):
     if not next_id:
         ss.last_action = "invalid"
         ss.last_message = "Opción no válida en este menú."
-        do_rerun()
         return
 
     ss.route.append(
@@ -357,18 +384,15 @@ def handle_key(key: str):
     if not new_node:
         ss.last_action = "error"
         ss.last_message = f"Nodo destino '{next_id}' no definido en ivr_nodes.csv."
-        do_rerun()
         return
 
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio de ese nodo
 
+    # Si es cola, terminamos test
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
-        do_rerun()
-    else:
-        do_rerun()
 
 
 def finish_test(queue_node: dict):
@@ -445,8 +469,6 @@ def main():
 
         if st.button("🎬 Empezar nuevo test"):
             start_new_test()
-            if st.session_state.get("test_active", False):
-                do_rerun()
         return
 
     scenario = ss.scenario
@@ -492,16 +514,13 @@ def main():
     # Fase de ringing: tono + descolgar
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
-
-        if st.button("▶ Escuchar tono de llamada"):
-            play_ringtone_once()
-
-        st.caption("Cuando quieras empezar la prueba, descuelga.")
+        # El tono se reproduce automáticamente, oculto
+        play_ringtone_once()
+        st.caption("Escuchas el tono de llamada. Cuando quieras empezar la prueba, descuelga.")
 
         if st.button("📞 Descolgar teléfono"):
             ss.phase = "ivr"
             ss.last_played_node_id = None
-            do_rerun()
 
         return
 
@@ -517,7 +536,7 @@ def main():
     prompt_text = current_node.get("PROMPT_TEXT", "")
     st.write(f"🗣️ {prompt_text}")
 
-    # 3) Mensajes de error/estado (sin debug técnico)
+    # 3) Mensajes de estado (sin meter ruido con errores técnicos)
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
