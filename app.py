@@ -32,9 +32,6 @@ RING_PATHS = [
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
 
-# Duración simulada del tono (segundos)
-RING_DURATION_SECONDS = 8
-
 
 # =========================
 # HELPERS AUDIO
@@ -286,7 +283,7 @@ SCENARIOS = load_scenarios()
 if "ROOT" in NODES:
     ROOT_NODE_ID = "ROOT"
 else:
-    ROOT_NODE_ID = next((nid for nid, n in NODES.items() if n.get("IS_ENTRY")), None)
+    ROOT_NODE_ID = next((nid for nid, n) in NODES.items() if n.get("IS_ENTRY"))
 
 
 # =========================
@@ -307,8 +304,6 @@ def init_session():
         ss.last_message = ""
         ss.phase = "idle"          # idle | ringing | ivr | done
         ss.last_played_node_id = None
-        ss.ring_started_at = None  # timestamp ISO de inicio de tono
-        ss.ring_played = False     # si ya se lanzó el audio de tono
 
 
 def reset_session():
@@ -344,8 +339,6 @@ def start_new_test():
     ss.last_message = ""
     ss.phase = "ringing"
     ss.last_played_node_id = None
-    ss.ring_started_at = None
-    ss.ring_played = False
 
 
 def handle_key(key: str):
@@ -374,7 +367,7 @@ def handle_key(key: str):
         )
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
-        ss.last_played_node_id = None  # se volverá a reproducir
+        ss.last_played_node_id = None
         return
 
     # '#': ir al ROOT
@@ -430,7 +423,7 @@ def handle_key(key: str):
 
     ss.last_action = None
     ss.last_message = ""
-    ss.last_played_node_id = None  # nuevo nodo -> repro audio
+    ss.last_played_node_id = None
 
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
@@ -551,45 +544,21 @@ def main():
 
         return
 
-    # ===== FASE RINGING (llamando, obligatorio) =====
+    # ===== FASE RINGING: Llamando + tono =====
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
+        play_ringtone_once()
+        st.caption("Escuchas el tono de llamada. Espera a que termine y luego pulsa el botón para empezar la llamada.")
 
-        # Inicializar timestamp si hace falta
-        if ss.ring_started_at is None:
-            ss.ring_started_at = datetime.utcnow().isoformat()
-
-        # Solo lanzamos el audio de tono una vez
-        if not ss.ring_played:
-            play_ringtone_once()
-            ss.ring_played = True
-
-        # Calcular tiempo restante
-        try:
-            started = datetime.fromisoformat(ss.ring_started_at)
-        except Exception:
-            started = datetime.utcnow()
-            ss.ring_started_at = started.isoformat()
-
-        elapsed = (datetime.utcnow() - started).total_seconds()
-        remaining = max(0, int(RING_DURATION_SECONDS - elapsed))
-
-        st.caption(f"Llamando... ({remaining} s)")
-
-        if remaining > 0:
-            # Recarga automática cada segundo mientras siga sonando el tono
-            st.markdown(
-                "<meta http-equiv='refresh' content='1'>",
-                unsafe_allow_html=True,
-            )
-            st.divider()
-            if st.button("❌ Cancelar test"):
-                reset_session()
-            return
-        else:
-            # Tono terminado → pasamos a IVR
+        if st.button("📞 Empezar llamada IVR"):
             ss.phase = "ivr"
             ss.last_played_node_id = None
+
+        st.divider()
+        if st.button("❌ Cancelar test"):
+            reset_session()
+
+        return
 
     # ===== FASE IVR =====
     st.subheader("📟 Llamada IVR (simulada)")
