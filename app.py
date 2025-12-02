@@ -8,7 +8,7 @@ import base64
 
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components  # para inyectar JS
+import streamlit.components.v1 as components
 
 
 # =========================
@@ -36,24 +36,6 @@ RING_PATHS = [
 # =========================
 # HELPERS AUDIO
 # =========================
-
-def looks_like_audio_ref(s: str) -> bool:
-    """Heurística para saber si AUDIO_URL parece fichero/URL de audio."""
-    if not s:
-        return False
-    s = str(s).trim() if hasattr(str(s), "trim") else str(s).strip()
-    if not s:
-        return False
-
-    if s.lower().startswith(("http://", "https://")):
-        return True
-    if "/" in s or "\\" in s:
-        return True
-    for ext in (".wav", ".mp3", ".ogg", ".m4a"):
-        if s.lower().endswith(ext):
-            return True
-    return False
-
 
 def _audio_path_to_src(path: Path) -> tuple[str, str]:
     """Convierte Path local a data:URL base64 + mime."""
@@ -283,7 +265,7 @@ def play_node_audio(node: dict) -> bool:
 # CARGA DE CONFIGURACIÓN
 # =========================
 
- def load_nodes():
+def load_nodes():
     """
     Carga ivr_nodes.csv y construye el diccionario NODES.
 
@@ -297,25 +279,24 @@ def play_node_audio(node: dict) -> bool:
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
-    # Leemos el CSV tal cual
     df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
-    nodes = {}
+    nodes: dict[str, dict] = {}
+
     for _, row in df.iterrows():
         node_id = str(row.get("NODE_ID", "")).strip()
         if not node_id:
-            continue  # por si hubiera filas vacías
+            continue
 
         node_label = str(row.get("NODE_LABEL", "") or "")
         node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE
         is_entry_flag = str(row.get("IS_ENTRY", "") or "").strip().upper() == "YES"
-
         prompt_text = str(row.get("PROMPT_TEXT", "") or "")
         audio_url = str(row.get("AUDIO_URL", "") or "")
         queue_id = str(row.get("QUEUE_ID", "") or "")
         queue_name = str(row.get("QUEUE_NAME", "") or "")
 
-        next_map = {}
+        next_map: dict[str, str] = {}
         for d in range(10):
             col_name = f"OPT_{d}_NEXT_NODE"
             next_map[str(d)] = str(row.get(col_name, "") or "").strip()
@@ -332,13 +313,10 @@ def play_node_audio(node: dict) -> bool:
             "NEXT":        next_map,
         }
 
-    # DEBUG para comprobar que ahora sí salen ROOT, Global_Menu_B2B, etc.
+    # DEBUG: ver qué IDs se han cargado realmente
     st.sidebar.write("DEBUG NODE_IDs:", list(nodes.keys()))
 
     return nodes
-
-
-
 
 
 def load_scenarios():
@@ -371,7 +349,6 @@ else:
         (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
         None,
     )
-
 
 
 # =========================
@@ -666,6 +643,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
