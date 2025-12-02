@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import base64
 
@@ -30,6 +30,9 @@ RING_PATHS = [
     BASE_DIR / "audio" / "ringtone.wav",
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
+
+# Duración que simulamos de tono antes de pasar a la IVR
+RING_DURATION_SECONDS = 8
 
 
 # =========================
@@ -118,7 +121,6 @@ def play_ringtone_once():
     if ring_file:
         play_hidden_audio(ring_file)
     else:
-        # No molestamos con reproductor visible ni warning gordo
         st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
 
 
@@ -191,11 +193,6 @@ def load_nodes():
     for idx, row in df.iterrows():
         node_id = str(idx).strip()  # ROOT, L1_PEDIDOS, ...
 
-        # En tu CSV actual:
-        #   - NODE_ID     -> label legible ("Menú principal")
-        #   - NODE_LABEL  -> tipo ("MENU"/"QUEUE")
-        #   - NODE_TYPE   -> YES/NO (entrada)
-        #   - IS_ENTRY    -> texto del mensaje si PROMPT_TEXT vacío
         node_label = row.get("NODE_ID", "")
         node_type = row.get("NODE_LABEL", "")
         is_entry_flag = str(row.get("NODE_TYPE", "")).strip().upper() == "YES"
@@ -275,12 +272,12 @@ def init_session():
         ss.last_message = ""
         ss.phase = "idle"          # idle | ringing | ivr | done
         ss.last_played_node_id = None  # para controlar cuándo reproducir audio de nodo
+        ss.ring_end_ts = None      # momento en que termina el tono
 
 
 def reset_session():
     for k in list(st.session_state.keys()):
         del st.session_state[k]
-    # No llamamos a rerun aquí, se regenerará en el siguiente click
 
 
 def start_new_test():
@@ -310,7 +307,8 @@ def start_new_test():
     ss.last_action = None
     ss.last_message = ""
     ss.phase = "ringing"
-    ss.last_played_node_id = None  # se reproducirá el audio al entrar en IVR
+    ss.last_played_node_id = None
+    ss.ring_end_ts = (datetime.utcnow() + timedelta(seconds=RING_DURATION_SECONDS)).isoformat()
 
 
 def handle_key(key: str):
@@ -518,20 +516,41 @@ def main():
 
         return
 
-    # Fase de ringing: tono + descolgar
+    # =========================
+    # FASE RINGING (automática)
+    # =========================
     if ss.phase == "ringing":
         st.subheader("☎️ Llamando a la IVR...")
-        # El tono se reproduce automáticamente, oculto
         play_ringtone_once()
-        st.caption("Escuchas el tono de llamada. Cuando quieras empezar la prueba, descuelga.")
+        st.caption("Escuchas el tono de llamada…")
 
-        if st.button("📞 Descolgar teléfono"):
+        # Autorefresco cada segundo mientras dure el tono
+        if ss.ring_end_ts:
+            try:
+                ring_end = datetime.fromisoformat(ss.ring_end_ts)
+            except Exception:
+                ring_end = datetime.utcnow()
+
+            if datetime.utcnow() < ring_end:
+                # Recarga automática de la página
+                st.markdown(
+                    "<meta http-equiv='refresh' content='1'>",
+                    unsafe_allow_html=True,
+                )
+                return
+            else:
+                # Ya ha terminado el tono → pasamos a IVR
+                ss.phase = "ivr"
+                ss.last_played_node_id = None
+
+        else:
+            # Sin ring_end_ts por lo que sea, pasamos directamente a IVR
             ss.phase = "ivr"
             ss.last_played_node_id = None
 
-        return
-
-    # ===== Fase IVR normal =====
+    # =========================
+    # FASE IVR
+    # =========================
     st.subheader("📟 Llamada IVR (simulada)")
 
     # 1) Reproducir audio del nodo actual SOLO cuando entramos al nodo
@@ -543,7 +562,7 @@ def main():
     prompt_text = current_node.get("PROMPT_TEXT", "")
     st.write(f"🗣️ {prompt_text}")
 
-    # 3) Mensajes de estado (sin meter ruido con errores técnicos)
+    # 3) Mensajes de estado
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
