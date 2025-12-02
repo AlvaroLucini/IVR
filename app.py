@@ -294,7 +294,7 @@ def load_nodes():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
         st.stop()
 
-    # NO usamos index_col, así mantenemos NODE_ID como columna
+    # No usamos index_col, así mantenemos NODE_ID como columna normal
     df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
 
     nodes = {}
@@ -319,7 +319,7 @@ def load_nodes():
         nodes[node_id] = {
             "NODE_ID":     node_id,
             "NODE_LABEL":  node_label,
-            "NODE_TYPE":   node_type,          # ahora sí: MENU / QUEUE
+            "NODE_TYPE":   node_type,          # MENU / QUEUE
             "IS_ENTRY":    is_entry_flag,
             "PROMPT_TEXT": prompt_text,
             "AUDIO_URL":   row.get("AUDIO_URL", ""),
@@ -501,7 +501,7 @@ def handle_key(key: str):
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
 
-    # Aquí ya funciona porque NODE_TYPE viene bien del CSV (MENU / QUEUE)
+    # Si llegamos a una cola, cerramos el test
     if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
         finish_test(new_node)
 
@@ -619,7 +619,7 @@ def main():
 
         return
 
-    # ===== LÓGICA DE AUDIO INICIAL (ring + ROOT) =====
+    # ===== LÓGICA DE AUDIO INICIAL (ring + nodo de entrada) =====
     if not ss.did_initial_ring:
         st.subheader("☎️ Llamando a la IVR...")
         st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú correspondiente.")
