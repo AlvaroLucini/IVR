@@ -1,4 +1,10 @@
 SCENARIO_ID,TITLE,MISSION_TEXT,ENTRY_NODE_ID,EXPECTED_QUEUE_ID,ACTIVE
-S001,"Estado pedido online","Has realizado un pedido online que no llega. Solo quieres saber dónde está tu pedido.",ROOT,Q_PEDIDOS_ONLINE,TRUE
-S002,"Devolución compra en tienda","Compraste un producto en tienda y quieres hacer una devolución.",ROOT,Q_DEVOLUCIONES_TIENDA,TRUE
-S003,"Consulta general","No tienes claro qué departamento necesitas, quieres hablar con alguien que te guíe.",ROOT,Q_OTRAS_CONSULTAS,TRUE
+S001,"Compra B2B con agente","Eres una empresa y quieres hacer un pedido nuevo con ayuda de un agente especializado para negocios.","ROOT",ES_Voice_Sales_Business,TRUE
+S002,"Postventa B2B","Eres una empresa y ya has comprado. Ahora necesitas ayuda con un pedido o con la política de devoluciones para negocios.","ROOT",ES_Voice_Res_Business,TRUE
+S003,"Compra cocina hogar","Quieres comprar una cocina para tu hogar (muebles, encimeras, electrodomésticos) y necesitas que un agente te ayude con la compra.","ROOT",ES_Voice_Sales_Kitchen,TRUE
+S004,"Compra productos hogar","Quieres comprar productos de salón, dormitorio u otros muebles para tu hogar con ayuda de un agente de ventas.","ROOT",ES_Voice_Sales_Sales,TRUE
+S005,"Consulta comercial general","Tienes dudas sobre productos, servicios, citas de planificación u horarios de apertura y quieres hablar con alguien que te informe.","ROOT",ES_Voice_Sales_General,TRUE
+S006,"Postventa cocina","Ya tienes una cocina comprada y necesitas ayuda con la instalación, incidencias o dudas relacionadas con tu cocina.","ROOT",ES_Voice_Res_Kitchen,TRUE
+S007,"Seguimiento entrega pedido","Has hecho una compra y quieres saber dónde está tu pedido o cuándo se va a entregar.","ROOT",ES_Voice_Res_Delivery,TRUE
+S008,"Incidencia con montaje","Contrataste el servicio de montaje y tienes una incidencia o consulta sobre ese servicio.","ROOT",ES_Voice_Res_Montaje,TRUE
+S009,"Postventa otras consultas","Tienes una consulta de postventa que no encaja claramente en cocina, entrega ni montaje y quieres hablar con alguien que te ayude.","ROOT",ES_Voice_Res_General,TRUE
