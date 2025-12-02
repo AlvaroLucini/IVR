@@ -116,6 +116,7 @@ def play_ringtone_once():
     """Intenta reproducir el ringtone una vez (oculto)."""
     ring_file = next((p for p in RING_PATHS if p.exists()), None)
     if ring_file:
+        st.caption(f"Tono → {ring_file.relative_to(BASE_DIR)}")
         play_hidden_audio(ring_file)
     else:
         st.caption("Simulando tonos de llamada… (añade ringtone.wav en audio/ o tts_audio/).")
@@ -128,25 +129,33 @@ def play_node_audio(node: dict) -> bool:
     Prioridad:
       1) audio/{NODE_ID}_es.wav
       2) audio/{NODE_ID}.wav
-      3) AUDIO_URL
+      3) tts_audio/{NODE_ID}_es.wav
+      4) AUDIO_URL
     """
     node_id = node["NODE_ID"]
 
-    # 1) audio/{NODE_ID}_es.wav
+    candidatos: list[Path] = []
+
     audio_es_path = BASE_DIR / "audio" / f"{node_id}_es.wav"
-    if audio_es_path.exists():
-        if play_hidden_audio(audio_es_path):
-            return True
+    candidatos.append(audio_es_path)
 
-    # 2) audio/{NODE_ID}.wav
     audio_plain_path = BASE_DIR / "audio" / f"{node_id}.wav"
-    if audio_plain_path.exists():
-        if play_hidden_audio(audio_plain_path):
-            return True
+    candidatos.append(audio_plain_path)
 
-    # 3) AUDIO_URL
+    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
+    candidatos.append(tts_path)
+
+    # 1–3) Ficheros locales
+    for p in candidatos:
+        if p.exists():
+            st.caption(f"Reproduciendo audio: {p.relative_to(BASE_DIR)}")
+            if play_hidden_audio(p):
+                return True
+
+    # 4) AUDIO_URL
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
+        st.caption(f"Reproduciendo AUDIO_URL: {audio_url}")
         if audio_url.lower().startswith(("http://", "https://")):
             if play_hidden_audio_url(audio_url):
                 return True
@@ -159,7 +168,10 @@ def play_node_audio(node: dict) -> bool:
                 if play_hidden_audio_url(audio_url):
                     return True
 
-    return False  # si no hay audio, simplemente silencio
+    # Debug suave: ver qué hemos buscado para este nodo
+    buscados = ", ".join(str(p.relative_to(BASE_DIR)) for p in candidatos)
+    st.caption(f"Sin audio para {node_id}. Buscados: {buscados} y AUDIO_URL='{audio_url}'")
+    return False
 
 
 # =========================
