@@ -128,8 +128,7 @@ def play_node_audio(node: dict) -> bool:
     Prioridad:
       1) audio/{NODE_ID}_es.wav
       2) audio/{NODE_ID}.wav
-      3) tts_audio/{NODE_ID}_es.wav
-      4) AUDIO_URL
+      3) AUDIO_URL
     """
     node_id = node["NODE_ID"]
 
@@ -145,13 +144,7 @@ def play_node_audio(node: dict) -> bool:
         if play_hidden_audio(audio_plain_path):
             return True
 
-    # 3) tts_audio/{NODE_ID}_es.wav
-    tts_path = BASE_DIR / "tts_audio" / f"{node_id}_es.wav"
-    if tts_path.exists():
-        if play_hidden_audio(tts_path):
-            return True
-
-    # 4) AUDIO_URL (por si queremos usar URLs externas o rutas raras)
+    # 3) AUDIO_URL
     audio_url = str(node.get("AUDIO_URL", "")).strip()
     if looks_like_audio_ref(audio_url):
         if audio_url.lower().startswith(("http://", "https://")):
@@ -166,7 +159,7 @@ def play_node_audio(node: dict) -> bool:
                 if play_hidden_audio_url(audio_url):
                     return True
 
-    return False  # Sin mensajes, simplemente no suena nada
+    return False  # si no hay audio, simplemente silencio
 
 
 # =========================
@@ -509,7 +502,7 @@ def main():
         play_ringtone_once()
         st.caption("Escuchas el tono de llamada…")
 
-        if st.button("📞 Empezar llamada IVR"):
+        if st.button("📞 Descolgar teléfono"):
             ss.phase = "ivr"
             ss.last_played_node_id = None
 
