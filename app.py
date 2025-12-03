@@ -374,6 +374,11 @@ def load_scenarios():
     if "EXPECTED_OK_TYPES" not in df.columns:
         df["EXPECTED_OK_TYPES"] = ""
 
+    # Nueva: asegurar EXECUTIONS
+    if "EXECUTIONS" not in df.columns:
+        df["EXECUTIONS"] = "0"
+
+
     scenarios = df.to_dict(orient="records")
     scenarios = [s for s in scenarios if s.get("ACTIVE", "").strip().upper() == "TRUE"]
     return scenarios
@@ -793,7 +798,7 @@ def increment_scenario_executions(scenario_id: str):
     Suma 1 a EXECUTIONS del escenario dado en scenarios.csv.
     Si no existe la columna, la crea con 0 y luego suma.
     """
-    global SCENARIOS
+    global SCENARIOS  # para refrescar el cache en memoria
 
     try:
         df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
@@ -807,16 +812,21 @@ def increment_scenario_executions(scenario_id: str):
             st.sidebar.error("scenarios.csv no tiene columna SCENARIO_ID.")
         return
 
+    # Aseguramos que exista EXECUTIONS
     if "EXECUTIONS" not in df.columns:
         df["EXECUTIONS"] = "0"
 
-    mask = df["SCENARIO_ID"] == scenario_id
+    # Igualamos por SCENARIO_ID tras hacer strip (por si hay espacios)
+    sid = str(scenario_id).strip()
+    df["SCENARIO_ID"] = df["SCENARIO_ID"].astype(str)
+    mask = df["SCENARIO_ID"].str.strip() == sid
+
     if not mask.any():
         if DEBUG_MODE:
             st.sidebar.warning(f"SCENARIO_ID '{scenario_id}' no encontrado en scenarios.csv.")
         return
 
-    # Convertimos a int, sumamos 1 y volvemos a string
+    # Convertimos a int, sumamos 1, volvemos a string
     execs = (
         pd.to_numeric(df.loc[mask, "EXECUTIONS"], errors="coerce")
         .fillna(0)
@@ -831,11 +841,12 @@ def increment_scenario_executions(scenario_id: str):
             st.sidebar.error(f"No se pudo guardar scenarios.csv con EXECUTIONS: {e}")
         return
 
-    # Refrescamos SCENARIOS en memoria para que modo debug vea los nuevos valores
+    # Refrescamos SCENARIOS en memoria para que la app use valores actualizados
     try:
         SCENARIOS = load_scenarios()
     except Exception:
         pass
+
 
 
 def finish_test(end_node: dict):
@@ -1100,6 +1111,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
