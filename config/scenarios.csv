@@ -4,7 +4,7 @@ S011,Seguimiento entrega pedido B2B,Soy cliente B2B y estoy esperando un pedido 
 S012,Incidencia montaje dormitorio Cliente,Soy un cliente particular y me han dejado sin montar parte de un armario de dormitorio.,ROOT,ES_Voice_Res_Montaje,,,TRUE,1
 S012,Incidencia montaje dormitorio B2B,Soy cliente B2B y me han dejado sin montar parte de un armario de dormitorio.,ROOT,ES_Voice_Res_Business,,,TRUE,1
 S013,Cita de montaje no realizada,Soy un cliente particular y el montador no ha aparecido en la cita acordada.,ROOT,ES_Voice_Res_Montaje,,,TRUE,0
-S014,Montaje cocina incompleto,Soy un cliente particular y no han terminado de montar mi cocina.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,0
+S014,Montaje cocina incompleto,Soy un cliente particular y no han terminado de montar mi cocina.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,1
 S015,Seguimiento incidencia cocina Cliente,Soy un cliente particular y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,0
 S015,Seguimiento incidencia cocina B2B,Soy cliente B2B y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia  pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Business,,,TRUE,0
 S016,Bulto faltante en pedido,Soy un cliente particular y falta un paquete en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,1
