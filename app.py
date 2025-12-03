@@ -350,22 +350,15 @@ def load_scenarios():
             st.error(f"Falta la columna '{col}' en scenarios.csv")
             st.stop()
 
+    # Columnas opcionales para finales múltiples
+    if "EXPECTED_ALT_QUEUE_IDS" not in df.columns:
+        df["EXPECTED_ALT_QUEUE_IDS"] = ""
+    if "EXPECTED_OK_TYPES" not in df.columns:
+        df["EXPECTED_OK_TYPES"] = ""
+
     scenarios = df.to_dict(orient="records")
     scenarios = [s for s in scenarios if s.get("ACTIVE", "").strip().upper() == "TRUE"]
     return scenarios
-
-
-NODES = load_nodes()
-SCENARIOS = load_scenarios()
-
-# Nodo raíz para '#'
-if "ROOT" in NODES:
-    ROOT_NODE_ID = "ROOT"
-else:
-    ROOT_NODE_ID = next(
-        (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
-        None,
-    )
 
 
 # =========================
@@ -590,34 +583,35 @@ def send_result_to_github(row: dict):
 
 
 def finish_test(end_node: dict):
-    """
-    Cierra el test cuando se llega a una cola (QUEUE),
-    a un nodo SMS o a un nodo TRANSFER.
-    """
     ss = st.session_state
     scenario = ss.scenario
 
     node_type = str(end_node.get("NODE_TYPE", "")).strip().upper()
 
-    expected_queue_id = scenario.get("EXPECTED_QUEUE_ID", "")
+    # ---- Leer expectativas del escenario ----
+    expected_queue_id = (scenario.get("EXPECTED_QUEUE_ID") or "").strip()
+
+    alt_raw = (scenario.get("EXPECTED_ALT_QUEUE_IDS") or "").strip()
+    ok_types_raw = (scenario.get("EXPECTED_OK_TYPES") or "").strip()
+
+    ok_queues = {q.strip() for q in ([expected_queue_id] + alt_raw.split("|")) if q.strip()}
+    ok_types = {t.strip().upper() for t in ok_types_raw.split("|") if t.strip()}
+
     reached_queue_id = end_node.get("QUEUE_ID", "")
     queue_name = end_node.get("QUEUE_NAME", "")
 
-    # Resultado lógico según tipo de nodo
-    if node_type == "QUEUE":
-        if reached_queue_id == expected_queue_id:
-            result = "SUCCESS"
-        else:
-            result = "WRONG_QUEUE"
-    elif node_type == "SMS":
-        result = "SMS_SELF_SERVICE"
-    elif node_type == "TRANSFER":
-        if reached_queue_id == expected_queue_id:
-            result = "SUCCESS_TRANSFER"
-        else:
-            result = "WRONG_QUEUE_TRANSFER"
+    # ---- Reglas de éxito ----
+    is_ok_queue = (node_type == "QUEUE") and reached_queue_id in ok_queues
+    is_ok_type = node_type in ok_types
+
+    if is_ok_queue or is_ok_type:
+        result = "SUCCESS"
     else:
-        result = f"END_{node_type or 'UNKNOWN'}"
+        # Etiquetas algo más detalladas por si te interesan en el JSON
+        if node_type == "QUEUE":
+            result = "WRONG_QUEUE"
+        else:
+            result = f"WRONG_END_{node_type or 'UNKNOWN'}"
 
     ss.finished = True
     ss.result = {
@@ -859,3 +853,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
