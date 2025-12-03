@@ -386,6 +386,7 @@ def init_session():
         ss.last_message = ""
         ss.last_played_node_id = None
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
+        ss.end_audio_played = False   # audio del nodo final (p.ej. SMS) reproducido
 
 
 def reset_session():
@@ -421,6 +422,7 @@ def start_new_test():
     ss.last_message = ""
     ss.last_played_node_id = None
     ss.did_initial_ring = False   # aún no hemos hecho ring+prompt
+    ss.end_audio_played = False   # aún no hemos reproducido audio de nodo final
 
 
 def handle_key(key: str):
@@ -625,6 +627,7 @@ def finish_test(end_node: dict):
         "end_node_id": end_node.get("NODE_ID", ""),
         "end_node_type": node_type,
     }
+    ss.end_audio_played = False  # aún no hemos lanzado el audio del nodo final
 
     # ===== Registro persistente del test =====
     try:
@@ -732,6 +735,15 @@ def main():
     # Test terminado
     if ss.finished and ss.result:
         st.subheader("✅ Gracias por completar la prueba")
+
+        # Si el nodo final es SMS, reproducimos su audio una vez al entrar aquí
+        end_type = ss.result.get("end_node_type")
+        if end_type == "SMS" and not ss.get("end_audio_played", False):
+            end_node_id = ss.result.get("end_node_id")
+            node_for_audio = NODES.get(end_node_id, current_node)
+            if node_for_audio:
+                play_node_audio(node_for_audio)
+            ss.end_audio_played = True
 
         result_type = ss.result["result"]
 
