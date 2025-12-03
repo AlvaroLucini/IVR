@@ -24,7 +24,8 @@ st.set_page_config(page_title="IVR Tester", page_icon="📞", layout="centered")
 # MODO DEBUG (para ti)
 # =========================
 
-DEBUG_MODE = st.sidebar.checkbox("🔧 Modo avanzado / debug", value=False)
+DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
+
 
 
 # =========================
@@ -1233,6 +1234,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
