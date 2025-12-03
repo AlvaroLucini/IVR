@@ -386,7 +386,7 @@ def init_session():
         ss.last_message = ""
         ss.last_played_node_id = None
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
-        ss.end_audio_played = False   # audio del nodo final (p.ej. SMS) reproducido
+        ss.end_audio_played = False   # audio del nodo final (QUEUE/SMS/TRANSFER) reproducido
 
 
 def reset_session():
@@ -736,9 +736,9 @@ def main():
     if ss.finished and ss.result:
         st.subheader("✅ Gracias por completar la prueba")
 
-        # Si el nodo final es SMS, reproducimos su audio una vez al entrar aquí
+        # Si el nodo final es QUEUE / SMS / TRANSFER, reproducimos su audio una vez al entrar aquí
         end_type = ss.result.get("end_node_type")
-        if end_type == "SMS" and not ss.get("end_audio_played", False):
+        if end_type in ("QUEUE", "SMS", "TRANSFER") and not ss.get("end_audio_played", False):
             end_node_id = ss.result.get("end_node_id")
             node_for_audio = NODES.get(end_node_id, current_node)
             if node_for_audio:
