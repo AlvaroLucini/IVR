@@ -11,7 +11,7 @@ S016,Bulto faltante en pedido,Soy un cliente particular y falta un paquete en mi
 S017,Producto dañado en pedido,Soy un cliente particular y me ha llegado un artículo dañado en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,1
 S018,Artículo equivocado en tienda,Soy un cliente particular y fui a comprar a la tienda; al llegar a casa uno de los artículos no se corresponde con lo que pedí.,ROOT,ES_Voice_Res_General,,,TRUE,1
 S019,Piezas pequeñas faltantes,Soy un cliente particular y me falta la bolsita de tornillos de la mesita que compré.,ROOT,ES_Voice_Res_General,,,TRUE,0
-S020,Devolución parcial de pedido,Soy un cliente particular y quiero devolver solo una parte de mi pedido.,ROOT,ES_Voice_Res_General,,,TRUE,0
+S020,Devolución parcial de pedido,Soy un cliente particular y quiero devolver solo una parte de mi pedido.,ROOT,ES_Voice_Res_General,,,TRUE,1
 S021,Seguimiento revisión pendiente,Soy un cliente particular y vinisteis a hacer una revisión de mi mueble  pero no he vuelto a saber nada más.,ROOT,ES_Voice_Res_General,,,TRUE,0
 S022,Cambio datos de factura Particular,Soy un cliente particular y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_General,,,TRUE,1
 S022,Cambio datos de factura B2B,Soy cliente B2B y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_Business,,,TRUE,1
