@@ -304,7 +304,7 @@ def load_nodes():
             continue
 
         node_label = str(row.get("NODE_LABEL", "") or "")
-        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE
+        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE / SMS
         is_entry_flag = str(row.get("IS_ENTRY", "") or "").strip().upper() == "YES"
         prompt_text = str(row.get("PROMPT_TEXT", "") or "")
         audio_url = str(row.get("AUDIO_URL", "") or "")
@@ -510,8 +510,9 @@ def handle_key(key: str):
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
 
-    # Si llegamos a una cola, cerramos el test
-    if str(new_node["NODE_TYPE"]).strip().upper() == "QUEUE":
+    # Si llegamos a una cola o a un nodo SMS, cerramos el test
+    node_type = str(new_node["NODE_TYPE"]).strip().upper()
+    if node_type in ("QUEUE", "SMS"):
         finish_test(new_node)
 
 
@@ -577,17 +578,32 @@ def send_result_to_github(row: dict):
         st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
 
 
-def finish_test(queue_node: dict):
+def finish_test(end_node: dict):
+    """
+    Cierra el test cuando se llega a una cola (QUEUE) o a un nodo SMS.
+    """
     ss = st.session_state
     scenario = ss.scenario
 
-    expected_queue_id = scenario["EXPECTED_QUEUE_ID"]
-    reached_queue_id = queue_node.get("QUEUE_ID", "")
+    node_type = str(end_node.get("NODE_TYPE", "")).strip().upper()
 
-    if reached_queue_id == expected_queue_id:
-        result = "SUCCESS"
+    expected_queue_id = scenario.get("EXPECTED_QUEUE_ID", "")
+    reached_queue_id = end_node.get("QUEUE_ID", "")
+    queue_name = end_node.get("QUEUE_NAME", "")
+
+    # ----- Resultado lógico según tipo de nodo -----
+    if node_type == "QUEUE":
+        if reached_queue_id == expected_queue_id:
+            result = "SUCCESS"
+        else:
+            result = "WRONG_QUEUE"
+
+    elif node_type == "SMS":
+        # Nodo final de SMS de autoservicio
+        result = "SMS_SELF_SERVICE"
+
     else:
-        result = "WRONG_QUEUE"
+        result = f"END_{node_type or 'UNKNOWN'}"
 
     # Marcar como terminado en sesión
     ss.finished = True
@@ -595,7 +611,9 @@ def finish_test(queue_node: dict):
         "result": result,
         "expected_queue_id": expected_queue_id,
         "reached_queue_id": reached_queue_id,
-        "queue_name": queue_node.get("QUEUE_NAME", ""),
+        "queue_name": queue_name,
+        "end_node_id": end_node.get("NODE_ID", ""),
+        "end_node_type": node_type,
     }
 
     # ===== Registro persistente del test =====
@@ -619,7 +637,9 @@ def finish_test(queue_node: dict):
             "entry_node_id": scenario["ENTRY_NODE_ID"],
             "expected_queue_id": expected_queue_id,
             "reached_queue_id": reached_queue_id,
-            "reached_queue_name": queue_node.get("QUEUE_NAME", ""),
+            "reached_queue_name": queue_name,
+            "end_node_id": end_node.get("NODE_ID", ""),
+            "end_node_type": node_type,
             "result": result,
             "duration_seconds": round(duration_seconds, 3),
             "num_steps": len(route),
@@ -627,6 +647,7 @@ def finish_test(queue_node: dict):
         }
 
         send_result_to_github(row)
+        ss.last_result_row = row
 
     except Exception as e:
         st.sidebar.error(f"Error guardando el resultado del test: {e}")
@@ -702,17 +723,32 @@ def main():
     if ss.finished and ss.result:
         st.subheader("✅ Gracias por completar la prueba")
 
-        if ss.result["result"] == "SUCCESS":
+        result_type = ss.result["result"]
+
+        if result_type == "SUCCESS":
             st.success(
                 f"Llegaste a la cola correcta: `{ss.result['reached_queue_id']}` "
                 f"({ss.result.get('queue_name','')})."
             )
-        else:
+
+        elif result_type == "WRONG_QUEUE":
             st.error(
                 "La cola alcanzada no coincide con la esperada.\n\n"
                 f"- Esperada: `{ss.result['expected_queue_id']}`\n"
                 f"- Alcanzada: `{ss.result['reached_queue_id']}` "
                 f"({ss.result.get('queue_name','')})"
+            )
+
+        elif result_type == "SMS_SELF_SERVICE":
+            st.success(
+                "La llamada ha finalizado en un nodo de SMS de autoservicio.\n\n"
+                f"- Nodo final: `{ss.result.get('end_node_id', '')}` "
+                f"({ss.result.get('end_node_type', '')})"
+            )
+
+        else:
+            st.info(
+                f"La llamada ha finalizado en un nodo de tipo `{ss.result.get('end_node_type','')}`."
             )
 
         with st.expander("Ver ruta seguida (para análisis interno)"):
