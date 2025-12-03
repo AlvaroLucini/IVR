@@ -878,19 +878,23 @@ def main():
 
     st.title("📞 IVR Tester (simulador de IVR)")
 
-    # Estado inicial
+    # =========================
+    # ESTADO INICIAL (sin test activo)
+    # =========================
     if not ss.test_active:
         st.write(
             "Pulsa el botón para recibir una misión aleatoria y probar la IVR como si fueras un cliente."
         )
 
-    if st.button("🎬 Empezar nuevo test"):
-        start_new_test()
-        st.rerun()   # <-- antes era st.experimental_rerun()
-    return
+        if st.button("🎬 Empezar nuevo test"):
+            start_new_test()
+            st.rerun()   # un solo clic: arranca test y se repinta
 
+        return  # <-- este return va DENTRO del if not ss.test_active
 
-
+    # =========================
+    # TEST EN CURSO
+    # =========================
     scenario = ss.scenario
     current_node = NODES.get(ss.current_node_id)
 
@@ -898,16 +902,18 @@ def main():
         st.error("Error de estado interno. Puedes reiniciar el test.")
         if st.button("Reiniciar todo"):
             reset_session()
+            st.rerun()
         return
 
     # Bloque: misión
     st.subheader("📝 Tu misión")
-    # El título solo lo ve el modo debug, los testers solo ven el texto azul
     if DEBUG_MODE:
         st.write(f"**{scenario['TITLE']}**")
     st.info(scenario["MISSION_TEXT"])
 
-    # Test terminado
+    # =========================
+    # TEST TERMINADO
+    # =========================
     if ss.finished and ss.result:
         st.subheader("✅ Test finalizado")
 
@@ -920,13 +926,12 @@ def main():
                 play_node_audio(node_for_audio)
             ss.end_audio_played = True
 
-        # Vista TESTER: mensaje genérico
+        # Vista TESTER
         st.success("La misión ha finalizado. Gracias por completar el test. 🙌")
 
-        # Vista DEBUG: detalles
+        # Vista DEBUG
         if DEBUG_MODE:
             result_type = ss.result["result"]
-
             st.markdown("### 🔍 Detalles internos (solo debug)")
             st.write(f"Resultado lógico: `{result_type}`")
             st.write(
@@ -947,14 +952,13 @@ def main():
         st.divider()
         if st.button("🔁 Empezar otro test"):
             start_new_test()
-            st.rerun()
+            st.rerun()   # un solo clic para empezar otro
 
-        return
+        return  # aquí sí termina la función
 
-
-        return
-
-    # ===== AUDIO INICIAL / CAMBIOS DE NODO =====
+    # =========================
+    # AUDIO INICIAL / CAMBIO DE NODO
+    # =========================
     if not ss.did_initial_ring:
         if DEBUG_MODE:
             st.subheader("☎️ Llamando a la IVR...")
@@ -965,17 +969,16 @@ def main():
     else:
         if DEBUG_MODE:
             st.subheader("📟 Llamada IVR (simulada)")
-        # Reproducir prompt solo cuando cambiamos de nodo o repetimos
         if ss.last_played_node_id != current_node["NODE_ID"]:
             play_node_audio(current_node)
             ss.last_played_node_id = current_node["NODE_ID"]
 
-    # Texto del mensaje del nodo SOLO en modo debug
+    # Texto del nodo solo en debug
     if DEBUG_MODE:
         prompt_text = current_node.get("PROMPT_TEXT", "")
         st.write(f"🗣️ {prompt_text}")
 
-    # Mensajes de estado (errores / opción no válida / repetir / root)
+    # Mensajes de estado
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
@@ -990,10 +993,13 @@ def main():
     st.divider()
     if st.button("❌ Cancelar test"):
         reset_session()
+        st.rerun()
+
 
 
 if __name__ == "__main__":
     main()
+
 
 
 
