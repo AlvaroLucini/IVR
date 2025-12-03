@@ -425,6 +425,18 @@ def load_scenarios_df_for_selection() -> pd.DataFrame:
     )
 
     return df
+    # --- Solo para debug: ver escenarios y EXECUTIONS ---
+    if DEBUG_MODE:
+        try:
+            df_dbg = load_scenarios_df_for_selection()
+            if not df_dbg.empty:
+                st.sidebar.markdown("### DEBUG: Escenarios")
+                st.sidebar.dataframe(
+                    df_dbg[["SCENARIO_ID", "TITLE", "EXECUTIONS_INT"]],
+                    use_container_width=True,
+                )
+        except Exception as e:
+            st.sidebar.error(f"DEBUG EXEC: no se pudo cargar escenarios para debug: {e}")
 
 
 # =========================
@@ -800,33 +812,47 @@ def increment_scenario_executions(scenario_id: str):
     """
     global SCENARIOS  # para refrescar el cache en memoria
 
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG EXEC: entrando en increment_scenario_executions('{scenario_id}')")
+
     try:
         df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
     except Exception as e:
         if DEBUG_MODE:
-            st.sidebar.error(f"No se pudo leer scenarios.csv para EXECUTIONS: {e}")
+            st.sidebar.error(f"DEBUG EXEC: no se pudo leer scenarios.csv: {e}")
         return
 
     if "SCENARIO_ID" not in df.columns:
         if DEBUG_MODE:
-            st.sidebar.error("scenarios.csv no tiene columna SCENARIO_ID.")
+            st.sidebar.error("DEBUG EXEC: scenarios.csv no tiene columna SCENARIO_ID.")
         return
 
     # Aseguramos que exista EXECUTIONS
     if "EXECUTIONS" not in df.columns:
         df["EXECUTIONS"] = "0"
 
-    # Igualamos por SCENARIO_ID tras hacer strip (por si hay espacios)
-    sid = str(scenario_id).strip()
+    # Normalizamos IDs
     df["SCENARIO_ID"] = df["SCENARIO_ID"].astype(str)
-    mask = df["SCENARIO_ID"].str.strip() == sid
+    df["SCENARIO_ID_STRIP"] = df["SCENARIO_ID"].str.strip()
+
+    sid = str(scenario_id).strip()
+
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG EXEC: SCENARIO_ID buscado = '{sid}'")
+        st.sidebar.write(f"DEBUG EXEC: SCENARIO_ID distintos en CSV: {sorted(df['SCENARIO_ID_STRIP'].unique().tolist())}")
+
+    mask = df["SCENARIO_ID_STRIP"] == sid
 
     if not mask.any():
         if DEBUG_MODE:
-            st.sidebar.warning(f"SCENARIO_ID '{scenario_id}' no encontrado en scenarios.csv.")
+            st.sidebar.warning(f"DEBUG EXEC: SCENARIO_ID '{sid}' no encontrado en scenarios.csv.")
         return
 
-    # Convertimos a int, sumamos 1, volvemos a string
+    # Ejecutamos el incremento
+    before_vals = df.loc[mask, "EXECUTIONS"].tolist()
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG EXEC: valores EXECUTIONS antes = {before_vals}")
+
     execs = (
         pd.to_numeric(df.loc[mask, "EXECUTIONS"], errors="coerce")
         .fillna(0)
@@ -834,12 +860,29 @@ def increment_scenario_executions(scenario_id: str):
     )
     df.loc[mask, "EXECUTIONS"] = (execs + 1).astype(str)
 
+    after_vals = df.loc[mask, "EXECUTIONS"].tolist()
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG EXEC: valores EXECUTIONS después = {after_vals}")
+
+    # Limpiamos la columna auxiliar
+    df = df.drop(columns=["SCENARIO_ID_STRIP"])
+
     try:
         df.to_csv(CSV_SCENARIOS, index=False)
+        if DEBUG_MODE:
+            st.sidebar.success("DEBUG EXEC: scenarios.csv actualizado correctamente.")
     except Exception as e:
         if DEBUG_MODE:
-            st.sidebar.error(f"No se pudo guardar scenarios.csv con EXECUTIONS: {e}")
+            st.sidebar.error(f"DEBUG EXEC: no se pudo guardar scenarios.csv con EXECUTIONS: {e}")
         return
+
+    # Refrescamos SCENARIOS en memoria
+    try:
+        SCENARIOS = load_scenarios()
+    except Exception as e:
+        if DEBUG_MODE:
+            st.sidebar.error(f"DEBUG EXEC: error recargando SCENARIOS: {e}")
+
 
     # Refrescamos SCENARIOS en memoria para que la app use valores actualizados
     try:
@@ -890,7 +933,14 @@ def finish_test(end_node: dict):
     }
     ss.end_audio_played = False  # aún no hemos lanzado el audio del nodo final
 
-    # Registro en GitHub
+    # ✅ IMPORTANTÍSIMO: actualizar EXECUTIONS SIEMPRE, aunque luego falle el log
+    scenario_id = scenario.get("SCENARIO_ID")
+    if scenario_id:
+        if DEBUG_MODE:
+            st.sidebar.write(f"DEBUG EXEC: incrementando EXECUTIONS para {scenario_id}")
+        increment_scenario_executions(scenario_id)
+
+    # Registro en GitHub (esto ya es "extra", no debe bloquear el contador)
     try:
         start_ts_str = ss.start_ts
         start_dt = datetime.fromisoformat(start_ts_str)
@@ -923,14 +973,10 @@ def finish_test(end_node: dict):
         send_result_to_github(row)
         ss.last_result_row = row
 
-        # ✅ Sumamos 1 ejecución al escenario
-        scenario_id = scenario.get("SCENARIO_ID")
-        if scenario_id:
-            increment_scenario_executions(scenario_id)
-
     except Exception as e:
         if DEBUG_MODE:
-            st.sidebar.error(f"Error guardando el resultado del test: {e}")
+            st.sidebar.error(f"Error guardando el resultado del test (GitHub/log): {e}")
+
 
 
 # =========================
@@ -1111,6 +1157,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
