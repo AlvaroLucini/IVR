@@ -20,6 +20,12 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="IVR Tester", page_icon="📞", layout="centered")
 
+# =========================
+# MODO DEBUG (para ti)
+# =========================
+
+DEBUG_MODE = st.sidebar.checkbox("🔧 Modo avanzado / debug", value=False)
+
 
 # =========================
 # RUTAS BÁSICAS
@@ -41,11 +47,13 @@ RING_PATHS = [
 # =========================
 
 try:
-    st.sidebar.write("DEBUG secrets keys:", list(st.secrets.keys()))
-    if "github" in st.secrets:
-        st.sidebar.write("DEBUG github keys:", list(st.secrets["github"].keys()))
+    if DEBUG_MODE:
+        st.sidebar.write("DEBUG secrets keys:", list(st.secrets.keys()))
+        if "github" in st.secrets:
+            st.sidebar.write("DEBUG github keys:", list(st.secrets["github"].keys()))
 except Exception as e:
-    st.sidebar.write(f"DEBUG st.secrets error: {e}")
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG st.secrets error: {e}")
 
 
 # =========================
@@ -330,8 +338,8 @@ def load_nodes():
             "NEXT":        next_map,
         }
 
-    # DEBUG: ver qué IDs se han cargado realmente
-    st.sidebar.write("DEBUG NODE_IDs:", list(nodes.keys()))
+    if DEBUG_MODE:
+        st.sidebar.write("DEBUG NODE_IDs:", list(nodes.keys()))
 
     return nodes
 
@@ -386,7 +394,7 @@ def init_session():
         ss.last_message = ""
         ss.last_played_node_id = None
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
-        ss.end_audio_played = False   # audio del nodo final (QUEUE/SMS/TRANSFER) reproducido
+        ss.end_audio_played = False   # audio del nodo final reproducido
 
 
 def reset_session():
@@ -529,7 +537,8 @@ def send_result_to_github(row: dict):
     Envía el resultado de un test a GitHub como un JSON individual:
     test_results/YYYY-MM-DD/<test_id>.json
     """
-    st.sidebar.write("DEBUG: entrando en send_result_to_github")
+    if DEBUG_MODE:
+        st.sidebar.write("DEBUG: entrando en send_result_to_github")
 
     try:
         gh_conf = st.secrets["github"]
@@ -537,7 +546,8 @@ def send_result_to_github(row: dict):
         repo = gh_conf["repo"]
         branch = gh_conf.get("branch", "main")
     except Exception as e:
-        st.sidebar.error(f"DEBUG: st.secrets['github'] no disponible: {e}")
+        if DEBUG_MODE:
+            st.sidebar.error(f"DEBUG: st.secrets['github'] no disponible: {e}")
         return
 
     # Carpeta y nombre de archivo
@@ -553,7 +563,8 @@ def send_result_to_github(row: dict):
         row["test_id"] = test_id
 
     path = f"test_results/{date_str}/{test_id}.json"
-    st.sidebar.write(f"DEBUG: path en GitHub: {path}")
+    if DEBUG_MODE:
+        st.sidebar.write(f"DEBUG: path en GitHub: {path}")
 
     api_url = f"https://api.github.com/repos/{repo}/contents/{path}"
 
@@ -573,13 +584,17 @@ def send_result_to_github(row: dict):
 
     try:
         resp = requests.put(api_url, headers=headers, json=payload, timeout=15)
-        st.sidebar.write(f"DEBUG: GitHub status {resp.status_code}")
+        if DEBUG_MODE:
+            st.sidebar.write(f"DEBUG: GitHub status {resp.status_code}")
         if resp.status_code not in (200, 201):
-            st.sidebar.error(f"GitHub error: {resp.status_code} - {resp.text[:200]}")
+            if DEBUG_MODE:
+                st.sidebar.error(f"GitHub error: {resp.status_code} - {resp.text[:200]}")
         else:
-            st.sidebar.success(f"Resultado guardado en GitHub: {path}")
+            if DEBUG_MODE:
+                st.sidebar.success(f"Resultado guardado en GitHub: {path}")
     except Exception as e:
-        st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
+        if DEBUG_MODE:
+            st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
 
 
 def finish_test(end_node: dict):
@@ -604,11 +619,9 @@ def finish_test(end_node: dict):
             result = "WRONG_QUEUE"
 
     elif node_type == "SMS":
-        # Nodo final de SMS de autoservicio
         result = "SMS_SELF_SERVICE"
 
     elif node_type == "TRANSFER":
-        # Nodo de transferencia: comprobamos igualmente la cola objetivo
         if reached_queue_id == expected_queue_id:
             result = "SUCCESS_TRANSFER"
         else:
@@ -663,7 +676,8 @@ def finish_test(end_node: dict):
         ss.last_result_row = row
 
     except Exception as e:
-        st.sidebar.error(f"Error guardando el resultado del test: {e}")
+        if DEBUG_MODE:
+            st.sidebar.error(f"Error guardando el resultado del test: {e}")
 
 
 # =========================
@@ -727,16 +741,16 @@ def main():
             reset_session()
         return
 
-    # Bloque: misión
+    # Bloque: misión (esto sí lo ve el tester)
     st.subheader("📝 Tu misión")
     st.write(f"**{scenario['TITLE']}**")
     st.info(scenario["MISSION_TEXT"])
 
     # Test terminado
     if ss.finished and ss.result:
-        st.subheader("✅ Gracias por completar la prueba")
+        st.subheader("✅ Test finalizado")
 
-        # Si el nodo final es QUEUE / SMS / TRANSFER, reproducimos su audio una vez al entrar aquí
+        # Reproducir audio del nodo final (QUEUE/SMS/TRANSFER) una vez
         end_type = ss.result.get("end_node_type")
         if end_type in ("QUEUE", "SMS", "TRANSFER") and not ss.get("end_audio_played", False):
             end_node_id = ss.result.get("end_node_id")
@@ -745,57 +759,70 @@ def main():
                 play_node_audio(node_for_audio)
             ss.end_audio_played = True
 
-        result_type = ss.result["result"]
+        # Vista TESTER: mensaje genérico, sin decir si ha sido éxito o fallo
+        st.success("La misión ha finalizado. Gracias por completar el test. 🙌")
 
-        if result_type == "SUCCESS":
-            st.success(
-                f"Llegaste a la cola correcta: `{ss.result['reached_queue_id']}` "
-                f"({ss.result.get('queue_name','')})."
-            )
+        # Vista DEBUG: todos los detalles (solo si activas el toggle en el sidebar)
+        if DEBUG_MODE:
+            result_type = ss.result["result"]
 
-        elif result_type == "WRONG_QUEUE":
-            st.error(
-                "La cola alcanzada no coincide con la esperada.\n\n"
-                f"- Esperada: `{ss.result['expected_queue_id']}`\n"
-                f"- Alcanzada: `{ss.result['reached_queue_id']}` "
-                f"({ss.result.get('queue_name','')})"
-            )
+            st.markdown("### 🔍 Detalles internos (solo debug)")
 
-        elif result_type == "SMS_SELF_SERVICE":
-            st.success(
-                "La llamada ha finalizado en un nodo de SMS de autoservicio.\n\n"
-                f"- Nodo final: `{ss.result.get('end_node_id', '')}` "
-                f"({ss.result.get('end_node_type', '')})"
-            )
+            if result_type == "SUCCESS":
+                st.success(
+                    f"Resultado: SUCCESS\n\n"
+                    f"- Cola esperada: `{ss.result['expected_queue_id']}`\n"
+                    f"- Cola alcanzada: `{ss.result['reached_queue_id']}` "
+                    f"({ss.result.get('queue_name','')})"
+                )
 
-        elif result_type == "SUCCESS_TRANSFER":
-            st.success(
-                "La llamada ha finalizado en un nodo de transferencia y te han "
-                f"pasado a la cola correcta: `{ss.result['reached_queue_id']}` "
-                f"({ss.result.get('queue_name','')})."
-            )
+            elif result_type == "WRONG_QUEUE":
+                st.error(
+                    "Resultado: WRONG_QUEUE\n\n"
+                    f"- Esperada: `{ss.result['expected_queue_id']}`\n"
+                    f"- Alcanzada: `{ss.result['reached_queue_id']}` "
+                    f"({ss.result.get('queue_name','')})"
+                )
 
-        elif result_type == "WRONG_QUEUE_TRANSFER":
-            st.error(
-                "La llamada ha finalizado en un nodo de transferencia, pero la cola "
-                "de destino no coincide con la esperada.\n\n"
-                f"- Esperada: `{ss.result['expected_queue_id']}`\n"
-                f"- Cola destino: `{ss.result['reached_queue_id']}` "
-                f"({ss.result.get('queue_name','')})"
-            )
+            elif result_type == "SMS_SELF_SERVICE":
+                st.info(
+                    "Resultado: SMS_SELF_SERVICE\n\n"
+                    f"- Nodo final: `{ss.result.get('end_node_id', '')}` "
+                    f"({ss.result.get('end_node_type', '')})"
+                )
 
-        else:
-            st.info(
-                f"La llamada ha finalizado en un nodo de tipo "
-                f"`{ss.result.get('end_node_type','')}`."
-            )
+            elif result_type == "SUCCESS_TRANSFER":
+                st.success(
+                    "Resultado: SUCCESS_TRANSFER\n\n"
+                    f"- Esperada / destino correcto: `{ss.result['reached_queue_id']}` "
+                    f"({ss.result.get('queue_name','')})"
+                )
 
-        with st.expander("Ver ruta seguida (para análisis interno)"):
-            st.json(ss.route)
+            elif result_type == "WRONG_QUEUE_TRANSFER":
+                st.error(
+                    "Resultado: WRONG_QUEUE_TRANSFER\n\n"
+                    f"- Esperada: `{ss.result['expected_queue_id']}`\n"
+                    f"- Cola destino: `{ss.result['reached_queue_id']}` "
+                    f"({ss.result.get('queue_name','')})"
+                )
+
+            else:
+                st.info(
+                    f"Resultado: {result_type}\n\n"
+                    f"Tipo nodo final: `{ss.result.get('end_node_type','')}`"
+                )
+
+            with st.expander("Ruta seguida (JSON)"):
+                st.json(ss.route)
+
+            if "last_result_row" in ss:
+                with st.expander("Último registro enviado a GitHub"):
+                    st.json(ss.last_result_row)
 
         st.divider()
+        # 👉 Un solo clic para nuevo test: llamamos directo a start_new_test
         if st.button("🔁 Empezar otro test"):
-            reset_session()
+            start_new_test()
 
         return
 
@@ -813,11 +840,11 @@ def main():
             play_node_audio(current_node)
             ss.last_played_node_id = current_node["NODE_ID"]
 
-    # Texto del mensaje del nodo
+    # Texto del mensaje del nodo (esto sí lo ve el tester)
     prompt_text = current_node.get("PROMPT_TEXT", "")
     st.write(f"🗣️ {prompt_text}")
 
-    # Mensajes de estado
+    # Mensajes de estado (errores / opción no válida / repetir / root)
     if ss.last_message:
         if ss.last_action in ("invalid",):
             st.warning(ss.last_message)
