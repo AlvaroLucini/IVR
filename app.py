@@ -291,6 +291,7 @@ def play_node_audio(node: dict) -> bool:
 def load_nodes():
     """
     Carga ivr_nodes.csv y construye el diccionario NODES.
+    NODE_TYPE puede ser: MENU / QUEUE / SMS / TRANSFER / ACCOUNT
     """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
@@ -306,7 +307,7 @@ def load_nodes():
             continue
 
         node_label = str(row.get("NODE_LABEL", "") or "")
-        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE / SMS / TRANSFER
+        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE / SMS / TRANSFER / ACCOUNT
         is_entry_flag = str(row.get("IS_ENTRY", "") or "").strip().upper() == "YES"
         prompt_text = str(row.get("PROMPT_TEXT", "") or "")
         audio_url = str(row.get("AUDIO_URL", "") or "")
@@ -361,6 +362,18 @@ def load_scenarios():
     return scenarios
 
 
+NODES = load_nodes()
+SCENARIOS = load_scenarios()
+
+# Nodo raíz para '#'
+if "ROOT" in NODES:
+    ROOT_NODE_ID = "ROOT"
+else:
+    ROOT_NODE_ID = next(
+        (nid for nid, n) in NODES.items() if n.get("IS_ENTRY")
+    )
+
+
 # =========================
 # SESIÓN
 # =========================
@@ -380,6 +393,7 @@ def init_session():
         ss.last_played_node_id = None
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
         ss.end_audio_played = False   # audio del nodo final reproducido
+        ss.account_buffer = ""        # buffer para nodos ACCOUNT
 
 
 def reset_session():
@@ -416,7 +430,140 @@ def start_new_test():
     ss.last_played_node_id = None
     ss.did_initial_ring = False
     ss.end_audio_played = False
+    ss.account_buffer = ""
 
+
+# =========================
+# LÓGICA ESPECIAL ACCOUNT
+# =========================
+
+def handle_account_key(key: str, current_node: dict):
+    """
+    Lógica especial para nodos de tipo ACCOUNT:
+    - 0-9: se acumulan en un buffer de cuenta.
+    - *  : confirma la cuenta y pasa a OPT_0_NEXT_NODE (o ROOT si no está).
+    - #  : vuelve a ROOT.
+    """
+    ss = st.session_state
+    now = datetime.now(timezone.utc).isoformat()
+    node_id = current_node["NODE_ID"]
+
+    if "account_buffer" not in ss:
+        ss.account_buffer = ""
+
+    # '#' => volver a ROOT
+    if key == "#":
+        ss.route.append({
+            "step": len(ss.route) + 1,
+            "node_id": node_id,
+            "digit": "#",
+            "timestamp": now,
+            "event": "ACCOUNT_BACK_TO_ROOT",
+            "account_buffer": ss.account_buffer,
+        })
+        ss.current_node_id = ROOT_NODE_ID
+        ss.account_buffer = ""
+        ss.last_action = "goto_root"
+        ss.last_message = ""
+        ss.last_played_node_id = None
+        return
+
+    # Dígitos => acumular
+    if key in "0123456789":
+        ss.account_buffer += key
+        ss.route.append({
+            "step": len(ss.route) + 1,
+            "node_id": node_id,
+            "digit": key,
+            "timestamp": now,
+            "event": "ACCOUNT_DIGIT",
+            "account_buffer": ss.account_buffer,
+        })
+        ss.last_action = "account_digit"
+        ss.last_message = ""
+        # Nos quedamos en el mismo nodo
+        return
+
+    # '*' => confirmar número y pasar a OPT_0_NEXT_NODE (o ROOT)
+    if key == "*":
+        dest_id = current_node["NEXT"].get("0") or ROOT_NODE_ID
+
+        ss.route.append({
+            "step": len(ss.route) + 1,
+            "node_id": node_id,
+            "digit": "*",
+            "timestamp": now,
+            "event": "ACCOUNT_OK",
+            "account_buffer": ss.account_buffer,
+        })
+
+        ss.account_buffer = ""
+        ss.current_node_id = dest_id
+        ss.last_action = None
+        ss.last_message = ""
+        ss.last_played_node_id = None
+
+        new_node = NODES.get(dest_id)
+        if not new_node:
+            ss.last_action = "error"
+            ss.last_message = f"Nodo destino '{dest_id}' no definido en ivr_nodes.csv."
+            return
+
+        node_type2 = str(new_node.get("NODE_TYPE", "")).strip().upper()
+        if node_type2 in ("QUEUE", "SMS", "TRANSFER"):
+            finish_test(new_node)
+        return
+
+    # Cualquier otra cosa -> no válida
+    ss.last_action = "invalid"
+    ss.last_message = "Opción no válida en este menú."
+    return
+
+
+def handle_account_timeout():
+    """Simula que el cliente no pulsa nada en un nodo ACCOUNT (timeout)."""
+    ss = st.session_state
+    current_node = NODES.get(ss.current_node_id)
+    if not current_node:
+        return
+
+    node_type = str(current_node.get("NODE_TYPE", "")).strip().upper()
+    if node_type != "ACCOUNT":
+        return
+
+    now = datetime.now(timezone.utc).isoformat()
+    node_id = current_node["NODE_ID"]
+    dest_id = current_node["NEXT"].get("0") or ROOT_NODE_ID
+
+    ss.route.append({
+        "step": len(ss.route) + 1,
+        "node_id": node_id,
+        "digit": "TIMEOUT",
+        "timestamp": now,
+        "event": "ACCOUNT_TIMEOUT",
+        "account_buffer": ss.get("account_buffer", ""),
+    })
+
+    ss.account_buffer = ""
+    ss.current_node_id = dest_id
+    ss.last_action = None
+    ss.last_message = ""
+    ss.last_played_node_id = None
+
+    new_node = NODES.get(dest_id)
+    if not new_node:
+        ss.last_action = "error"
+        ss.last_message = f"Nodo destino '{dest_id}' no definido en ivr_nodes.csv."
+        return
+
+    node_type2 = str(new_node.get("NODE_TYPE", "")).strip().upper()
+    if node_type2 in ("QUEUE", "SMS", "TRANSFER"):
+        finish_test(new_node)
+
+
+# =========================
+# MANEJO DE TECLAS GENERAL
+# =========================
 
 def handle_key(key: str):
     ss = st.session_state
@@ -428,6 +575,13 @@ def handle_key(key: str):
     if not current_node:
         ss.last_action = "error"
         ss.last_message = "Nodo actual no encontrado en la configuración."
+        return
+
+    node_type_current = str(current_node.get("NODE_TYPE", "")).strip().upper()
+
+    # Nodos ACCOUNT tienen lógica especial
+    if node_type_current == "ACCOUNT":
+        handle_account_key(key, current_node)
         return
 
     # '*': repetir mensaje del nodo actual (solo prompt, sin tono)
@@ -502,6 +656,10 @@ def handle_key(key: str):
         ss.last_action = "error"
         ss.last_message = f"Nodo destino '{next_id}' no definido en ivr_nodes.csv."
         return
+
+    # Si el nuevo nodo es ACCOUNT, vaciamos el buffer
+    if str(new_node.get("NODE_TYPE", "")).strip().upper() == "ACCOUNT":
+        ss.account_buffer = ""
 
     ss.last_action = None
     ss.last_message = ""
@@ -607,7 +765,6 @@ def finish_test(end_node: dict):
     if is_ok_queue or is_ok_type:
         result = "SUCCESS"
     else:
-        # Etiquetas algo más detalladas por si te interesan en el JSON
         if node_type == "QUEUE":
             result = "WRONG_QUEUE"
         else:
@@ -699,6 +856,19 @@ def render_keypad():
     if DEBUG_MODE:
         st.caption("⭐ '*' repite el mensaje del nodo actual · '#' vuelve al menú principal")
 
+    # Botón de timeout para nodos ACCOUNT
+    ss = st.session_state
+    current_node = NODES.get(ss.current_node_id) if "current_node_id" in ss else None
+    node_type = str(current_node.get("NODE_TYPE", "")).strip().upper() if current_node else ""
+
+    if node_type == "ACCOUNT":
+        st.button(
+            "⏱️ Simular que el cliente no pulsa nada",
+            use_container_width=True,
+            key="btn_timeout_account",
+            on_click=handle_account_timeout,
+        )
+
 
 def main():
     init_session()
@@ -753,50 +923,14 @@ def main():
             result_type = ss.result["result"]
 
             st.markdown("### 🔍 Detalles internos (solo debug)")
-
-            if result_type == "SUCCESS":
-                st.success(
-                    f"Resultado: SUCCESS\n\n"
-                    f"- Cola esperada: `{ss.result['expected_queue_id']}`\n"
-                    f"- Cola alcanzada: `{ss.result['reached_queue_id']}` "
-                    f"({ss.result.get('queue_name','')})"
-                )
-
-            elif result_type == "WRONG_QUEUE":
-                st.error(
-                    "Resultado: WRONG_QUEUE\n\n"
-                    f"- Esperada: `{ss.result['expected_queue_id']}`\n"
-                    f"- Alcanzada: `{ss.result['reached_queue_id']}` "
-                    f"({ss.result.get('queue_name','')})"
-                )
-
-            elif result_type == "SMS_SELF_SERVICE":
-                st.info(
-                    "Resultado: SMS_SELF_SERVICE\n\n"
-                    f"- Nodo final: `{ss.result.get('end_node_id', '')}` "
-                    f"({ss.result.get('end_node_type', '')})"
-                )
-
-            elif result_type == "SUCCESS_TRANSFER":
-                st.success(
-                    "Resultado: SUCCESS_TRANSFER\n\n"
-                    f"- Cola destino correcta: `{ss.result['reached_queue_id']}` "
-                    f"({ss.result.get('queue_name','')})"
-                )
-
-            elif result_type == "WRONG_QUEUE_TRANSFER":
-                st.error(
-                    "Resultado: WRONG_QUEUE_TRANSFER\n\n"
-                    f"- Esperada: `{ss.result['expected_queue_id']}`\n"
-                    f"- Cola destino: `{ss.result['reached_queue_id']}` "
-                    f"({ss.result.get('queue_name','')})"
-                )
-
-            else:
-                st.info(
-                    f"Resultado: {result_type}\n\n"
-                    f"Tipo nodo final: `{ss.result.get('end_node_type','')}`"
-                )
+            st.write(f"Resultado lógico: `{result_type}`")
+            st.write(
+                f"- Cola esperada principal: `{ss.result['expected_queue_id']}`\n"
+                f"- Cola alcanzada: `{ss.result['reached_queue_id']}` "
+                f"({ss.result.get('queue_name','')})\n"
+                f"- Nodo final: `{ss.result.get('end_node_id','')}` "
+                f"({ss.result.get('end_node_type','')})"
+            )
 
             with st.expander("Ruta seguida (JSON)"):
                 st.json(ss.route)
@@ -814,7 +948,6 @@ def main():
 
     # ===== AUDIO INICIAL / CAMBIOS DE NODO =====
     if not ss.did_initial_ring:
-        # El texto "Llamando..." solo en debug, el tester no ve nada
         if DEBUG_MODE:
             st.subheader("☎️ Llamando a la IVR...")
             st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú correspondiente.")
@@ -853,4 +986,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
