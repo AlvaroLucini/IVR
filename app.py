@@ -291,14 +291,6 @@ def play_node_audio(node: dict) -> bool:
 def load_nodes():
     """
     Carga ivr_nodes.csv y construye el diccionario NODES.
-
-    Usa directamente la columna NODE_ID como identificador:
-      - ROOT
-      - Global_Menu_B2B
-      - Menu_ES_SalesOpen
-      - ...
-      - Global_SMSSent (SMS)
-      - Global_TransferToCoWorkerDelivery (TRANSFER)
     """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
@@ -429,8 +421,8 @@ def start_new_test():
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None
-    ss.did_initial_ring = False   # aún no hemos hecho ring+prompt
-    ss.end_audio_played = False   # aún no hemos reproducido audio de nodo final
+    ss.did_initial_ring = False
+    ss.end_audio_played = False
 
 
 def handle_key(key: str):
@@ -611,26 +603,22 @@ def finish_test(end_node: dict):
     reached_queue_id = end_node.get("QUEUE_ID", "")
     queue_name = end_node.get("QUEUE_NAME", "")
 
-    # ----- Resultado lógico según tipo de nodo -----
+    # Resultado lógico según tipo de nodo
     if node_type == "QUEUE":
         if reached_queue_id == expected_queue_id:
             result = "SUCCESS"
         else:
             result = "WRONG_QUEUE"
-
     elif node_type == "SMS":
         result = "SMS_SELF_SERVICE"
-
     elif node_type == "TRANSFER":
         if reached_queue_id == expected_queue_id:
             result = "SUCCESS_TRANSFER"
         else:
             result = "WRONG_QUEUE_TRANSFER"
-
     else:
         result = f"END_{node_type or 'UNKNOWN'}"
 
-    # Marcar como terminado en sesión
     ss.finished = True
     ss.result = {
         "result": result,
@@ -642,7 +630,7 @@ def finish_test(end_node: dict):
     }
     ss.end_audio_played = False  # aún no hemos lanzado el audio del nodo final
 
-    # ===== Registro persistente del test =====
+    # Registro en GitHub
     try:
         start_ts_str = ss.start_ts
         start_dt = datetime.fromisoformat(start_ts_str)
@@ -713,7 +701,9 @@ def render_keypad():
         for i, key in enumerate(row):
             make_button(key, cols[i])
 
-    st.caption("⭐ '*' repite el mensaje del nodo actual · '#' vuelve al menú principal")
+    # Nota de ayuda solo en modo debug
+    if DEBUG_MODE:
+        st.caption("⭐ '*' repite el mensaje del nodo actual · '#' vuelve al menú principal")
 
 
 def main():
@@ -741,9 +731,11 @@ def main():
             reset_session()
         return
 
-    # Bloque: misión (esto sí lo ve el tester)
+    # Bloque: misión
     st.subheader("📝 Tu misión")
-    st.write(f"**{scenario['TITLE']}**")
+    # El título solo lo ve el modo debug, los testers solo ven el texto azul
+    if DEBUG_MODE:
+        st.write(f"**{scenario['TITLE']}**")
     st.info(scenario["MISSION_TEXT"])
 
     # Test terminado
@@ -759,10 +751,10 @@ def main():
                 play_node_audio(node_for_audio)
             ss.end_audio_played = True
 
-        # Vista TESTER: mensaje genérico, sin decir si ha sido éxito o fallo
+        # Vista TESTER: mensaje genérico
         st.success("La misión ha finalizado. Gracias por completar el test. 🙌")
 
-        # Vista DEBUG: todos los detalles (solo si activas el toggle en el sidebar)
+        # Vista DEBUG: detalles
         if DEBUG_MODE:
             result_type = ss.result["result"]
 
@@ -794,7 +786,7 @@ def main():
             elif result_type == "SUCCESS_TRANSFER":
                 st.success(
                     "Resultado: SUCCESS_TRANSFER\n\n"
-                    f"- Esperada / destino correcto: `{ss.result['reached_queue_id']}` "
+                    f"- Cola destino correcta: `{ss.result['reached_queue_id']}` "
                     f"({ss.result.get('queue_name','')})"
                 )
 
@@ -820,29 +812,33 @@ def main():
                     st.json(ss.last_result_row)
 
         st.divider()
-        # 👉 Un solo clic para nuevo test: llamamos directo a start_new_test
+        # Un solo clic para nuevo test
         if st.button("🔁 Empezar otro test"):
             start_new_test()
 
         return
 
-    # ===== LÓGICA DE AUDIO INICIAL (ring + nodo de entrada) =====
+    # ===== AUDIO INICIAL / CAMBIOS DE NODO =====
     if not ss.did_initial_ring:
-        st.subheader("☎️ Llamando a la IVR...")
-        st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú correspondiente.")
+        # El texto "Llamando..." solo en debug, el tester no ve nada
+        if DEBUG_MODE:
+            st.subheader("☎️ Llamando a la IVR...")
+            st.caption("Escuchas el tono de llamada y, a continuación, el mensaje del menú correspondiente.")
         play_ring_and_prompt(current_node)
         ss.did_initial_ring = True
         ss.last_played_node_id = current_node["NODE_ID"]
     else:
-        st.subheader("📟 Llamada IVR (simulada)")
+        if DEBUG_MODE:
+            st.subheader("📟 Llamada IVR (simulada)")
         # Reproducir prompt solo cuando cambiamos de nodo o repetimos
         if ss.last_played_node_id != current_node["NODE_ID"]:
             play_node_audio(current_node)
             ss.last_played_node_id = current_node["NODE_ID"]
 
-    # Texto del mensaje del nodo (esto sí lo ve el tester)
-    prompt_text = current_node.get("PROMPT_TEXT", "")
-    st.write(f"🗣️ {prompt_text}")
+    # Texto del mensaje del nodo SOLO en modo debug
+    if DEBUG_MODE:
+        prompt_text = current_node.get("PROMPT_TEXT", "")
+        st.write(f"🗣️ {prompt_text}")
 
     # Mensajes de estado (errores / opción no válida / repetir / root)
     if ss.last_message:
