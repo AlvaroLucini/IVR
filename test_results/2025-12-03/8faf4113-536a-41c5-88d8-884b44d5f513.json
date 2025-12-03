@@ -1,0 +1,16 @@
+{
+  "test_id": "8faf4113-536a-41c5-88d8-884b44d5f513",
+  "timestamp_utc": "2025-12-03T07:30:00.900285+00:00",
+  "scenario_id": "S002",
+  "scenario_title": "Postventa B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "Global_TransferToCoWorkerDelivery",
+  "end_node_type": "TRANSFER",
+  "result": "WRONG_QUEUE_TRANSFER",
+  "duration_seconds": 16.018,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:29:47.317297+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-03T07:29:51.156815+00:00\"}, {\"step\": 3, \"node_id\": \"Global_MenuStockMain\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:30:00.899630+00:00\"}]"
+}
