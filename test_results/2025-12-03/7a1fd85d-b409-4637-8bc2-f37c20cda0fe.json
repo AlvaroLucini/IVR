@@ -1,0 +1,16 @@
+{
+  "test_id": "7a1fd85d-b409-4637-8bc2-f37c20cda0fe",
+  "timestamp_utc": "2025-12-03T07:17:23.761550+00:00",
+  "scenario_id": "S004",
+  "scenario_title": "Compra productos hogar",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_name": "Sales Home",
+  "end_node_id": "ES_Voice_Sales_Sales",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 17.041,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:17:12.577195+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"4\", \"timestamp\": \"2025-12-03T07:17:14.191150+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:17:23.761024+00:00\"}]"
+}
