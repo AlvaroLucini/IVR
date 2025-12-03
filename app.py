@@ -809,12 +809,15 @@ def increment_scenario_executions(scenario_id: str):
     """
     Suma 1 a EXECUTIONS del escenario dado en scenarios.csv.
     Si no existe la columna, la crea con 0 y luego suma.
+    Además, intenta subir el fichero actualizado a GitHub
+    en config/scenarios.csv para que quede persistido.
     """
     global SCENARIOS  # para refrescar el cache en memoria
 
     if DEBUG_MODE:
         st.sidebar.write(f"DEBUG EXEC: entrando en increment_scenario_executions('{scenario_id}')")
 
+    # 1) Leer CSV local dentro del contenedor
     try:
         df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
     except Exception as e:
@@ -839,7 +842,10 @@ def increment_scenario_executions(scenario_id: str):
 
     if DEBUG_MODE:
         st.sidebar.write(f"DEBUG EXEC: SCENARIO_ID buscado = '{sid}'")
-        st.sidebar.write(f"DEBUG EXEC: SCENARIO_ID distintos en CSV: {sorted(df['SCENARIO_ID_STRIP'].unique().tolist())}")
+        st.sidebar.write(
+            "DEBUG EXEC: SCENARIO_ID distintos en CSV: "
+            f"{sorted(df['SCENARIO_ID_STRIP'].unique().tolist())}"
+        )
 
     mask = df["SCENARIO_ID_STRIP"] == sid
 
@@ -867,21 +873,91 @@ def increment_scenario_executions(scenario_id: str):
     # Limpiamos la columna auxiliar
     df = df.drop(columns=["SCENARIO_ID_STRIP"])
 
+    # 2) Guardar el CSV en el sistema de ficheros del contenedor
     try:
         df.to_csv(CSV_SCENARIOS, index=False)
         if DEBUG_MODE:
-            st.sidebar.success("DEBUG EXEC: scenarios.csv actualizado correctamente.")
+            st.sidebar.success("DEBUG EXEC: scenarios.csv actualizado localmente.")
     except Exception as e:
         if DEBUG_MODE:
             st.sidebar.error(f"DEBUG EXEC: no se pudo guardar scenarios.csv con EXECUTIONS: {e}")
         return
 
-    # Refrescamos SCENARIOS en memoria
+    # 3) Intentar subir el scenarios.csv actualizado a GitHub
+    try:
+        gh_conf = st.secrets["github"]
+        token = gh_conf["token"]
+        repo = gh_conf["repo"]
+        branch = gh_conf.get("branch", "main")
+
+        # Ruta del fichero dentro del repo (ajusta si tu app está en subcarpeta)
+        rel_path = "config/scenarios.csv"
+        api_base = f"https://api.github.com/repos/{repo}/contents"
+        get_url = f"{api_base}/{rel_path}"
+
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+        }
+
+        # Primero GET para obtener el sha actual (requisito para actualizar)
+        resp_get = requests.get(get_url, headers=headers, timeout=15)
+        sha = None
+        if resp_get.status_code == 200:
+            data_get = resp_get.json()
+            sha = data_get.get("sha")
+            if DEBUG_MODE:
+                st.sidebar.write(f"DEBUG EXEC: SHA actual de scenarios.csv en GitHub = {sha}")
+        else:
+            if DEBUG_MODE:
+                st.sidebar.warning(
+                    f"DEBUG EXEC: no se pudo obtener SHA de {rel_path} en GitHub "
+                    f"(status {resp_get.status_code}). Se intentará crear el fichero."
+                )
+
+        # Leemos el fichero local actualizado
+        content_bytes = Path(CSV_SCENARIOS).read_bytes()
+        content_b64 = base64.b64encode(content_bytes).decode("utf-8")
+
+        payload = {
+            "message": f"Update scenarios EXECUTIONS for {sid}",
+            "content": content_b64,
+            "branch": branch,
+        }
+        if sha:
+            payload["sha"] = sha  # necesario para actualizar
+
+        put_url = get_url  # misma URL para PUT
+        resp_put = requests.put(put_url, headers=headers, json=payload, timeout=20)
+
+        if DEBUG_MODE:
+            st.sidebar.write(
+                f"DEBUG EXEC: resultado PUT scenarios.csv GitHub: "
+                f"{resp_put.status_code} - {resp_put.text[:200]}"
+            )
+
+        if resp_put.status_code not in (200, 201):
+            # No rompemos nada, solo avisamos en debug
+            if DEBUG_MODE:
+                st.sidebar.error(
+                    "DEBUG EXEC: fallo al subir scenarios.csv actualizado a GitHub. "
+                    "El reparto interno de escenarios sigue funcionando."
+                )
+        else:
+            if DEBUG_MODE:
+                st.sidebar.success("DEBUG EXEC: scenarios.csv actualizado en GitHub correctamente.")
+
+    except Exception as e:
+        if DEBUG_MODE:
+            st.sidebar.error(f"DEBUG EXEC: excepción al subir scenarios.csv a GitHub: {e}")
+
+    # 4) Refrescamos SCENARIOS en memoria
     try:
         SCENARIOS = load_scenarios()
     except Exception as e:
         if DEBUG_MODE:
             st.sidebar.error(f"DEBUG EXEC: error recargando SCENARIOS: {e}")
+
 
 
     # Refrescamos SCENARIOS en memoria para que la app use valores actualizados
@@ -1157,6 +1233,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
