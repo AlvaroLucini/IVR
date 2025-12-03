@@ -289,6 +289,8 @@ def load_nodes():
       - Global_Menu_B2B
       - Menu_ES_SalesOpen
       - ...
+      - Global_SMSSent (SMS)
+      - Global_TransferToCoWorkerDelivery (TRANSFER)
     """
     if not CSV_NODES.exists():
         st.error(f"No se encuentra el archivo de nodos: {CSV_NODES}")
@@ -304,7 +306,7 @@ def load_nodes():
             continue
 
         node_label = str(row.get("NODE_LABEL", "") or "")
-        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE / SMS
+        node_type = str(row.get("NODE_TYPE", "") or "")  # MENU / QUEUE / SMS / TRANSFER
         is_entry_flag = str(row.get("IS_ENTRY", "") or "").strip().upper() == "YES"
         prompt_text = str(row.get("PROMPT_TEXT", "") or "")
         audio_url = str(row.get("AUDIO_URL", "") or "")
@@ -475,7 +477,7 @@ def handle_key(key: str):
         ss.last_message = "Tecla no reconocida."
         return
 
-    # Tus opciones están “corridas”: la opción del 1 está en OPT_0, la del 2 en OPT_1, etc.
+    # Opciones “corridas”: la opción del 1 está en OPT_0, la del 2 en OPT_1, etc.
     d = int(key)
     if d == 0:
         lookup_digit = "0"
@@ -510,9 +512,9 @@ def handle_key(key: str):
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
 
-    # Si llegamos a una cola o a un nodo SMS, cerramos el test
+    # Si llegamos a una cola, a un nodo SMS o a un nodo TRANSFER, cerramos el test
     node_type = str(new_node["NODE_TYPE"]).strip().upper()
-    if node_type in ("QUEUE", "SMS"):
+    if node_type in ("QUEUE", "SMS", "TRANSFER"):
         finish_test(new_node)
 
 
@@ -580,7 +582,8 @@ def send_result_to_github(row: dict):
 
 def finish_test(end_node: dict):
     """
-    Cierra el test cuando se llega a una cola (QUEUE) o a un nodo SMS.
+    Cierra el test cuando se llega a una cola (QUEUE),
+    a un nodo SMS o a un nodo TRANSFER.
     """
     ss = st.session_state
     scenario = ss.scenario
@@ -601,6 +604,13 @@ def finish_test(end_node: dict):
     elif node_type == "SMS":
         # Nodo final de SMS de autoservicio
         result = "SMS_SELF_SERVICE"
+
+    elif node_type == "TRANSFER":
+        # Nodo de transferencia: comprobamos igualmente la cola objetivo
+        if reached_queue_id == expected_queue_id:
+            result = "SUCCESS_TRANSFER"
+        else:
+            result = "WRONG_QUEUE_TRANSFER"
 
     else:
         result = f"END_{node_type or 'UNKNOWN'}"
@@ -746,9 +756,26 @@ def main():
                 f"({ss.result.get('end_node_type', '')})"
             )
 
+        elif result_type == "SUCCESS_TRANSFER":
+            st.success(
+                "La llamada ha finalizado en un nodo de transferencia y te han "
+                f"pasado a la cola correcta: `{ss.result['reached_queue_id']}` "
+                f"({ss.result.get('queue_name','')})."
+            )
+
+        elif result_type == "WRONG_QUEUE_TRANSFER":
+            st.error(
+                "La llamada ha finalizado en un nodo de transferencia, pero la cola "
+                "de destino no coincide con la esperada.\n\n"
+                f"- Esperada: `{ss.result['expected_queue_id']}`\n"
+                f"- Cola destino: `{ss.result['reached_queue_id']}` "
+                f"({ss.result.get('queue_name','')})"
+            )
+
         else:
             st.info(
-                f"La llamada ha finalizado en un nodo de tipo `{ss.result.get('end_node_type','')}`."
+                f"La llamada ha finalizado en un nodo de tipo "
+                f"`{ss.result.get('end_node_type','')}`."
             )
 
         with st.expander("Ver ruta seguida (para análisis interno)"):
