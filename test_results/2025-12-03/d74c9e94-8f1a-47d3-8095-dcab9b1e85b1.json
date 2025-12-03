@@ -1,0 +1,16 @@
+{
+  "test_id": "d74c9e94-8f1a-47d3-8095-dcab9b1e85b1",
+  "timestamp_utc": "2025-12-03T13:30:28.359481+00:00",
+  "scenario_id": "S017",
+  "scenario_title": "Producto dañado en pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Sales_Kitchen",
+  "reached_queue_name": "Sales Kitchen",
+  "end_node_id": "ES_Voice_Sales_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 9.499,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T13:30:21.927405+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T13:30:25.247723+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-03T13:30:28.336890+00:00\"}]"
+}
