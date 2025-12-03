@@ -282,6 +282,23 @@ def play_node_audio(node: dict) -> bool:
         """
         components.html(html, height=0, width=0)
         return True
+        
+def pick_next_scenario_least_executed() -> dict | None:
+    """
+    Elige el siguiente escenario entre los que tienen menos EXECUTIONS.
+    Si hay varios empatados al mínimo, elige uno al azar.
+    Devuelve un dict (fila del CSV) o None si no hay escenarios.
+    """
+    df = load_scenarios_df_for_selection()
+    if df is None or df.empty:
+        return None
+
+    min_exec = df["EXECUTIONS_INT"].min()
+    candidatos = df[df["EXECUTIONS_INT"] == min_exec]
+
+    # Elegimos uno aleatorio entre los de menor EXECUTIONS
+    fila = candidatos.sample(1).iloc[0]
+    return fila.to_dict()
 
 
 # =========================
@@ -374,6 +391,35 @@ else:
         None,
     )
 
+def load_scenarios_df_for_selection() -> pd.DataFrame:
+    """
+    Carga scenarios.csv en un DataFrame, asegurando:
+      - Solo escenarios ACTIVE=TRUE
+      - Columna EXECUTIONS existente e interpretada como int
+    """
+    if not CSV_SCENARIOS.exists():
+        st.error(f"No se encuentra el archivo de escenarios: {CSV_SCENARIOS}")
+        return pd.DataFrame()
+
+    df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
+
+    # Filtramos activos
+    df = df[df.get("ACTIVE", "").str.upper() == "TRUE"].copy()
+    if df.empty:
+        return df
+
+    # Aseguramos columna EXECUTIONS
+    if "EXECUTIONS" not in df.columns:
+        df["EXECUTIONS"] = "0"
+
+    # Columna numérica para poder ordenar
+    df["EXECUTIONS_INT"] = (
+        pd.to_numeric(df["EXECUTIONS"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+    )
+
+    return df
 
 
 # =========================
@@ -404,12 +450,12 @@ def reset_session():
 
 
 def start_new_test():
-    """Elige un escenario y arranca directamente en IVR."""
-    if not SCENARIOS:
+    """Elige un escenario (el de menos EXECUTIONS) y arranca directamente en IVR."""
+    scenario = pick_next_scenario_least_executed()
+    if scenario is None:
         st.error("No hay escenarios activos en config/scenarios.csv")
         return
 
-    scenario = random.choice(SCENARIOS)
     entry_node_id = str(scenario["ENTRY_NODE_ID"]).strip()
 
     if entry_node_id not in NODES:
@@ -433,6 +479,7 @@ def start_new_test():
     ss.did_initial_ring = False
     ss.end_audio_played = False
     ss.account_buffer = ""
+
 
 
 # =========================
@@ -741,6 +788,55 @@ def send_result_to_github(row: dict):
         if DEBUG_MODE:
             st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
 
+def increment_scenario_executions(scenario_id: str):
+    """
+    Suma 1 a EXECUTIONS del escenario dado en scenarios.csv.
+    Si no existe la columna, la crea con 0 y luego suma.
+    """
+    global SCENARIOS
+
+    try:
+        df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
+    except Exception as e:
+        if DEBUG_MODE:
+            st.sidebar.error(f"No se pudo leer scenarios.csv para EXECUTIONS: {e}")
+        return
+
+    if "SCENARIO_ID" not in df.columns:
+        if DEBUG_MODE:
+            st.sidebar.error("scenarios.csv no tiene columna SCENARIO_ID.")
+        return
+
+    if "EXECUTIONS" not in df.columns:
+        df["EXECUTIONS"] = "0"
+
+    mask = df["SCENARIO_ID"] == scenario_id
+    if not mask.any():
+        if DEBUG_MODE:
+            st.sidebar.warning(f"SCENARIO_ID '{scenario_id}' no encontrado en scenarios.csv.")
+        return
+
+    # Convertimos a int, sumamos 1 y volvemos a string
+    execs = (
+        pd.to_numeric(df.loc[mask, "EXECUTIONS"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+    )
+    df.loc[mask, "EXECUTIONS"] = (execs + 1).astype(str)
+
+    try:
+        df.to_csv(CSV_SCENARIOS, index=False)
+    except Exception as e:
+        if DEBUG_MODE:
+            st.sidebar.error(f"No se pudo guardar scenarios.csv con EXECUTIONS: {e}")
+        return
+
+    # Refrescamos SCENARIOS en memoria para que modo debug vea los nuevos valores
+    try:
+        SCENARIOS = load_scenarios()
+    except Exception:
+        pass
+
 
 def finish_test(end_node: dict):
     ss = st.session_state
@@ -815,6 +911,11 @@ def finish_test(end_node: dict):
 
         send_result_to_github(row)
         ss.last_result_row = row
+
+        # ✅ Sumamos 1 ejecución al escenario
+        scenario_id = scenario.get("SCENARIO_ID")
+        if scenario_id:
+            increment_scenario_executions(scenario_id)
 
     except Exception as e:
         if DEBUG_MODE:
@@ -999,6 +1100,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
