@@ -881,12 +881,14 @@ def main():
     # Estado inicial
     if not ss.test_active:
         st.write(
-            "Pulsa el botón para recibir una misión aleatoria y probar la IVR como si fueras un cliente."
+             "Pulsa el botón para recibir una misión aleatoria y probar la IVR como si fueras un cliente."
         )
 
         if st.button("🎬 Empezar nuevo test"):
             start_new_test()
+            st.experimental_rerun()   # <-- fuerza que se pinte el nuevo test en el mismo clic
         return
+
 
     scenario = ss.scenario
     current_node = NODES.get(ss.current_node_id)
@@ -942,9 +944,12 @@ def main():
                     st.json(ss.last_result_row)
 
         st.divider()
-        # Un solo clic para nuevo test
         if st.button("🔁 Empezar otro test"):
             start_new_test()
+            st.experimental_rerun()   # <-- igual que arriba
+
+        return
+
 
         return
 
@@ -988,4 +993,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
