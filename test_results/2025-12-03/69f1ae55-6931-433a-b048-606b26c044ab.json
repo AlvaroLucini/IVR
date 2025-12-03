@@ -1,0 +1,16 @@
+{
+  "test_id": "69f1ae55-6931-433a-b048-606b26c044ab",
+  "timestamp_utc": "2025-12-03T07:30:18.884500+00:00",
+  "scenario_id": "S009",
+  "scenario_title": "Postventa otras consultas",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "Global_TransferToCoWorkerResGen",
+  "end_node_type": "TRANSFER",
+  "result": "SUCCESS_TRANSFER",
+  "duration_seconds": 9.863,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:30:14.947930+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"3\", \"timestamp\": \"2025-12-03T07:30:16.656203+00:00\"}, {\"step\": 3, \"node_id\": \"Global_SparePartsMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-03T07:30:18.884010+00:00\"}]"
+}
