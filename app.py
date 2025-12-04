@@ -31,8 +31,8 @@ DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
 # =========================
 # Si lo pones a True, la app solo mostrará el mensaje de mantenimiento.
 # O, si prefieres, puedes controlarlo también por secrets:
-  MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", False))
-# MAINTENANCE_MODE = TRUE
+#  MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", False))
+ MAINTENANCE_MODE = TRUE
 
 MAINTENANCE_MESSAGE = (
     "Estamos actualizando la IVR para testar una nueva estructura. "
@@ -1295,8 +1295,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 
 
