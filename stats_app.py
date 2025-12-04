@@ -29,6 +29,23 @@ st.caption(
 )
 
 # =========================
+# HELPERS
+# =========================
+
+def format_seconds_hhmmss(seconds: float | int | None) -> str:
+    """Convierte segundos (float) a HH:MM:SS."""
+    if seconds is None:
+        return "N/A"
+    try:
+        total = int(round(float(seconds)))
+    except (TypeError, ValueError):
+        return "N/A"
+    h = total // 3600
+    m = (total % 3600) // 60
+    s = total % 60
+    return f"{h:02d}:{m:02d}:{s:02d}"
+
+# =========================
 # LOOKUP DE ESCENARIOS
 # =========================
 
@@ -184,6 +201,21 @@ with c2:
 with c3:
     st.metric("🔴 Tests con fallo", tests_fail)
 
+# --- Duración media ---
+dur_series = df["duration_seconds"]
+if dur_series.notna().any():
+    avg_seconds = float(dur_series.dropna().mean())
+else:
+    avg_seconds = None
+
+avg_str = format_seconds_hhmmss(avg_seconds)
+
+st.markdown("### Métricas de duración")
+
+c_dur, _, _ = st.columns(3)
+with c_dur:
+    st.metric("⏱ Duración media de los tests (HH:MM:SS)", avg_str)
+
 st.markdown("---")
 
 # --- KPIs de ESCENARIOS ---
@@ -260,6 +292,14 @@ tabla = agg.pivot_table(
     fill_value=0,
 ).reset_index()
 
+# Añadimos % de éxito por escenario
+if "Éxito" in tabla.columns and "Fallo" in tabla.columns:
+    total_por_escenario = tabla["Éxito"] + tabla["Fallo"]
+    # evitar división por 0
+    tasa_exito = (tabla["Éxito"] / total_por_escenario.replace({0: pd.NA})).fillna(0) * 100
+    tabla["pct_exito"] = tasa_exito.round(1)
+    tabla.rename(columns={"pct_exito": "% éxito"}, inplace=True)
+
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
         scenarios_lookup,
@@ -270,7 +310,17 @@ if not scenarios_lookup.empty:
         c for c in tabla.columns
         if c not in ("scenario_id", "scenario_title", "mission_text")
     ]
-    nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + metric_cols
+    # Dejamos el orden: ID, título, misión, Fallo, Éxito, % éxito
+    orden_metricas = []
+    for col in ["Fallo", "Éxito", "% éxito"]:
+        if col in metric_cols:
+            orden_metricas.append(col)
+    # añadimos cualquier otra métrica que pudiera aparecer
+    for col in metric_cols:
+        if col not in orden_metricas:
+            orden_metricas.append(col)
+
+    nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + orden_metricas
     tabla = tabla[nueva_orden]
 
 st.dataframe(tabla, width="stretch")
