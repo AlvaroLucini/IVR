@@ -1,0 +1,16 @@
+{
+  "test_id": "081c0ec5-3aa8-407a-944d-b4f23d3a99cc",
+  "timestamp_utc": "2025-12-04T07:14:18.410048+00:00",
+  "scenario_id": "S028",
+  "scenario_title": "Consulta horario tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 53.587,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T07:13:48.131126+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T07:13:56.392507+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T07:14:17.536323+00:00\"}]"
+}
