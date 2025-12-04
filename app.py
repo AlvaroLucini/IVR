@@ -54,7 +54,7 @@ RING_PATHS = [
 ]
 
 # Imagen de mantenimiento (ajusta nombre/ruta si quieres)
-MAINTENANCE_IMAGE_PATH = BASE_DIR / "static" / "maintenance.png"
+MAINTENANCE_IMAGE_PATH = BASE_DIR / "maintenance.png"
 
 
 # =========================
@@ -1322,4 +1322,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
