@@ -123,10 +123,9 @@ with st.sidebar:
         df = df[df["scenario_id"].isin(seleccion)]
 
     st.write("---")
-# 👇 dentro del with st.sidebar:
+    # Botón para recargar la app completa
     if st.button("🔄 Recargar resultados"):
         st.rerun()
-
 
 # =========================
 # SI NO HAY DATOS
@@ -173,13 +172,24 @@ agg = (
 
 st.subheader("Resultados por escenario")
 
+# máximo para el eje Y (entero)
+max_count = int(agg["count"].max())
+
 chart = (
     alt.Chart(agg)
     .mark_bar()
     .encode(
         x=alt.X("scenario_id:N", title="Escenario"),
         xOffset="resultado_label:N",            # barras lado a lado
-        y=alt.Y("count:Q", title="Número de tests"),
+        y=alt.Y(
+            "count:Q",
+            title="Número de tests",
+            scale=alt.Scale(domain=(0, max_count + 0.5)),
+            axis=alt.Axis(
+                values=list(range(0, max_count + 1)),  # 0,1,2,3...
+                format="d",                             # formato entero
+            ),
+        ),
         color=alt.Color(
             "resultado_label:N",
             scale=alt.Scale(
