@@ -235,6 +235,7 @@ def play_node_audio(node: dict) -> bool:
     """
     Reproduce solo el audio del nodo (sin tono) vía JS autoplay,
     sin reproductor visible.
+    Se puede llamar tantas veces como se quiera (por ejemplo, con '*').
     """
     src, mime = get_node_audio_source(node)
     if src is None:
@@ -299,6 +300,7 @@ def play_node_audio(node: dict) -> bool:
         """
         components.html(html, height=0, width=0)
         return True
+
 
 
 
@@ -1252,4 +1254,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
