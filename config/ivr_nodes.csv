@@ -1,50 +1,27 @@
 NODE_ID,NODE_LABEL,NODE_TYPE,IS_ENTRY,PROMPT_TEXT,AUDIO_URL,QUEUE_ID,QUEUE_NAME,OPT_0_NEXT_NODE,OPT_1_NEXT_NODE,OPT_2_NEXT_NODE,OPT_3_NEXT_NODE,OPT_4_NEXT_NODE,OPT_5_NEXT_NODE,OPT_6_NEXT_NODE,OPT_7_NEXT_NODE,OPT_8_NEXT_NODE,OPT_9_NEXT_NODE
-
 ROOT,"Menú principal",MENU,YES,"Bienvenido a IKEA. A continuación te presentamos las tres opciones disponibles. Si eres empresa, autonomo o profesional, pulsa 1. Si quieres ayuda despues de la compra, pulsa 2. Si quieres realizar una compra o información para comprar, pulsa 3. Puedes volver a este menu en cualquier momento pulsando la almohadilla.","","",,Global_EnterAccountNumber,Menu_ES_ResolutionOpen,Menu_ES_SalesOptions,,,,,,,
-
 Global_EnterAccountNumber,"Filtrado clientes B2B",ACCOUNT,NO,"Esta línea es exclusiva para empresas y autónomos. Introduce tu CIF o NIF y pulsa asterisco para continuar. Si eres un particular, pulsa solamente almohadilla para ir al menú principal.","","",,Global_Menu_B2B,,,,,,,,,
-
-
-
 Global_Menu_B2B,"Menú B2B",MENU,NO,"Bienvenido al servicio de IKEA para Empresas. Si  quieres comprar con un agente pulsa 1. Si has realizado una compra y necesitas ayuda, o conocer nuestra politica de devoluciones, pulsa 2. Para volver a escuchar este menú, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.","","",,ES_Voice_Sales_Business,ES_Voice_Res_Business,,,,,,,,
 ES_Voice_Sales_Business,"Cola pedidos Venta B2B",QUEUE,NO,"Te vamos a pasar con un agente especializado venta business.","",ES_Voice_Sales_Business,"Ventas B2B",,,,,,,,,,
 ES_Voice_Res_Business,"Cola pedidos Resolution B2B",QUEUE,NO,"Te vamos a pasar con un agente especializado postventa business.","",ES_Voice_Res_Business,"Resolution B2B",,,,,,,,,,
-
-
 Menu_ES_SalesOpen,"Autoservicio Sales",MENU,NO,"Para reservar tu mismo una cita de planificación, pulsa 1. Si quieres comprar con un experto en linea, pulsa 2.Para volver al menú principal, pulsa almohadilla.","","",,Global_MenuPlanAppMobileOpen,Menu_ES_SalesOptions,,,,,,,
 Global_MenuStockMain,"Autoservicio Stock",MENU,NO,"Ayúdanos a entender tus necesidades seleccionando una de las siguientes opciones. Si deseas saber si hay existencias de un artículo concreto en alguna de nuestras tiendas, pulsa 1.Si ya has consultado en línea, pero no hay existencias y deseas saber cuándo estará disponible la próxima vez, Pulsa 2. O si sabes que el producto que quieres no está disponible y buscas una alternativa, pulsa 3.","","",,Global_SMSSent,Global_TransferToCoWorkerDelivery,,,,,,,,
 Global_MenuNoStock,"Autoservicio Stock SMS",MENU,NO,"Para recibir información cuando volvamos a tener stock en nuestra web, a través de un SMS, pulsa 1. De lo contrario, para hablar con uno de nuestros colaboradores, pulsa 2. ","","",,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_MenuPlanAppMobileOpen,"Autoservicio Planificación",MENU,NO,"El lugar más fácil para solicitar una cita de planificación es la página web de IKEA. Para recibir un enlace a esa página en nuestra web, mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.","","",,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_SparePartsMobileOpen,"Autoservicio Piezas y Repuestos",MENU,NO,"El mejor lugar para informarse sobre las piezas de repuesto es la web de IKEA.Para recibir un enlace a esa página de nuestra web mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.","","",,Global_SMSSent,Global_TransferToCoWorkerResGen,,,,,,,,
-
-
 Menu_ES_SalesOptions,"Contacto Agente Sales",MENU,NO,"Para comprar mobiliario de cocina, baño o electrodomesticos, pulsa 1. Para comprar productos de salón, dormitorio u otros, pulsa 2. Para información de productos o servicios, pulsa 3. Para repetir este menú, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.","","",,ES_Voice_Sales_Kitchen,ES_Voice_Sales_Sales,ES_Voice_Sales_General,,,,,,,
 ES_Voice_Sales_Kitchen,"Cola pedidos Sales Kitchen",QUEUE,NO,"Te vamos a pasar con un agente especializado ventas cocinas.","",ES_Voice_Sales_Kitchen,"Sales Kitchen",,,,,,,,,,
 ES_Voice_Sales_Sales,"Cola pedidos Sales Home",QUEUE,NO,"Te vamos a pasar con un agente especializado ventas hogar.","",ES_Voice_Sales_Sales,"Sales Home",,,,,,,,,,
 ES_Voice_Sales_General,"Cola pedidos Sales General",QUEUE,NO,"Te vamos a pasar con un agente especializado teleperformance.","",ES_Voice_Sales_General,"Sales General",,,,,,,,,,
-
-
-
-
 Menu_ES_ResolutionOpen,"Autoservicio Resolution",MENU,NO,"Para realizar tu mismo el seguimiento y otras gestiones de tu pedido, pulsa 1. Para hablar con un agente, pulsa 2. Para volver a escuchar este menú, pulsa asterisco. Para volver al menú principal, pulsa almohadilla","","",,Global_MenuOrderManMobileOpen,Menu_ES_ResolutionOptions,,,,,,,
 Global_MenuOrderManMobileOpen,"Autoservicio Order Management",MENU,NO,"Para obtener actualizaciones y realizar cambios en un pedido, incluida la información de entrega, utiliza la web de IKEA. Para recibir un enlace a esa página de nuestra web, mediante un SMS, pulsa 1. De lo contrario, si ya has probado nuestras opciones de autoservicio, pulsa 2.","","",,Global_SMSSent,Global_TransferToCoWorkerDelivery,,,,,,,,
 Global_MenuReturnsMobileOpen,"Autoservicio Devoluciones",MENU,NO,"El mejor lugar para informarse sobre las devoluciones de productos es la web de IKEA. Para recibir un enlace a esa página de nuestra web, mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.","","",,Global_SMSSent,Global_TransferToCoWorkerDelivery,,,,,,,,
 Menu_ES_ResolutionOptions,"Contacto Agente Resolution",MENU,NO,"A continuación te ofreceremos tres opciones para poder ayudarte mejor: Para consultas relacionadas con: Tu cocina o la instalación de tu cocina, pulsa 1. Si necesitas apoyo con la entrega de tu pedido o con el servicio de montaje, pulsa 2. Para cualquier otra gestión relacionada con tu compra, pulsa 3. Para volver a escuchar este menú, pulsa estrella. Para volver al menú principal, pulsa almohadilla.","","",,ES_Voice_Res_Kitchen,ES_Voice_Res_Delivery,ES_Voice_Res_Montaje,ES_Voice_Res_General,,,,,,
-
-
-
 ES_Voice_Res_Kitchen,"Cola Resolution Kitchen",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Kitchen,"Resolution Kitchen",,,,,,,,,,
 ES_Voice_Res_Delivery,"Cola Resolution Delivery",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Delivery,"Resolution Delivery",,,,,,,,,,
 ES_Voice_Res_Montaje,"Cola Resolution Montaje",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Montaje,"Resolution Montaje",,,,,,,,,,
 ES_Voice_Res_General,"Cola Resolution General",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_General,"Resolution General",,,,,,,,,,
-
-
-
-
 Global_TransferToCoWorkerDelivery,"Transferencia a Delivery",TRANSFER,NO,"Voy a transferirte a uno de nuestros colaboradores para que te ayude.","",ES_Voice_Res_Delivery,"Resolution Delivery",,,,,,,,,,
 Global_TransferToCoWorkerSalesGen,"Transferencia a Sales General",TRANSFER,NO,"Voy a transferirte a uno de nuestros colaboradores para que te ayude.","","ES_Voice_Sales_General","Sales General",,,,,,,,,,
 Global_TransferToCoWorkerResGen,"Transferencia a Resolution General",TRANSFER,NO,"Voy a transferirte a uno de nuestros colaboradores para que te ayude.","","ES_Voice_Res_General","Resolution General",,,,,,,,,,
 Global_SMSSent,"Envio SMS autoservicio",SMS,NO,"Te acabamos de enviar un mensaje de texto, comprueba tu teléfono móvil. Gracias por llamar a IKEA. Hasta pronto.","","",,,,,,,,,,,
-
-
-
