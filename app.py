@@ -241,7 +241,7 @@ def play_node_audio(node: dict) -> bool:
     if src is None:
         return False
 
-    # Caso base64 local
+    # Caso base64/local (no URL remota)
     if mime != "url":
         html = f"""
         <audio id="ivr_prompt_only" preload="auto">
@@ -251,6 +251,15 @@ def play_node_audio(node: dict) -> bool:
         (function() {{
             var audio = document.getElementById("ivr_prompt_only");
             if (!audio) return;
+
+            try {{
+                // Por si ya hubiera algo sonando con ese id
+                audio.pause();
+                audio.currentTime = 0;
+            }} catch (e) {{
+                console.log("Error reseteando audio local:", e);
+            }}
+
             var pp = audio.play();
             if (pp !== undefined) {{
                 pp.catch(function(err) {{
@@ -272,6 +281,14 @@ def play_node_audio(node: dict) -> bool:
         (function() {{
             var audio = document.getElementById("ivr_prompt_only_url");
             if (!audio) return;
+
+            try {{
+                audio.pause();
+                audio.currentTime = 0;
+            }} catch (e) {{
+                console.log("Error reseteando audio URL:", e);
+            }}
+
             var pp = audio.play();
             if (pp !== undefined) {{
                 pp.catch(function(err) {{
@@ -283,6 +300,7 @@ def play_node_audio(node: dict) -> bool:
         """
         components.html(html, height=0, width=0)
         return True
+
         
 def pick_next_scenario_least_executed() -> dict | None:
     """
@@ -1234,6 +1252,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
