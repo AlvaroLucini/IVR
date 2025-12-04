@@ -166,24 +166,42 @@ agg = (
 )
 
 # =========================
-# KPI CARDS (encima de la gráfica)
+# KPI TESTS Y ESCENARIOS
 # =========================
 
+# --- KPIs de TESTS ---
+total_tests = int(len(df))
+tests_success = int((df["resultado_label"] == "Éxito").sum())
+tests_fail = total_tests - tests_success
+
+st.markdown("### Resumen global (tests)")
+
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.metric("🔵 Tests totales", total_tests)
+with c2:
+    st.metric("🟢 Tests con éxito", tests_success)
+with c3:
+    st.metric("🔴 Tests con fallo", tests_fail)
+
+st.markdown("---")
+
+# --- KPIs de ESCENARIOS ---
 total_scenarios = int(df["scenario_id"].nunique())
 scenarios_with_success = int(
     agg[agg["resultado_label"] == "Éxito"]["scenario_id"].nunique()
 )
 scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
 
-st.markdown("### Resumen de escenarios (KPI)")
+st.markdown("### Resumen por escenarios")
 
-col1, col2, col3 = st.columns(3)
-with col1:
+c4, c5, c6 = st.columns(3)
+with c4:
     st.metric("🔵 Escenarios ejecutados", total_scenarios)
-with col2:
-    st.metric("🟢 Escenarios con éxito", scenarios_with_success)
-with col3:
-    st.metric("🔴 Escenarios sin éxito", scenarios_without_success)
+with c5:
+    st.metric("🟢 Escenarios con algún éxito", scenarios_with_success)
+with c6:
+    st.metric("🔴 Escenarios sin ningún éxito", scenarios_without_success)
 
 st.markdown("---")
 
@@ -227,7 +245,7 @@ chart = (
     .properties(height=500)
 )
 
-st.altair_chart(chart, use_container_width=True)
+st.altair_chart(chart, width="stretch")
 
 # =========================
 # TABLA RESUMEN
@@ -255,4 +273,4 @@ if not scenarios_lookup.empty:
     nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + metric_cols
     tabla = tabla[nueva_orden]
 
-st.dataframe(tabla, use_container_width=True)
+st.dataframe(tabla, width="stretch")
