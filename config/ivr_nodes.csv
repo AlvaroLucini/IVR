@@ -48,10 +48,10 @@ Global_MenuReturnsMobileOpen,"Autoservicio Devoluciones",MENU,NO,"El mejor lugar
 
 Menu_ES_ResolutionOptions,"Contacto Agente Resolution",MENU,NO,"Estas opciones te pondrán en contacto con uno de nuestros colaboradores,Para consultas relacionadas con: Tu cocina o la instalación de tu cocina, pulsa 1. La entrega de tu pedido, pulsa 2.El servicio de montaje contratado, pulsa 3.Para otras consultas, pulsa 4. Para volver a escuchar este menú, pulsa estrella. Para volver al menú principal, pulsa almohadilla.","","",,ES_Voice_Res_Kitchen,ES_Voice_Res_Delivery,ES_Voice_Res_Montaje,ES_Voice_Res_General,,,,,,
 
-ES_Voice_Res_Kitchen,"Cola Resolution Kitchen",QUEUE,NO,"Te vamos a pasar con un agente especializado ventas cocinas.","",ES_Voice_Res_Kitchen,"Resolution Kitchen",,,,,,,,,,
-ES_Voice_Res_Delivery,"Cola Resolution Delivery",QUEUE,NO,"Te vamos a pasar con un agente especializado ventas hogar.","",ES_Voice_Res_Delivery,"Resolution Delivery",,,,,,,,,,
-ES_Voice_Res_Montaje,"Cola Resolution Montaje",QUEUE,NO,"Te vamos a pasar con un agente especializado teleperformance.","",ES_Voice_Res_Montaje,"Resolution Montaje",,,,,,,,,,
-ES_Voice_Res_General,"Cola Resolution General",QUEUE,NO,"Te vamos a pasar con un agente especializado teleperformance.","",ES_Voice_Res_General,"Resolution General",,,,,,,,,,
+ES_Voice_Res_Kitchen,"Cola Resolution Kitchen",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Kitchen,"Resolution Kitchen",,,,,,,,,,
+ES_Voice_Res_Delivery,"Cola Resolution Delivery",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Delivery,"Resolution Delivery",,,,,,,,,,
+ES_Voice_Res_Montaje,"Cola Resolution Montaje",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_Montaje,"Resolution Montaje",,,,,,,,,,
+ES_Voice_Res_General,"Cola Resolution General",QUEUE,NO,"Te vamos a pasar con un agente especializado para que te ayude.","",ES_Voice_Res_General,"Resolution General",,,,,,,,,,
 
 
 
@@ -60,4 +60,5 @@ Global_TransferToCoWorkerDelivery,"Transferencia a Delivery",TRANSFER,NO,"Voy a 
 Global_TransferToCoWorkerSalesGen,"Transferencia a Sales General",TRANSFER,NO,"Voy a transferirte a uno de nuestros colaboradores para que te ayude.","","ES_Voice_Sales_General","Sales General",,,,,,,,,,
 Global_TransferToCoWorkerResGen,"Transferencia a Resolution General",TRANSFER,NO,"Voy a transferirte a uno de nuestros colaboradores para que te ayude.","","ES_Voice_Res_General","Resolution General",,,,,,,,,,
 Global_SMSSent,"Envio SMS autoservicio",SMS,NO,"Te acabamos de enviar un mensaje de texto, comprueba tu teléfono móvil. Gracias por llamar a IKEA. Hasta pronto.","","",,,,,,,,,,,
+
 
