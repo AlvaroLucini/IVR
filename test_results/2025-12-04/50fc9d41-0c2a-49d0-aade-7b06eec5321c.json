@@ -1,0 +1,16 @@
+{
+  "test_id": "50fc9d41-0c2a-49d0-aade-7b06eec5321c",
+  "timestamp_utc": "2025-12-04T14:20:51.001180+00:00",
+  "scenario_id": "S024",
+  "scenario_title": "Seguimiento incidencia pendiente Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "Global_TransferToCoWorkerSalesGen",
+  "end_node_type": "TRANSFER",
+  "result": "WRONG_END_TRANSFER",
+  "duration_seconds": 61.534,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T14:20:08.650492+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T14:20:31.906871+00:00\"}, {\"step\": 3, \"node_id\": \"Global_MenuPlanAppMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T14:20:49.970518+00:00\"}]"
+}
