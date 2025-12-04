@@ -490,20 +490,33 @@ else:
 
         df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
 
-        # Tabla de llamadas (sin reached_queue_name ni end_node_type)
-        cols_preferencia = [
-            "test_id",
-            "timestamp_utc",
-            "resultado_label",
-            "reached_queue_id",
-            "ruta",
-        ]
-        cols_presentes = [c for c in cols_preferencia if c in df_scenario.columns]
+        # Construimos una columna con la ruta seguida en cada test (más sintética)
+    def row_route_str(route_str: str) -> str:
+        steps_local = parse_route_json(route_str)
+        return build_route_str(steps_local, NODE_LABELS)
 
-        tabla_llamadas = (
-            df_scenario[cols_presentes]
-            .sort_values("timestamp_utc")
-            .reset_index(drop=True)
-        )
+    df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
 
-        st.dataframe(tabla_llamadas, width="stretch")
+    # 🔵🟢🟥 Columna de icono de estado (éxito / fallo)
+    df_scenario["estado"] = df_scenario["resultado_label"].map(
+        {"Éxito": "🟢", "Fallo": "🔴"}
+    ).fillna("⚪")
+
+    # Tabla de llamadas (sin reached_queue_name ni end_node_type)
+    cols_preferencia = [
+        "estado",          # 👈 nuevo icono
+        "test_id",
+        "timestamp_utc",
+        "resultado_label",
+        "reached_queue_id",
+        "ruta",
+    ]
+    cols_presentes = [c for c in cols_preferencia if c in df_scenario.columns]
+
+    tabla_llamadas = (
+        df_scenario[cols_presentes]
+        .sort_values("timestamp_utc")
+        .reset_index(drop=True)
+    )
+
+    st.dataframe(tabla_llamadas, width="stretch")
