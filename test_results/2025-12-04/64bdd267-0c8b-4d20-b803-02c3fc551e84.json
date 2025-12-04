@@ -1,0 +1,16 @@
+{
+  "test_id": "64bdd267-0c8b-4d20-b803-02c3fc551e84",
+  "timestamp_utc": "2025-12-04T08:21:12.227109+00:00",
+  "scenario_id": "S019",
+  "scenario_title": "Piezas pequeñas faltantes",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 89.332,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T08:20:00.592796+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-04T08:20:17.224830+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T08:20:30.475077+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T08:20:41.510354+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T08:21:11.253596+00:00\"}]"
+}
