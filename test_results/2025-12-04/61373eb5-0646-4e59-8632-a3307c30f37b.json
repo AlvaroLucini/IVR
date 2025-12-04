@@ -1,0 +1,16 @@
+{
+  "test_id": "61373eb5-0646-4e59-8632-a3307c30f37b",
+  "timestamp_utc": "2025-12-04T14:00:36.486203+00:00",
+  "scenario_id": "S022",
+  "scenario_title": "Cambio datos de factura Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 57.244,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T14:00:04.783979+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T14:00:15.466736+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T14:00:35.546601+00:00\"}]"
+}
