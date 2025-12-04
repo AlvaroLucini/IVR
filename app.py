@@ -272,7 +272,6 @@ def play_node_audio(node: dict) -> bool:
         }})();
         </script>
         """
-        # Key único para obligar a Streamlit a reinyectar el componente
         components.html(html, height=0, width=0, key=element_id)
         return True
     else:
@@ -483,7 +482,6 @@ def init_session():
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
         ss.end_audio_played = False   # audio del nodo final reproducido
         ss.account_buffer = ""        # buffer para nodos ACCOUNT
-        ss.repeat_token = None        # 🔁 disparador para repetir audio del nodo
 
 
 def reset_session():
@@ -521,7 +519,6 @@ def start_new_test():
     ss.did_initial_ring = False
     ss.end_audio_played = False
     ss.account_buffer = ""
-    ss.repeat_token = None
 
 
 # =========================
@@ -557,7 +554,6 @@ def handle_account_key(key: str, current_node: dict):
         ss.last_action = "goto_root"
         ss.last_message = ""
         ss.last_played_node_id = None
-        ss.repeat_token = None
         return
 
     # Dígitos => acumular
@@ -573,7 +569,6 @@ def handle_account_key(key: str, current_node: dict):
         })
         ss.last_action = "account_digit"
         ss.last_message = ""
-        ss.repeat_token = None
         # Nos quedamos en el mismo nodo
         return
 
@@ -595,7 +590,6 @@ def handle_account_key(key: str, current_node: dict):
         ss.last_action = None
         ss.last_message = ""
         ss.last_played_node_id = None
-        ss.repeat_token = None
 
         new_node = NODES.get(dest_id)
         if not new_node:
@@ -611,7 +605,6 @@ def handle_account_key(key: str, current_node: dict):
     # Cualquier otra cosa -> no válida
     ss.last_action = "invalid"
     ss.last_message = "Opción no válida en este menú."
-    ss.repeat_token = None
     return
 
 
@@ -644,7 +637,6 @@ def handle_account_timeout():
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None
-    ss.repeat_token = None
 
     new_node = NODES.get(dest_id)
     if not new_node:
@@ -693,10 +685,9 @@ def handle_key(key: str):
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
 
-        # 🔁 Disparador explícito para repetir el audio del nodo
-        ss.repeat_token = str(uuid4())
-
-        # OJO: ya no tocamos last_played_node_id aquí
+        # 👉 Reproducimos directamente el audio del nodo aquí
+        play_node_audio(current_node)
+        # No tocamos last_played_node_id para no interferir con cambios de nodo
         return
 
     # '#': ir al ROOT
@@ -718,7 +709,6 @@ def handle_key(key: str):
         ss.last_action = "goto_root"
         ss.last_message = "Has vuelto al menú principal."
         ss.last_played_node_id = None
-        ss.repeat_token = None
         return
 
     # 0..9
@@ -765,7 +755,6 @@ def handle_key(key: str):
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
-    ss.repeat_token = None
 
     # Si llegamos a una cola, a un nodo SMS o a un nodo TRANSFER, cerramos el test
     node_type = str(new_node["NODE_TYPE"]).strip().upper()
@@ -1237,15 +1226,8 @@ def main():
         if DEBUG_MODE:
             st.subheader("📟 Llamada IVR (simulada)")
 
-        # 🔁 Si hay una repetición pendiente (se ha pulsado '*'),
-        # reproducimos SIEMPRE el audio del nodo actual una vez.
-        if ss.get("repeat_token"):
-            play_node_audio(current_node)
-            ss.last_played_node_id = current_node["NODE_ID"]
-            ss.repeat_token = None  # consumimos el token
-
-        # ▶️ Si cambiamos de nodo, reproducimos también (una vez)
-        elif ss.last_played_node_id != current_node["NODE_ID"]:
+        # Si cambiamos de nodo, reproducimos el audio una vez
+        if ss.last_played_node_id != current_node["NODE_ID"]:
             play_node_audio(current_node)
             ss.last_played_node_id = current_node["NODE_ID"]
 
