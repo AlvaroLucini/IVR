@@ -13,7 +13,8 @@ import altair as alt
 # =========================
 
 BASE_DIR = Path(__file__).resolve().parent
-RESULTS_ROOT = BASE_DIR / "test_results"   # 👈 carpeta que ya tienes
+RESULTS_ROOT = BASE_DIR / "test_results"   # carpeta con los JSON
+CSV_SCENARIOS = BASE_DIR / "config" / "scenarios.csv"  # 👈 nuevo: config de escenarios
 
 st.set_page_config(
     page_title="IVR Tester - Estadísticas escenarios",
@@ -26,6 +27,45 @@ st.caption(
     "Para cada escenario, una barra verde (éxitos) y una roja (fallos), "
     "a partir de los JSON de test_results."
 )
+
+# =========================
+# LOOKUP DE ESCENARIOS
+# =========================
+
+def load_scenarios_lookup() -> pd.DataFrame:
+    """
+    Lee config/scenarios.csv y devuelve un DataFrame con:
+    - scenario_id
+    - scenario_title (TITLE)
+    - mission_text  (MISSION_TEXT)
+    solo para escenarios ACTIVE=TRUE (si existe la columna).
+    """
+    if not CSV_SCENARIOS.exists():
+        st.warning(f"No se ha encontrado el archivo de escenarios: {CSV_SCENARIOS}")
+        return pd.DataFrame()
+
+    df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
+
+    # Filtramos activos si hay columna ACTIVE
+    if "ACTIVE" in df.columns:
+        df = df[df["ACTIVE"].str.upper() == "TRUE"].copy()
+
+    if df.empty:
+        return pd.DataFrame()
+
+    # Normalizamos nombres
+    df["SCENARIO_ID"] = df["SCENARIO_ID"].astype(str)
+
+    out = pd.DataFrame({
+        "scenario_id": df["SCENARIO_ID"],
+        "scenario_title": df.get("TITLE", ""),
+        "mission_text": df.get("MISSION_TEXT", ""),
+    })
+
+    return out
+
+
+scenarios_lookup = load_scenarios_lookup()
 
 # =========================
 # CARGA DE TODOS LOS JSON
@@ -221,5 +261,18 @@ tabla = agg.pivot_table(
     values="count",
     fill_value=0,
 ).reset_index()
+
+# Si tenemos lookup de escenarios, lo unimos para añadir título y descripción
+if not scenarios_lookup.empty:
+    tabla = tabla.merge(
+        scenarios_lookup,
+        on="scenario_id",
+        how="left",
+    )
+    # Reordenamos columnas: ID, título, descripción, métricas...
+    metric_cols = [c for c in tabla.columns
+                   if c not in ("scenario_id", "scenario_title", "mission_text")]
+    nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + metric_cols
+    tabla = tabla[nueva_orden]
 
 st.dataframe(tabla, use_container_width=True)
