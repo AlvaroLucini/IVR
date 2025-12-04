@@ -235,25 +235,20 @@ def play_node_audio(node: dict) -> bool:
     """
     Reproduce solo el audio del nodo (sin tono) vía JS autoplay,
     sin reproductor visible.
-    Cada llamada usa un id y un key únicos para forzar la ejecución
-    del script incluso en repeticiones (*).
     """
     src, mime = get_node_audio_source(node)
     if src is None:
         return False
 
-    node_id = node.get("NODE_ID", "UNKNOWN")
-
     # Caso base64/local (no URL remota)
     if mime != "url":
-        element_id = f"ivr_prompt_only_{node_id}_{random.randint(0, 999999)}"
         html = f"""
-        <audio id="{element_id}" preload="auto">
+        <audio id="ivr_prompt_only" preload="auto">
             <source src="{src}" type="{mime}">
         </audio>
         <script>
         (function() {{
-            var audio = document.getElementById("{element_id}");
+            var audio = document.getElementById("ivr_prompt_only");
             if (!audio) return;
 
             try {{
@@ -272,18 +267,18 @@ def play_node_audio(node: dict) -> bool:
         }})();
         </script>
         """
-        components.html(html, height=0, width=0, key=element_id)
+        components.html(html, height=0, width=0)
         return True
+
+    # Caso URL http/https
     else:
-        # URL http/https
-        element_id = f"ivr_prompt_only_url_{node_id}_{random.randint(0, 999999)}"
         html = f"""
-        <audio id="{element_id}" preload="auto">
+        <audio id="ivr_prompt_only_url" preload="auto">
             <source src="{src}" type="audio/mpeg">
         </audio>
         <script>
         (function() {{
-            var audio = document.getElementById("{element_id}");
+            var audio = document.getElementById("ivr_prompt_only_url");
             if (!audio) return;
 
             try {{
@@ -302,8 +297,9 @@ def play_node_audio(node: dict) -> bool:
         }})();
         </script>
         """
-        components.html(html, height=0, width=0, key=element_id)
+        components.html(html, height=0, width=0)
         return True
+
 
 
 def pick_next_scenario_least_executed() -> dict | None:
@@ -1256,3 +1252,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
