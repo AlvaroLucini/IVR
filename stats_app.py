@@ -256,3 +256,4 @@ if not scenarios_lookup.empty:
     tabla = tabla[nueva_orden]
 
 st.dataframe(tabla, use_container_width=True)
+ 
