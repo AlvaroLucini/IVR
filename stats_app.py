@@ -13,8 +13,8 @@ import altair as alt
 # =========================
 
 BASE_DIR = Path(__file__).resolve().parent
-RESULTS_ROOT = BASE_DIR / "test_results"   # carpeta con los JSON
-CSV_SCENARIOS = BASE_DIR / "config" / "scenarios.csv"  # 👈 nuevo: config de escenarios
+RESULTS_ROOT = BASE_DIR / "test_results"              # carpeta con los JSON
+CSV_SCENARIOS = BASE_DIR / "config" / "scenarios.csv" # config de escenarios
 
 st.set_page_config(
     page_title="IVR Tester - Estadísticas escenarios",
@@ -34,7 +34,7 @@ st.caption(
 
 def load_scenarios_lookup() -> pd.DataFrame:
     """
-    Lee config/scenarios.csv y devuelve un DataFrame con:
+    Lee config/scenarios.csv y devuelve:
     - scenario_id
     - scenario_title (TITLE)
     - mission_text  (MISSION_TEXT)
@@ -53,7 +53,6 @@ def load_scenarios_lookup() -> pd.DataFrame:
     if df.empty:
         return pd.DataFrame()
 
-    # Normalizamos nombres
     df["SCENARIO_ID"] = df["SCENARIO_ID"].astype(str)
 
     out = pd.DataFrame({
@@ -126,44 +125,10 @@ def load_all_results() -> pd.DataFrame:
 df = load_all_results()
 
 # =========================
-# CONTROLES LATERALES
+# SOLO BOTÓN EN LA BARRA IZQUIERDA
 # =========================
 
 with st.sidebar:
-    st.header("⚙️ Filtros")
-
-    # Filtro por fecha (si hay timestamp)
-    if not df.empty and "timestamp_utc" in df.columns:
-        if df["timestamp_utc"].notna().any():
-            min_dt = df["timestamp_utc"].min()
-            max_dt = df["timestamp_utc"].max()
-
-            rango = st.date_input(
-                "Rango de fechas:",
-                value=(min_dt.date(), max_dt.date()),
-                min_value=min_dt.date(),
-                max_value=max_dt.date(),
-            )
-            if isinstance(rango, tuple) and len(rango) == 2:
-                d1, d2 = rango
-                mask = (
-                    (df["timestamp_utc"].dt.date >= d1)
-                    & (df["timestamp_utc"].dt.date <= d2)
-                )
-                df = df[mask]
-
-    # Filtro por escenario
-    if not df.empty:
-        escenarios = sorted(df["scenario_id"].unique())
-        seleccion = st.multiselect(
-            "Escenarios:",
-            options=escenarios,
-            default=escenarios,
-        )
-        df = df[df["scenario_id"].isin(seleccion)]
-
-    st.write("---")
-    # Botón para recargar la app completa
     if st.button("🔄 Recargar resultados"):
         st.rerun()
 
@@ -172,7 +137,7 @@ with st.sidebar:
 # =========================
 
 if df.empty:
-    st.info("Todavía no hay resultados o los filtros no devuelven nada.")
+    st.info("Todavía no hay resultados para mostrar.")
     st.stop()
 
 # =========================
@@ -212,7 +177,6 @@ agg = (
 
 st.subheader("Resultados por escenario")
 
-# máximo para el eje Y (entero)
 max_count = int(agg["count"].max())
 
 chart = (
@@ -262,14 +226,13 @@ tabla = agg.pivot_table(
     fill_value=0,
 ).reset_index()
 
-# Si tenemos lookup de escenarios, lo unimos para añadir título y descripción
+# Añadimos título y descripción del escenario
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
         scenarios_lookup,
         on="scenario_id",
         how="left",
     )
-    # Reordenamos columnas: ID, título, descripción, métricas...
     metric_cols = [c for c in tabla.columns
                    if c not in ("scenario_id", "scenario_title", "mission_text")]
     nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + metric_cols
