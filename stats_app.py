@@ -295,10 +295,27 @@ tabla = agg.pivot_table(
 # Añadimos % de éxito por escenario
 if "Éxito" in tabla.columns and "Fallo" in tabla.columns:
     total_por_escenario = tabla["Éxito"] + tabla["Fallo"]
-    # evitar división por 0
     tasa_exito = (tabla["Éxito"] / total_por_escenario.replace({0: pd.NA})).fillna(0) * 100
     tabla["pct_exito"] = tasa_exito.round(1)
     tabla.rename(columns={"pct_exito": "% éxito"}, inplace=True)
+
+# =========================
+# TIEMPO MEDIO POR ESCENARIO
+# =========================
+
+if "duration_seconds" in df.columns:
+    dur_por_escenario = (
+        df.groupby("scenario_id")["duration_seconds"]
+          .mean()
+          .reset_index(name="avg_duration_seconds")
+    )
+    tabla = tabla.merge(dur_por_escenario, on="scenario_id", how="left")
+    tabla["Duración media"] = tabla["avg_duration_seconds"].apply(format_seconds_hhmmss)
+    tabla.drop(columns=["avg_duration_seconds"], inplace=True)
+
+# =========================
+# AÑADIR INFO DE scenarios.csv Y ORDEN DE COLUMNAS
+# =========================
 
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
@@ -310,9 +327,10 @@ if not scenarios_lookup.empty:
         c for c in tabla.columns
         if c not in ("scenario_id", "scenario_title", "mission_text")
     ]
-    # Dejamos el orden: ID, título, misión, Fallo, Éxito, % éxito
+
+    # Ordenamos métricas dejando explícitamente Fallo / Éxito / % éxito / Duración media
     orden_metricas = []
-    for col in ["Fallo", "Éxito", "% éxito"]:
+    for col in ["Fallo", "Éxito", "% éxito", "Duración media"]:
         if col in metric_cols:
             orden_metricas.append(col)
     # añadimos cualquier otra métrica que pudiera aparecer
