@@ -15,6 +15,7 @@ import altair as alt
 BASE_DIR = Path(__file__).resolve().parent
 RESULTS_ROOT = BASE_DIR / "test_results"              # carpeta con los JSON
 CSV_SCENARIOS = BASE_DIR / "config" / "scenarios.csv" # config de escenarios
+CSV_NODES = BASE_DIR / "config" / "ivr_nodes.csv"     # nodos IVR (para nombres)
 
 st.set_page_config(
     page_title="IVR Tester - Estadísticas escenarios",
@@ -69,6 +70,43 @@ def format_seconds_hhmmss(seconds: float | int | None) -> str:
     s = total % 60
     return f"{h:02d}:{m:02d}:{s:02d}"
 
+
+def parse_route_json(route_str: str):
+    """Convierte el string route_json en lista de pasos."""
+    if not route_str:
+        return []
+    try:
+        return json.loads(route_str)
+    except Exception:
+        return []
+
+
+def build_route_str(steps, node_labels: dict[str, str]) -> str:
+    """
+    Construye una cadena legible de la ruta:
+    ROOT (Menu raíz) [2] → Menu_ES_X (Etiqueta) [1] → ...
+    """
+    parts = []
+    for step in steps:
+        node_id = str(step.get("node_id", ""))
+        digit = str(step.get("digit", ""))
+
+        label = node_labels.get(node_id, "").strip()
+        if label:
+            node_desc = f"{node_id} ({label})"
+        else:
+            node_desc = node_id
+
+        if digit and digit not in ("None",):
+            part = f"{node_desc} [{digit}]"
+        else:
+            part = node_desc
+
+        parts.append(part)
+
+    return " → ".join(parts)
+
+
 # =========================
 # LOOKUP DE ESCENARIOS
 # =========================
@@ -107,6 +145,31 @@ def load_scenarios_lookup() -> pd.DataFrame:
 scenarios_lookup = load_scenarios_lookup()
 
 # =========================
+# LOOKUP DE NODOS
+# =========================
+
+def load_node_labels() -> dict[str, str]:
+    """
+    Lee ivr_nodes.csv y devuelve un dict: NODE_ID -> NODE_LABEL.
+    """
+    labels: dict[str, str] = {}
+    if not CSV_NODES.exists():
+        st.warning(f"No se ha encontrado el archivo de nodos: {CSV_NODES}")
+        return labels
+
+    df = pd.read_csv(CSV_NODES, dtype=str).fillna("")
+    for _, row in df.iterrows():
+        node_id = str(row.get("NODE_ID", "")).strip()
+        if not node_id:
+            continue
+        labels[node_id] = str(row.get("NODE_LABEL", "")).strip()
+
+    return labels
+
+
+NODE_LABELS = load_node_labels()
+
+# =========================
 # CARGA DE TODOS LOS JSON
 # =========================
 
@@ -137,10 +200,12 @@ def load_all_results() -> pd.DataFrame:
                 "result":            data.get("result", ""),
                 "expected_queue_id": data.get("expected_queue_id", ""),
                 "reached_queue_id":  data.get("reached_queue_id", ""),
+                "reached_queue_name": data.get("reached_queue_name", ""),
                 "end_node_id":       data.get("end_node_id", ""),
                 "end_node_type":     data.get("end_node_type", ""),
                 "duration_seconds":  data.get("duration_seconds", None),
                 "num_steps":         data.get("num_steps", None),
+                "route_json":        data.get("route_json", ""),
                 "__source_file":     str(f.relative_to(BASE_DIR)),
             })
 
@@ -301,7 +366,7 @@ chart = (
 st.altair_chart(chart, width="stretch")
 
 # =========================
-# TABLA RESUMEN
+# TABLA RESUMEN GLOBAL POR ESCENARIO
 # =========================
 
 st.subheader("Detalle numérico por escenario")
@@ -320,10 +385,7 @@ if "Éxito" in tabla.columns and "Fallo" in tabla.columns:
     tabla["pct_exito"] = tasa_exito.round(1)
     tabla.rename(columns={"pct_exito": "% éxito"}, inplace=True)
 
-# =========================
-# TIEMPO MEDIO POR ESCENARIO
-# =========================
-
+# Tiempo medio por escenario
 if "duration_seconds" in df.columns:
     dur_por_escenario = (
         df.groupby("scenario_id")["duration_seconds"]
@@ -334,10 +396,7 @@ if "duration_seconds" in df.columns:
     tabla["Duración media"] = tabla["avg_duration_seconds"].apply(format_seconds_hhmmss)
     tabla.drop(columns=["avg_duration_seconds"], inplace=True)
 
-# =========================
-# AÑADIR INFO DE scenarios.csv Y ORDEN DE COLUMNAS
-# =========================
-
+# Añadir info de scenarios.csv y ordenar columnas
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
         scenarios_lookup,
@@ -349,12 +408,10 @@ if not scenarios_lookup.empty:
         if c not in ("scenario_id", "scenario_title", "mission_text")
     ]
 
-    # Ordenamos métricas dejando explícitamente Fallo / Éxito / % éxito / Duración media
     orden_metricas = []
     for col in ["Fallo", "Éxito", "% éxito", "Duración media"]:
         if col in metric_cols:
             orden_metricas.append(col)
-    # añadimos cualquier otra métrica que pudiera aparecer
     for col in metric_cols:
         if col not in orden_metricas:
             orden_metricas.append(col)
@@ -363,3 +420,76 @@ if not scenarios_lookup.empty:
     tabla = tabla[nueva_orden]
 
 st.dataframe(tabla, width="stretch")
+
+# =========================
+# DETALLE POR ESCENARIO: RUTA CORRECTA + LLAMADAS
+# =========================
+
+st.markdown("---")
+st.subheader("Detalle de rutas por escenario")
+
+# Opciones de escenario para el desplegable
+escenarios_disponibles = sorted(df["scenario_id"].unique())
+
+def scenario_label(sid: str) -> str:
+    row = scenarios_lookup[scenarios_lookup["scenario_id"] == sid]
+    if not row.empty:
+        title = row.iloc[0]["scenario_title"]
+        return f"{sid} - {title}"
+    return sid
+
+selected_scenario = st.selectbox(
+    "Selecciona un escenario para ver sus rutas:",
+    options=escenarios_disponibles,
+    format_func=scenario_label,
+)
+
+df_scenario = df[df["scenario_id"] == selected_scenario].copy()
+
+if df_scenario.empty:
+    st.info("No hay resultados para este escenario.")
+else:
+    # -------- Ruta correcta (a partir de tests con Éxito) --------
+    df_ok = df_scenario[df_scenario["resultado_label"] == "Éxito"].copy()
+    st.markdown("#### Ruta correcta (basada en tests con éxito)")
+
+    if df_ok.empty:
+        st.warning("Este escenario no tiene tests con Éxito todavía.")
+        correct_route_str = ""
+    else:
+        # Tomamos la ruta de éxito más frecuente
+        vc = df_ok["route_json"].value_counts()
+        best_route_json = vc.index[0]
+        steps = parse_route_json(best_route_json)
+        correct_route_str = build_route_str(steps, NODE_LABELS)
+
+        st.markdown(f"**Ruta de referencia:** {correct_route_str}")
+
+    st.markdown("#### Llamadas de este escenario")
+
+    # Construimos una columna con la ruta seguida en cada test
+    def row_route_str(route_str: str) -> str:
+        steps = parse_route_json(route_str)
+        return build_route_str(steps, NODE_LABELS)
+
+    df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
+
+    # Tabla de llamadas
+    cols_preferencia = [
+        "test_id",
+        "timestamp_utc",
+        "resultado_label",
+        "reached_queue_id",
+        "reached_queue_name",
+        "end_node_type",
+        "ruta",
+    ]
+    cols_presentes = [c for c in cols_preferencia if c in df_scenario.columns]
+
+    tabla_llamadas = (
+        df_scenario[cols_presentes]
+        .sort_values("timestamp_utc")
+        .reset_index(drop=True)
+    )
+
+    st.dataframe(tabla_llamadas, width="stretch")
