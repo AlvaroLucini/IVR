@@ -191,30 +191,26 @@ total_tests = int(len(df))
 tests_success = int((df["resultado_label"] == "Éxito").sum())
 tests_fail = total_tests - tests_success
 
-st.markdown("### Resumen global (tests)")
-
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.metric("🔵 Tests totales", total_tests)
-with c2:
-    st.metric("🟢 Tests con éxito", tests_success)
-with c3:
-    st.metric("🔴 Tests con fallo", tests_fail)
-
-# --- Duración media ---
+# --- Duración media global ---
 dur_series = df["duration_seconds"]
 if dur_series.notna().any():
     avg_seconds = float(dur_series.dropna().mean())
 else:
     avg_seconds = None
-
 avg_str = format_seconds_hhmmss(avg_seconds)
 
-st.markdown("### Métricas de duración")
+# ===== Fila 1: resumen global (tests + duración) =====
+st.markdown("### Resumen global")
 
-c_dur, _, _ = st.columns(3)
-with c_dur:
-    st.metric("⏱ Duración media de los tests (HH:MM:SS)", avg_str)
+g1, g2, g3, g4 = st.columns(4)
+with g1:
+    st.metric("🔵 Tests totales", total_tests)
+with g2:
+    st.metric("🟢 Tests con éxito", tests_success)
+with g3:
+    st.metric("🔴 Tests con fallo", tests_fail)
+with g4:
+    st.metric("⏱ Duración media (HH:MM:SS)", avg_str)
 
 st.markdown("---")
 
@@ -225,14 +221,15 @@ scenarios_with_success = int(
 )
 scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
 
+# ===== Fila 2: resumen por escenarios =====
 st.markdown("### Resumen por escenarios")
 
-c4, c5, c6 = st.columns(3)
-with c4:
+e1, e2, e3 = st.columns(3)
+with e1:
     st.metric("🔵 Escenarios ejecutados", total_scenarios)
-with c5:
+with e2:
     st.metric("🟢 Escenarios con algún éxito", scenarios_with_success)
-with c6:
+with e3:
     st.metric("🔴 Escenarios sin ningún éxito", scenarios_without_success)
 
 st.markdown("---")
