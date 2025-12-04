@@ -1,0 +1,16 @@
+{
+  "test_id": "8b0a31b2-d39b-445d-b7d9-45d10dd1eca6",
+  "timestamp_utc": "2025-12-04T07:29:35.643016+00:00",
+  "scenario_id": "S011",
+  "scenario_title": "Seguimiento entrega pedido B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 217.283,
+  "num_steps": 11,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T07:26:56.375673+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T07:27:05.557208+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"4\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T07:27:05.771856+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"44\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"0\", \"timestamp\": \"2025-12-04T07:27:06.945367+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"440\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T07:27:07.843368+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"4404\"}, {\"step\": 6, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T07:27:08.051398+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"44044\"}, {\"step\": 7, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"4\", \"timestamp\": \"2025-12-04T07:27:09.422619+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"440444\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T07:27:11.090269+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"4404443\"}, {\"step\": 9, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"6\", \"timestamp\": \"2025-12-04T07:27:11.951645+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"44044436\"}, {\"step\": 10, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-04T07:29:20.795478+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"44044436\"}, {\"step\": 11, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T07:29:34.527540+00:00\"}]"
+}
