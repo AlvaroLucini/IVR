@@ -26,20 +26,6 @@ st.set_page_config(page_title="IVR Tester", page_icon="📞", layout="centered")
 
 DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
 
-# =========================
-# MODO MANTENIMIENTO
-# =========================
-# Si lo pones a True, la app solo mostrará el mensaje de mantenimiento.
-# O, si prefieres, puedes controlarlo también por secrets:
-#  MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", False))
- MAINTENANCE_MODE = FALSE
-
-MAINTENANCE_MESSAGE = (
-    "Estamos actualizando la IVR para testar una nueva estructura. "
-    "En breves momentos volveremos a abrir la plataforma para testarla. "
-    "🙏 Gracias por tu paciencia."
-)
-
 
 # =========================
 # RUTAS BÁSICAS
@@ -55,8 +41,6 @@ RING_PATHS = [
     BASE_DIR / "tts_audio" / "ringtone.wav",
 ]
 
-# Imagen de mantenimiento (ajusta la ruta/nombre según tu repo)
-MAINTENANCE_IMAGE_PATH = BASE_DIR /  "maintenance.png"
 
 # =========================
 # DEBUG SECRETS
@@ -1143,31 +1127,6 @@ def render_keypad():
 
 
 def main():
-   # 🔧 MODO MANTENIMIENTO
-    # Si está activo y no estás en DEBUG, solo se muestra el mensaje+imagen.
-    if MAINTENANCE_MODE and not DEBUG_MODE:
-        st.title("📞 IVR Tester (simulador de IVR)")
-        st.subheader("🔧 Plataforma en mantenimiento")
-
-        st.info(MAINTENANCE_MESSAGE)
-
-        # Imagen centrada (si existe el fichero)
-        try:
-            if MAINTENANCE_IMAGE_PATH.exists():
-                col_left, col_center, col_right = st.columns([1, 2, 1])
-                with col_center:
-                    st.image(str(MAINTENANCE_IMAGE_PATH), use_column_width=True)
-        except Exception as e:
-            if DEBUG_MODE:
-                st.sidebar.error(f"Error mostrando imagen de mantenimiento: {e}")
-
-        # Aquí cortamos la app, no se puede testear nada
-        return
-
-    init_session()
-    ss = st.session_state
-
-    st.title("📞 IVR Tester (simulador de IVR)")
     init_session()
     ss = st.session_state
 
@@ -1295,8 +1254,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
