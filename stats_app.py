@@ -434,7 +434,15 @@ st.markdown("---")
 st.subheader("Detalle de rutas por escenario")
 
 # Opciones de escenario para el desplegable
-escenarios_disponibles = sorted(df["scenario_id"].unique())
+escenarios_disponibles = sorted(df_all["scenario_id"].unique())
+escenario_sel = st.selectbox(
+    "Selecciona un escenario para ver sus rutas:",
+    escenarios_disponibles,
+    format_func=lambda sid: f"{sid} - " + df_all.loc[df_all["scenario_id"] == sid, "scenario_title"].iloc[0]
+)
+
+# 👉 Todos los tests de ese escenario (éxito + fallo)
+df_esc = df_all[df_all["scenario_id"] == escenario_sel].copy()
 
 def scenario_label(sid: str) -> str:
     row = scenarios_lookup[scenarios_lookup["scenario_id"] == sid]
