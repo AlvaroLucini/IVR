@@ -1,0 +1,16 @@
+{
+  "test_id": "5afd664e-6971-4f55-9f6e-c7dfad818e70",
+  "timestamp_utc": "2025-12-04T17:08:20.473589+00:00",
+  "scenario_id": "S022B2B",
+  "scenario_title": "Cambio datos de factura B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 42.03,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T17:07:57.018468+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T17:08:04.535056+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T17:08:05.083588+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"12\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T17:08:05.579696+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"123\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-04T17:08:06.292573+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"123\"}, {\"step\": 6, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T17:08:19.605335+00:00\"}]"
+}
