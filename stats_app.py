@@ -24,7 +24,7 @@ st.set_page_config(
 
 st.title("📊 Resultados IVR por escenario")
 st.caption(
-    "Para cada escenario, una barra verde (éxitos) y una roja (fallos), "
+    "📈 Para cada escenario, una barra verde (éxitos) y una roja (fallos), "
     "a partir de los JSON de test_results."
 )
 
@@ -175,7 +175,7 @@ scenarios_with_success = int(
 )
 scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
 
-st.markdown("### Resumen de escenarios")
+st.markdown("### Resumen de escenarios (KPI)")
 
 col1, col2, col3 = st.columns(3)
 with col1:
@@ -256,4 +256,3 @@ if not scenarios_lookup.empty:
     tabla = tabla[nueva_orden]
 
 st.dataframe(tabla, use_container_width=True)
- 
