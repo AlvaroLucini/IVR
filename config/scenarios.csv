@@ -8,7 +8,7 @@ S014,Montaje cocina incompleto,Soy un cliente particular y no han terminado de m
 S015,Seguimiento incidencia cocina Cliente,Soy un cliente particular y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,4
 S015,Seguimiento incidencia cocina B2B,Soy cliente B2B y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia  pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Business,,,TRUE,4
 S016,Bulto faltante en pedido,Soy un cliente particular y falta un paquete en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,3
-S017,Producto dañado en pedido,Soy un cliente particular y me ha llegado un artículo dañado en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,3
+S017,Producto dañado en pedido,Soy un cliente particular y me ha llegado un artículo dañado en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,4
 S018,Artículo equivocado en tienda,Soy un cliente particular y fui a comprar a la tienda; al llegar a casa uno de los artículos no se corresponde con lo que pedí.,ROOT,ES_Voice_Res_General,,,TRUE,4
 S019,Piezas pequeñas faltantes,Soy un cliente particular y me falta la bolsita de tornillos de la mesita que compré.,ROOT,ES_Voice_Res_General,,,TRUE,3
 S020,Devolución parcial de pedido,Soy un cliente particular y quiero devolver solo una parte de mi pedido.,ROOT,ES_Voice_Res_General,,,TRUE,3
@@ -25,4 +25,4 @@ S027,Compra cocina hogar B2B,Soy cliente B2B y quiero comprar una cocina para mi
 S028,Consulta horario tienda,Soy un cliente particular y no encuentro el horario de apertura de la tienda de Valencia.,ROOT,ES_Voice_Sales_General,,,TRUE,4
 S029,Consulta disponibilidad fregadero,Soy un cliente particular y quiero saber cuándo volverá a haber stock del fregadero que necesito.,ROOT,ES_Voice_Sales_General,ES_Voice_Sales_Business,,TRUE,4
 S030,Problema código descuento,Soy un cliente particular y no me funciona el código de descuento al hacer la compra.,ROOT,ES_Voice_Sales_General,,,TRUE,4
-S031,Contratar servicio de montaje,Soy un cliente particular y necesito contratar el servicio de montaje para mi pedido de salón.,ROOT,ES_Voice_Sales_Sales,ES_Voice_Sales_Business,,TRUE,3
+S031,Contratar servicio de montaje,Soy un cliente particular y necesito contratar el servicio de montaje para mi pedido de salón.,ROOT,ES_Voice_Sales_Sale,ES_Voice_Sales_Business,,TRUE,3
