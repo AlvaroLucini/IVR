@@ -166,7 +166,7 @@ agg = (
 )
 
 # =========================
-# KPI CARDS ARRIBA
+# KPI CARDS (encima de la gráfica)
 # =========================
 
 total_scenarios = int(df["scenario_id"].nunique())
@@ -175,55 +175,15 @@ scenarios_with_success = int(
 )
 scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
 
-# =========================
-# KPI CARDS (posición fija, SIEMPRE visibles)
-# =========================
+st.markdown("### Resumen de escenarios")
 
-st.markdown("")
-
-total_scenarios = int(df["scenario_id"].nunique())
-scenarios_with_success = int(
-    agg[agg["resultado_label"] == "Éxito"]["scenario_id"].nunique()
-)
-scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
-
-def kpi_card(label: str, value: int, color: str):
-    html = f"""
-    <div style="
-        background-color:{color};
-        padding:1rem;
-        border-radius:0.7rem;
-        text-align:center;
-        color:white;
-        font-weight:bold;
-        box-shadow:0 0 10px rgba(0,0,0,0.25);
-    ">
-        <div style="font-size:0.85rem; opacity:0.9;">{label}</div>
-        <div style="font-size:1.7rem; margin-top:0.25rem;">{value}</div>
-    </div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
-
-with st.container():
-    col_a, col_b, col_c = st.columns(3)
-    with col_a:
-        kpi_card("Escenarios ejecutados", total_scenarios, "#1f77b4")   # azul
-    with col_b:
-        kpi_card("Escenarios con éxito", scenarios_with_success, "#2ca02c")  # verde
-    with col_c:
-        kpi_card("Escenarios sin éxito", scenarios_without_success, "#d62728")  # rojo
-
-st.markdown("---")
-
-
-# 3 columnas iguales justo bajo el caption
 col1, col2, col3 = st.columns(3)
 with col1:
-    kpi_card("Escenarios ejecutados", total_scenarios, "#1f77b4")   # azul
+    st.metric("🔵 Escenarios ejecutados", total_scenarios)
 with col2:
-    kpi_card("Escenarios con éxito", scenarios_with_success, "#2ca02c")  # verde
+    st.metric("🟢 Escenarios con éxito", scenarios_with_success)
 with col3:
-    kpi_card("Escenarios sin éxito", scenarios_without_success, "#d62728")  # rojo
+    st.metric("🔴 Escenarios sin éxito", scenarios_without_success)
 
 st.markdown("---")
 
