@@ -172,6 +172,50 @@ agg = (
 )
 
 # =========================
+# KPI CARDS ARRIBA A LA DERECHA
+# =========================
+
+# Escenarios ejecutados = nº de escenarios distintos con al menos un test
+total_scenarios = int(df["scenario_id"].nunique())
+
+# Escenarios con éxito = al menos un test con resultado "Éxito"
+scenarios_with_success = int(
+    agg[agg["resultado_label"] == "Éxito"]["scenario_id"].nunique()
+)
+
+# Escenarios sin éxito = ejecutados pero sin ningún test "Éxito"
+scenarios_without_success = total_scenarios - scenarios_with_success
+
+def kpi_card(label: str, value: int, color: str):
+    html = f"""
+    <div style="
+        background-color:{color};
+        padding:0.75rem 1rem;
+        border-radius:0.6rem;
+        text-align:center;
+        color:white;
+        font-weight:bold;
+        box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    ">
+        <div style="font-size:0.8rem; margin-bottom:0.15rem;">{label}</div>
+        <div style="font-size:1.5rem;">{value}</div>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+# Layout: dejamos espacio a la izquierda, KPIs a la derecha
+col0, col1, col2, col3 = st.columns([2, 1, 1, 1])
+
+with col1:
+    kpi_card("Escenarios ejecutados", total_scenarios, "#1f77b4")  # azul
+with col2:
+    kpi_card("Escenarios con éxito", scenarios_with_success, "#2ca02c")  # verde
+with col3:
+    kpi_card("Escenarios sin éxito", scenarios_without_success, "#d62728")  # rojo
+
+st.markdown("---")
+
+# =========================
 # GRÁFICA DE BARRAS
 # =========================
 
