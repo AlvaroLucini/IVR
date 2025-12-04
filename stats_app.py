@@ -46,7 +46,6 @@ def load_scenarios_lookup() -> pd.DataFrame:
 
     df = pd.read_csv(CSV_SCENARIOS, dtype=str).fillna("")
 
-    # Filtramos activos si hay columna ACTIVE
     if "ACTIVE" in df.columns:
         df = df[df["ACTIVE"].str.upper() == "TRUE"].copy()
 
@@ -77,7 +76,6 @@ def load_all_results() -> pd.DataFrame:
 
     records = []
 
-    # Recorremos todas las subcarpetas tipo 2025-12-03, etc.
     for day_dir in sorted(RESULTS_ROOT.iterdir()):
         if not day_dir.is_dir():
             continue
@@ -90,7 +88,6 @@ def load_all_results() -> pd.DataFrame:
                 st.warning(f"No se pudo leer {f}: {e}")
                 continue
 
-            # Extraemos los campos que nos interesan; si falta alguno, lo dejamos vacío
             records.append({
                 "test_id":           data.get("test_id", ""),
                 "timestamp_utc":     data.get("timestamp_utc", ""),
@@ -111,11 +108,9 @@ def load_all_results() -> pd.DataFrame:
 
     df = pd.DataFrame.from_records(records)
 
-    # Normalizamos tipos básicos
     df["scenario_id"] = df["scenario_id"].astype(str)
     df["result"] = df["result"].astype(str).str.upper().str.strip()
 
-    # Parseamos timestamp
     if "timestamp_utc" in df.columns:
         df["timestamp_utc"] = pd.to_datetime(df["timestamp_utc"], errors="coerce")
 
@@ -156,7 +151,6 @@ def map_result_label(x: str) -> str:
     s = str(x).upper().strip()
     if s in SUCCESS_VALUES:
         return "Éxito"
-    # todo lo que no sea “éxito”, lo tratamos como fallo por ahora
     return "Fallo"
 
 df["resultado_label"] = df["result"].apply(map_result_label)
@@ -172,19 +166,14 @@ agg = (
 )
 
 # =========================
-# KPI CARDS ARRIBA A LA DERECHA
+# KPI CARDS ARRIBA
 # =========================
 
-# Escenarios ejecutados = nº de escenarios distintos con al menos un test
 total_scenarios = int(df["scenario_id"].nunique())
-
-# Escenarios con éxito = al menos un test con resultado "Éxito"
 scenarios_with_success = int(
     agg[agg["resultado_label"] == "Éxito"]["scenario_id"].nunique()
 )
-
-# Escenarios sin éxito = ejecutados pero sin ningún test "Éxito"
-scenarios_without_success = total_scenarios - scenarios_with_success
+scenarios_without_success = max(total_scenarios - scenarios_with_success, 0)
 
 def kpi_card(label: str, value: int, color: str):
     html = f"""
@@ -196,18 +185,17 @@ def kpi_card(label: str, value: int, color: str):
         color:white;
         font-weight:bold;
         box-shadow: 0 0 8px rgba(0,0,0,0.15);
-    ">
+        ">
         <div style="font-size:0.8rem; margin-bottom:0.15rem;">{label}</div>
         <div style="font-size:1.5rem;">{value}</div>
     </div>
     """
     st.markdown(html, unsafe_allow_html=True)
 
-# Layout: dejamos espacio a la izquierda, KPIs a la derecha
-col0, col1, col2, col3 = st.columns([2, 1, 1, 1])
-
+# 3 columnas iguales justo bajo el caption
+col1, col2, col3 = st.columns(3)
 with col1:
-    kpi_card("Escenarios ejecutados", total_scenarios, "#1f77b4")  # azul
+    kpi_card("Escenarios ejecutados", total_scenarios, "#1f77b4")   # azul
 with col2:
     kpi_card("Escenarios con éxito", scenarios_with_success, "#2ca02c")  # verde
 with col3:
@@ -228,14 +216,14 @@ chart = (
     .mark_bar()
     .encode(
         x=alt.X("scenario_id:N", title="Escenario"),
-        xOffset="resultado_label:N",            # barras lado a lado
+        xOffset="resultado_label:N",
         y=alt.Y(
             "count:Q",
             title="Número de tests",
             scale=alt.Scale(domain=(0, max_count + 0.5)),
             axis=alt.Axis(
-                values=list(range(0, max_count + 1)),  # 0,1,2,3...
-                format="d",                             # formato entero
+                values=list(range(0, max_count + 1)),
+                format="d",
             ),
         ),
         color=alt.Color(
@@ -270,15 +258,16 @@ tabla = agg.pivot_table(
     fill_value=0,
 ).reset_index()
 
-# Añadimos título y descripción del escenario
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
         scenarios_lookup,
         on="scenario_id",
         how="left",
     )
-    metric_cols = [c for c in tabla.columns
-                   if c not in ("scenario_id", "scenario_title", "mission_text")]
+    metric_cols = [
+        c for c in tabla.columns
+        if c not in ("scenario_id", "scenario_title", "mission_text")
+    ]
     nueva_orden = ["scenario_id", "scenario_title", "mission_text"] + metric_cols
     tabla = tabla[nueva_orden]
 
