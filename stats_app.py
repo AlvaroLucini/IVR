@@ -28,6 +28,30 @@ st.caption(
     "a partir de los JSON de test_results."
 )
 
+# ===== ESTILOS PERSONALIZADOS (TIPOGRAFÍA) =====
+st.markdown(
+    """
+    <style>
+    /* Valores de los KPIs (st.metric) */
+    div[data-testid="stMetricValue"] {
+        font-size: 2.6rem;
+        font-weight: 700;
+    }
+
+    /* Etiquetas de los KPIs */
+    div[data-testid="stMetricLabel"] {
+        font-size: 1.0rem;
+    }
+
+    /* Tamaño de letra de la tabla */
+    div[data-testid="stDataFrame"] table {
+        font-size: 0.95rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # =========================
 # HELPERS
 # =========================
