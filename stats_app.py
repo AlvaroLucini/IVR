@@ -231,6 +231,17 @@ def load_all_results() -> pd.DataFrame:
 df = load_all_results()
 
 # =========================
+# NORMALIZAR reached_queue_id PARA SMS
+# =========================
+
+if not df.empty and "end_node_type" in df.columns:
+    # Si el nodo final es SMS y reached_queue_id está vacío → mostrar "SMS"
+    end_type_upper = df["end_node_type"].astype(str).str.upper()
+    rq_stripped = df["reached_queue_id"].astype(str).str.strip()
+    mask_sms = (end_type_upper == "SMS") & (rq_stripped == "")
+    df.loc[mask_sms, "reached_queue_id"] = "SMS"
+
+# =========================
 # SOLO BOTÓN EN LA BARRA IZQUIERDA
 # =========================
 
@@ -478,18 +489,10 @@ else:
     else:
         st.markdown("_Cola esperada no definida en scenarios.csv_")
 
-    # -------- Rutas de éxito --------
+    # -------- Rutas de éxito (si existen) --------
     df_ok = df_scenario[df_scenario["resultado_label"] == "Éxito"].copy()
 
-    if df_ok.empty:
-        # No hay éxitos → mostramos aviso y tabla vacía
-        st.warning("Este escenario no tiene tests con Éxito todavía.")
-
-        st.markdown("#### Llamadas de este escenario")
-        empty_cols = ["estado", "test_id", "timestamp_utc", "resultado_label", "reached_queue_id", "ruta"]
-        st.dataframe(pd.DataFrame(columns=empty_cols), width="stretch")
-    else:
-        # Ruta de éxito más frecuente
+    if not df_ok.empty:
         vc = df_ok["route_json"].value_counts()
         best_route_json = vc.index[0]
         steps = parse_route_json(best_route_json)
@@ -497,34 +500,34 @@ else:
 
         st.markdown(f"**Ruta de éxito más frecuente:** {correct_route_str}")
 
-        # -------- Tabla de llamadas del escenario --------
-        st.markdown("#### Llamadas de este escenario")
+    # -------- Tabla de llamadas del escenario (éxito + fallo) --------
+    st.markdown("#### Llamadas de este escenario")
 
-        def row_route_str(route_str: str) -> str:
-            steps_local = parse_route_json(route_str)
-            return build_route_str(steps_local, NODE_LABELS)
+    def row_route_str(route_str: str) -> str:
+        steps_local = parse_route_json(route_str)
+        return build_route_str(steps_local, NODE_LABELS)
 
-        df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
+    df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
 
-        # Iconito de estado
-        df_scenario["estado"] = df_scenario["resultado_label"].map(
-            {"Éxito": "🟢", "Fallo": "🔴"}
-        ).fillna("⚪")
+    # Iconito de estado
+    df_scenario["estado"] = df_scenario["resultado_label"].map(
+        {"Éxito": "🟢", "Fallo": "🔴"}
+    ).fillna("⚪")
 
-        cols_preferencia = [
-            "estado",
-            "test_id",
-            "timestamp_utc",
-            "resultado_label",
-            "reached_queue_id",
-            "ruta",
-        ]
-        cols_presentes = [c for c in cols_preferencia if c in df_scenario.columns]
+    cols_preferencia = [
+        "estado",
+        "test_id",
+        "timestamp_utc",
+        "resultado_label",
+        "reached_queue_id",
+        "ruta",
+    ]
+    cols_presentes = [c for c in cols_preferencia if c in df_scenario.columns]
 
-        tabla_llamadas = (
-            df_scenario[cols_presentes]
-            .sort_values("timestamp_utc")
-            .reset_index(drop=True)
-        )
+    tabla_llamadas = (
+        df_scenario[cols_presentes]
+        .sort_values("timestamp_utc")
+        .reset_index(drop=True)
+    )
 
-        st.dataframe(tabla_llamadas, width="stretch")
+    st.dataframe(tabla_llamadas, width="stretch")
