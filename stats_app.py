@@ -29,7 +29,10 @@ st.caption(
     "a partir de los JSON de test_results."
 )
 
-# ===== ESTILOS PERSONALIZADOS (TIPOGRAFÍA) =====
+# =========================
+# ESTILOS PERSONALIZADOS
+# =========================
+
 st.markdown(
     """
     <style>
@@ -44,7 +47,7 @@ st.markdown(
         font-size: 1.0rem;
     }
 
-    /* Tamaño de letra de la tabla */
+    /* Tamaño de letra de la tabla principal */
     div[data-testid="stDataFrame"] table {
         font-size: 0.95rem;
     }
@@ -112,11 +115,11 @@ def build_route_str(steps, node_labels: dict[str, str]) -> str:
 def load_scenarios_lookup() -> pd.DataFrame:
     """
     Lee config/scenarios.csv y devuelve:
-    - scenario_id
-    - scenario_title (TITLE)
-    - mission_text  (MISSION_TEXT)
-    - expected_queue_id
-    - expected_alt_queue_ids
+      - scenario_id
+      - scenario_title (TITLE)
+      - mission_text  (MISSION_TEXT)
+      - expected_queue_id
+      - expected_alt_queue_ids
     solo para escenarios ACTIVE=TRUE (si existe la columna).
     """
     if not CSV_SCENARIOS.exists():
@@ -134,10 +137,10 @@ def load_scenarios_lookup() -> pd.DataFrame:
     df["SCENARIO_ID"] = df["SCENARIO_ID"].astype(str)
 
     out = pd.DataFrame({
-        "scenario_id":            df["SCENARIO_ID"],
-        "scenario_title":         df.get("TITLE", ""),
-        "mission_text":           df.get("MISSION_TEXT", ""),
-        "expected_queue_id":      df.get("EXPECTED_QUEUE_ID", ""),
+        "scenario_id": df["SCENARIO_ID"],
+        "scenario_title": df.get("TITLE", ""),
+        "mission_text": df.get("MISSION_TEXT", ""),
+        "expected_queue_id": df.get("EXPECTED_QUEUE_ID", ""),
         "expected_alt_queue_ids": df.get("EXPECTED_ALT_QUEUE_IDS", ""),
     })
 
@@ -401,7 +404,7 @@ if "duration_seconds" in df.columns:
 # Añadir info de scenarios.csv y ordenar columnas
 if not scenarios_lookup.empty:
     tabla = tabla.merge(
-        scenarios_lookup,
+        scenarios_lookup[["scenario_id", "scenario_title", "mission_text"]],
         on="scenario_id",
         how="left",
     )
@@ -451,53 +454,42 @@ df_scenario = df[df["scenario_id"] == selected_scenario].copy()
 if df_scenario.empty:
     st.info("No hay resultados para este escenario.")
 else:
-    # -------- Cola correcta (esperada) --------
+    # -------- Cola correcta (sacada de scenarios.csv) --------
     st.markdown("#### Cola correcta")
 
-    row_cfg = scenarios_lookup[scenarios_lookup["scenario_id"] == selected_scenario]
-
-    if not row_cfg.empty:
-        main_q = str(row_cfg.iloc[0].get("expected_queue_id", "")).strip()
-        alt_qs = str(row_cfg.iloc[0].get("expected_alt_queue_ids", "")).strip()
-
-        colas = []
-        if main_q:
-            colas.append(main_q)
-        if alt_qs:
-            for q in alt_qs.split(","):
-                q = q.strip()
-                if q and q not in colas:
-                    colas.append(q)
-
-        if colas:
-            cola_esperada = ", ".join(colas)
-        else:
-            cola_esperada = "No definida"
+    cfg_row = scenarios_lookup[scenarios_lookup["scenario_id"] == selected_scenario]
+    if not cfg_row.empty:
+        cfg = cfg_row.iloc[0]
+        primary_q = str(cfg.get("expected_queue_id", "")).strip()
+        alt_q = str(cfg.get("expected_alt_queue_ids", "")).strip()
     else:
-        # Fallback por si no se encuentra el escenario en el CSV
-        exp_q = (
-            df_scenario["expected_queue_id"]
-            .dropna()
-            .astype(str)
-            .unique()
-        )
-        if len(exp_q) == 0:
-            cola_esperada = "No definida"
-        else:
-            cola_esperada = ", ".join(sorted(exp_q))
+        # Fallback por si algún día no está en el csv
+        primary_q = ""
+        alt_q = ""
 
-    st.markdown(f"**Cola esperada:** `{cola_esperada}`")
+    if primary_q or alt_q:
+        partes = []
+        if primary_q:
+            partes.append(f"**Principal:** `{primary_q}`")
+        if alt_q:
+            partes.append(f"**Alternativas válidas:** `{alt_q}`")
+        cola_txt = "  \n".join(partes)
+        st.markdown(cola_txt)
+    else:
+        st.markdown("_Cola esperada no definida en scenarios.csv_")
 
-    # -------- Ruta de éxito más frecuente (si hay éxitos) --------
+    # -------- Rutas de éxito --------
     df_ok = df_scenario[df_scenario["resultado_label"] == "Éxito"].copy()
 
     if df_ok.empty:
+        # No hay éxitos → mostramos aviso y tabla vacía
         st.warning("Este escenario no tiene tests con Éxito todavía.")
-        st.markdown("#### Llamadas de este escenario")
 
+        st.markdown("#### Llamadas de este escenario")
         empty_cols = ["estado", "test_id", "timestamp_utc", "resultado_label", "reached_queue_id", "ruta"]
         st.dataframe(pd.DataFrame(columns=empty_cols), width="stretch")
     else:
+        # Ruta de éxito más frecuente
         vc = df_ok["route_json"].value_counts()
         best_route_json = vc.index[0]
         steps = parse_route_json(best_route_json)
@@ -505,7 +497,7 @@ else:
 
         st.markdown(f"**Ruta de éxito más frecuente:** {correct_route_str}")
 
-        # -------- Tabla de llamadas --------
+        # -------- Tabla de llamadas del escenario --------
         st.markdown("#### Llamadas de este escenario")
 
         def row_route_str(route_str: str) -> str:
@@ -514,7 +506,7 @@ else:
 
         df_scenario["ruta"] = df_scenario["route_json"].apply(row_route_str)
 
-        # Icono verde/rojo según éxito/fallo
+        # Iconito de estado
         df_scenario["estado"] = df_scenario["resultado_label"].map(
             {"Éxito": "🟢", "Fallo": "🔴"}
         ).fillna("⚪")
