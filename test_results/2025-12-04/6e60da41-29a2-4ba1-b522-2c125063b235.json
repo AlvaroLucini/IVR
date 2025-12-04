@@ -1,0 +1,16 @@
+{
+  "test_id": "6e60da41-29a2-4ba1-b522-2c125063b235",
+  "timestamp_utc": "2025-12-04T07:28:27.455934+00:00",
+  "scenario_id": "S018",
+  "scenario_title": "Artículo equivocado en tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 86.116,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-04T07:27:27.726679+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-04T07:27:40.491693+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-04T07:28:05.708709+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-04T07:28:14.579569+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-04T07:28:22.313710+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-04T07:28:26.576058+00:00\"}]"
+}
