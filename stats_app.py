@@ -123,8 +123,10 @@ with st.sidebar:
         df = df[df["scenario_id"].isin(seleccion)]
 
     st.write("---")
+# 👇 dentro del with st.sidebar:
     if st.button("🔄 Recargar resultados"):
-        st.experimental_rerun()
+        st.rerun()
+
 
 # =========================
 # SI NO HAY DATOS
