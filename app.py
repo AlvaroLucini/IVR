@@ -41,7 +41,7 @@ MAINTENANCE_MESSAGE = (
 
 # ⏳ Duración de la cuenta atrás (en segundos)
 # Cámbialo cuando cierres la plataforma (p. ej. 30*60 = 30 minutos)
-MAINTENANCE_COUNTDOWN_SECONDS = 30 * 60
+MAINTENANCE_COUNTDOWN_SECONDS = 12 * 24 * 00
 
 
 # =========================
@@ -1355,5 +1355,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
