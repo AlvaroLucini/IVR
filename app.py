@@ -27,7 +27,6 @@ st.set_page_config(page_title="IVR Tester", page_icon="📞", layout="centered")
 DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
 
 
-
 # =========================
 # RUTAS BÁSICAS
 # =========================
@@ -308,7 +307,6 @@ def play_node_audio(node: dict) -> bool:
         return True
 
 
-        
 def pick_next_scenario_least_executed() -> dict | None:
     """
     Elige el siguiente escenario entre los que tienen menos EXECUTIONS.
@@ -404,7 +402,6 @@ def load_scenarios():
     if "EXECUTIONS" not in df.columns:
         df["EXECUTIONS"] = "0"
 
-
     scenarios = df.to_dict(orient="records")
     scenarios = [s for s in scenarios if s.get("ACTIVE", "").strip().upper() == "TRUE"]
     return scenarios
@@ -421,6 +418,7 @@ else:
         (nid for nid, n in NODES.items() if n.get("IS_ENTRY")),
         None,
     )
+
 
 def load_scenarios_df_for_selection() -> pd.DataFrame:
     """
@@ -485,6 +483,7 @@ def init_session():
         ss.did_initial_ring = False   # si ya se ha reproducido ring+prompt inicial
         ss.end_audio_played = False   # audio del nodo final reproducido
         ss.account_buffer = ""        # buffer para nodos ACCOUNT
+        ss.repeat_token = None        # 🔁 disparador para repetir audio del nodo
 
 
 def reset_session():
@@ -522,7 +521,7 @@ def start_new_test():
     ss.did_initial_ring = False
     ss.end_audio_played = False
     ss.account_buffer = ""
-
+    ss.repeat_token = None
 
 
 # =========================
@@ -558,6 +557,7 @@ def handle_account_key(key: str, current_node: dict):
         ss.last_action = "goto_root"
         ss.last_message = ""
         ss.last_played_node_id = None
+        ss.repeat_token = None
         return
 
     # Dígitos => acumular
@@ -573,6 +573,7 @@ def handle_account_key(key: str, current_node: dict):
         })
         ss.last_action = "account_digit"
         ss.last_message = ""
+        ss.repeat_token = None
         # Nos quedamos en el mismo nodo
         return
 
@@ -594,6 +595,7 @@ def handle_account_key(key: str, current_node: dict):
         ss.last_action = None
         ss.last_message = ""
         ss.last_played_node_id = None
+        ss.repeat_token = None
 
         new_node = NODES.get(dest_id)
         if not new_node:
@@ -609,6 +611,7 @@ def handle_account_key(key: str, current_node: dict):
     # Cualquier otra cosa -> no válida
     ss.last_action = "invalid"
     ss.last_message = "Opción no válida en este menú."
+    ss.repeat_token = None
     return
 
 
@@ -641,6 +644,7 @@ def handle_account_timeout():
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None
+    ss.repeat_token = None
 
     new_node = NODES.get(dest_id)
     if not new_node:
@@ -688,7 +692,11 @@ def handle_key(key: str):
         )
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
-        ss.last_played_node_id = None
+
+        # 🔁 Disparador explícito para repetir el audio del nodo
+        ss.repeat_token = str(uuid4())
+
+        # OJO: ya no tocamos last_played_node_id aquí
         return
 
     # '#': ir al ROOT
@@ -710,6 +718,7 @@ def handle_key(key: str):
         ss.last_action = "goto_root"
         ss.last_message = "Has vuelto al menú principal."
         ss.last_played_node_id = None
+        ss.repeat_token = None
         return
 
     # 0..9
@@ -756,6 +765,7 @@ def handle_key(key: str):
     ss.last_action = None
     ss.last_message = ""
     ss.last_played_node_id = None  # nuevo nodo -> reproducir audio
+    ss.repeat_token = None
 
     # Si llegamos a una cola, a un nodo SMS o a un nodo TRANSFER, cerramos el test
     node_type = str(new_node["NODE_TYPE"]).strip().upper()
@@ -830,6 +840,7 @@ def send_result_to_github(row: dict):
     except Exception as e:
         if DEBUG_MODE:
             st.sidebar.error(f"Error enviando resultado a GitHub: {e}")
+
 
 def increment_scenario_executions(scenario_id: str):
     """
@@ -984,14 +995,11 @@ def increment_scenario_executions(scenario_id: str):
         if DEBUG_MODE:
             st.sidebar.error(f"DEBUG EXEC: error recargando SCENARIOS: {e}")
 
-
-
     # Refrescamos SCENARIOS en memoria para que la app use valores actualizados
     try:
         SCENARIOS = load_scenarios()
     except Exception:
         pass
-
 
 
 def finish_test(end_node: dict):
@@ -1078,7 +1086,6 @@ def finish_test(end_node: dict):
     except Exception as e:
         if DEBUG_MODE:
             st.sidebar.error(f"Error guardando el resultado del test (GitHub/log): {e}")
-
 
 
 # =========================
@@ -1229,7 +1236,16 @@ def main():
     else:
         if DEBUG_MODE:
             st.subheader("📟 Llamada IVR (simulada)")
-        if ss.last_played_node_id != current_node["NODE_ID"]:
+
+        # 🔁 Si hay una repetición pendiente (se ha pulsado '*'),
+        # reproducimos SIEMPRE el audio del nodo actual una vez.
+        if ss.get("repeat_token"):
+            play_node_audio(current_node)
+            ss.last_played_node_id = current_node["NODE_ID"]
+            ss.repeat_token = None  # consumimos el token
+
+        # ▶️ Si cambiamos de nodo, reproducimos también (una vez)
+        elif ss.last_played_node_id != current_node["NODE_ID"]:
             play_node_audio(current_node)
             ss.last_played_node_id = current_node["NODE_ID"]
 
@@ -1256,17 +1272,5 @@ def main():
         st.rerun()
 
 
-
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
