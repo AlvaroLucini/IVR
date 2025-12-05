@@ -1,0 +1,16 @@
+{
+  "test_id": "2384f320-e94b-4158-980a-3d499032f25c",
+  "timestamp_utc": "2025-12-05T08:12:09.490519+00:00",
+  "scenario_id": "S015CLI",
+  "scenario_title": "Seguimiento incidencia cocina Cliente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 91.986,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-05T08:11:11.098525+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-05T08:11:23.231544+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-05T08:11:48.594492+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-05T08:12:08.508643+00:00\"}]"
+}
