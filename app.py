@@ -32,7 +32,7 @@ DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
 # =========================
 # Si MAINTENANCE_MODE está a True (o en secrets), la app muestra solo
 # un mensaje + imagen y NO permite lanzar tests (salvo que estés en DEBUG).
-MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", False))
+MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", True))
 
 MAINTENANCE_MESSAGE = (
     "Estamos actualizando la IVR para testar una nueva estructura. "
@@ -41,7 +41,7 @@ MAINTENANCE_MESSAGE = (
 
 # ⏳ Duración de la cuenta atrás (en segundos)
 # Cámbialo cuando cierres la plataforma (p. ej. 30*60 = 30 minutos)
-MAINTENANCE_COUNTDOWN_SECONDS = 705 * 60
+MAINTENANCE_COUNTDOWN_SECONDS = 30 * 60
 
 
 # =========================
@@ -1355,6 +1355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
