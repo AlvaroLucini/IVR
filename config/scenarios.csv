@@ -16,7 +16,7 @@ S021,Seguimiento revisión pendiente,Soy un cliente particular y vinisteis a hac
 S022CLI,Cambio datos de factura Particular,Soy un cliente particular y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_General,,,TRUE,2
 S022B2B,Cambio datos de factura B2B,Soy cliente B2B y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_Business,,,TRUE,2
 S023CLI,Seguimiento devolución pendiente Particular,Soy un cliente particular y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_General,,,TRUE,2
-S023B2B,Seguimiento devolución pendiente  B2B,Soy cliente B2B y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_Business,,,TRUE,2
+S023B2B,Seguimiento devolución pendiente  B2B,Soy cliente B2B y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_Business,,,TRUE,3
 S024,Seguimiento incidencia pendiente Particular,Soy un cliente particular y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una incidencia pero aún no me habéis llamado.,ROOT,ES_Voice_Res_General,,,TRUE,2
 S025,Compra dormitorio hogar,Soy un cliente particular y quiero comprar un dormitorio para mi hogar.,ROOT,ES_Voice_Sales_Sales,,,TRUE,2
 S026,Info promo sofás,Soy un cliente particular y quiero informarme sobre la promoción de sofás.,ROOT,ES_Voice_Sales_General,,,TRUE,3
