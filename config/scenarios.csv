@@ -21,7 +21,7 @@ S024,Seguimiento incidencia pendiente Particular,Soy un cliente particular y me 
 S025,Compra dormitorio hogar,Soy un cliente particular y quiero comprar un dormitorio para mi hogar.,ROOT,ES_Voice_Sales_Sales,,,TRUE,2
 S026,Info promo sofás,Soy un cliente particular y quiero informarme sobre la promoción de sofás.,ROOT,ES_Voice_Sales_General,,,TRUE,2
 S027CLI,Compra cocina hogar Particular,Soy un cliente particular y quiero comprar una cocina para mi hogar.,ROOT,ES_Voice_Sales_Kitchen,,,TRUE,2
-S027B2B,Compra cocina hogar B2B,Soy cliente B2B y quiero comprar una cocina para mi negocio.,ROOT,ES_Voice_Sales_Business,,,TRUE,1
+S027B2B,Compra cocina hogar B2B,Soy cliente B2B y quiero comprar una cocina para mi negocio.,ROOT,ES_Voice_Sales_Business,,,TRUE,2
 S028,Consulta horario tienda,Soy un cliente particular y no encuentro el horario de apertura de la tienda de Valencia.,ROOT,ES_Voice_Sales_General,,,TRUE,2
 S029,Consulta disponibilidad fregadero,Soy un cliente particular y quiero saber cuándo volverá a haber stock del fregadero que necesito.,ROOT,ES_Voice_Sales_General,ES_Voice_Sales_Business,,TRUE,1
 S030,Problema código descuento,Soy un cliente particular y no me funciona el código de descuento al hacer la compra.,ROOT,ES_Voice_Sales_General,,,TRUE,2
