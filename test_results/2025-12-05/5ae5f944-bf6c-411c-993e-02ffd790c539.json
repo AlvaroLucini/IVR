@@ -1,0 +1,16 @@
+{
+  "test_id": "5ae5f944-bf6c-411c-993e-02ffd790c539",
+  "timestamp_utc": "2025-12-05T08:29:09.799190+00:00",
+  "scenario_id": "S012B2B",
+  "scenario_title": "Incidencia montaje dormitorio B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 84.907,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-05T08:28:06.920431+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-05T08:28:25.962424+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-05T08:28:40.966199+00:00\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-05T08:28:51.474767+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"\"}, {\"step\": 5, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-05T08:29:09.022555+00:00\"}]"
+}
