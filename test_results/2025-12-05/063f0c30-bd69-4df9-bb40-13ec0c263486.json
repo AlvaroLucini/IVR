@@ -4,7 +4,7 @@
   "scenario_id": "S012CLI",
   "scenario_title": "Incidencia montaje dormitorio Cliente",
   "entry_node_id": "ROOT",
-  "expected_queue_id": "ES_Voice_Res_Montaje",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
   "reached_queue_id": "ES_Voice_Res_General",
   "reached_queue_name": "Resolution General",
   "end_node_id": "ES_Voice_Res_General",
