@@ -23,6 +23,6 @@ S026,Info promo sofás,Soy un cliente particular y quiero informarme sobre la pr
 S027CLI,Compra cocina hogar Particular,Soy un cliente particular y quiero comprar una cocina para mi hogar.,ROOT,ES_Voice_Sales_Kitchen,,,TRUE,2
 S027B2B,Compra cocina hogar B2B,Soy cliente B2B y quiero comprar una cocina para mi negocio.,ROOT,ES_Voice_Sales_Business,,,TRUE,2
 S028,Consulta horario tienda,Soy un cliente particular y no encuentro el horario de apertura de la tienda de Valencia.,ROOT,ES_Voice_Sales_General,,,TRUE,2
-S029,Consulta disponibilidad fregadero,Soy un cliente particular y quiero saber cuándo volverá a haber stock del fregadero que necesito.,ROOT,ES_Voice_Sales_General,ES_Voice_Sales_Business,,TRUE,2
+S029,Consulta disponibilidad fregadero,Soy un cliente particular y quiero saber cuándo volverá a haber stock del fregadero que necesito.,ROOT,ES_Voice_Sales_General,ES_Voice_Sales_Business,,TRUE,3
 S030,Problema código descuento,Soy un cliente particular y no me funciona el código de descuento al hacer la compra.,ROOT,ES_Voice_Sales_General,,,TRUE,2
 S031,Contratar servicio de montaje,Soy un cliente particular y necesito contratar el servicio de montaje para mi pedido de salón.,ROOT,ES_Voice_Sales_Sales,ES_Voice_Sales_Business,,TRUE,2
