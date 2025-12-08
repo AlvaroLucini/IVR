@@ -1,0 +1,16 @@
+{
+  "test_id": "976b8c43-b95f-4bc2-aff1-d484f47e21dc",
+  "timestamp_utc": "2025-12-08T11:41:17.622204+00:00",
+  "scenario_id": "S019",
+  "scenario_title": "Piezas pequeñas faltantes",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 117.646,
+  "num_steps": 9,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T11:39:45.192560+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-08T11:40:08.812248+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T11:40:20.213248+00:00\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-08T11:40:30.133299+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 5, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T11:40:41.073449+00:00\"}, {\"step\": 6, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-08T11:40:49.000786+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 7, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T11:40:56.213349+00:00\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-08T11:41:09.490509+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"\"}, {\"step\": 9, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T11:41:16.603174+00:00\"}]"
+}
