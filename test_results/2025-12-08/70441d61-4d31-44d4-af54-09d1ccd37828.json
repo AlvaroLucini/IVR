@@ -1,0 +1,16 @@
+{
+  "test_id": "70441d61-4d31-44d4-af54-09d1ccd37828",
+  "timestamp_utc": "2025-12-08T14:33:24.536593+00:00",
+  "scenario_id": "S013",
+  "scenario_title": "Cita de montaje no realizada",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 42.193,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T14:33:03.621769+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-08T14:33:13.582994+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-08T14:33:23.661334+00:00\"}]"
+}
