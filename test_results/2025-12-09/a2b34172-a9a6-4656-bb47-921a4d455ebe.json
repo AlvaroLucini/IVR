@@ -1,0 +1,16 @@
+{
+  "test_id": "a2b34172-a9a6-4656-bb47-921a4d455ebe",
+  "timestamp_utc": "2025-12-09T14:41:55.472911+00:00",
+  "scenario_id": "S018",
+  "scenario_title": "Artículo equivocado en tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 83.119,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"*\", \"timestamp\": \"2025-12-09T14:41:06.127023+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:41:25.710736+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:41:36.230975+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-09T14:41:54.426741+00:00\"}]"
+}
