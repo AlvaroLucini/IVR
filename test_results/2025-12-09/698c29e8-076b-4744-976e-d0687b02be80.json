@@ -1,0 +1,16 @@
+{
+  "test_id": "698c29e8-076b-4744-976e-d0687b02be80",
+  "timestamp_utc": "2025-12-09T14:45:03.833024+00:00",
+  "scenario_id": "S016",
+  "scenario_title": "Bulto faltante en pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 92.154,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:44:03.097275+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"*\", \"timestamp\": \"2025-12-09T14:44:24.309473+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:44:31.316153+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-09T14:44:50.983305+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:45:02.949564+00:00\"}]"
+}
