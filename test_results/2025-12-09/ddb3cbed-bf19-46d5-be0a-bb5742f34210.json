@@ -1,0 +1,16 @@
+{
+  "test_id": "ddb3cbed-bf19-46d5-be0a-bb5742f34210",
+  "timestamp_utc": "2025-12-09T11:19:41.575059+00:00",
+  "scenario_id": "S030",
+  "scenario_title": "Problema código descuento",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_name": "Sales Home",
+  "end_node_id": "ES_Voice_Sales_Sales",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 55.267,
+  "num_steps": 2,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-09T11:19:15.830652+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-09T11:19:40.696838+00:00\"}]"
+}
