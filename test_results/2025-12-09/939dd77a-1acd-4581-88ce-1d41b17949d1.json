@@ -1,0 +1,16 @@
+{
+  "test_id": "939dd77a-1acd-4581-88ce-1d41b17949d1",
+  "timestamp_utc": "2025-12-09T15:20:16.492428+00:00",
+  "scenario_id": "S018",
+  "scenario_title": "Artículo equivocado en tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "Global_TransferToCoWorkerDelivery",
+  "end_node_type": "TRANSFER",
+  "result": "WRONG_END_TRANSFER",
+  "duration_seconds": 77.729,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T15:19:35.776968+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T15:19:52.373853+00:00\"}, {\"step\": 3, \"node_id\": \"Global_MenuOrderManMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T15:20:15.487649+00:00\"}]"
+}
