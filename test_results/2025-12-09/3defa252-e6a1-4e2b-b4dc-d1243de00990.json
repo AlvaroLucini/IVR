@@ -1,0 +1,16 @@
+{
+  "test_id": "3defa252-e6a1-4e2b-b4dc-d1243de00990",
+  "timestamp_utc": "2025-12-09T18:40:50.107267+00:00",
+  "scenario_id": "S027B2B",
+  "scenario_title": "Compra cocina hogar B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 51.816,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T18:40:23.529207+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-09T18:40:38.892066+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T18:40:49.187710+00:00\"}]"
+}
