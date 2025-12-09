@@ -1,0 +1,16 @@
+{
+  "test_id": "ef42830b-f71e-4fbf-a4ee-ed4c1be59734",
+  "timestamp_utc": "2025-12-09T14:47:21.540624+00:00",
+  "scenario_id": "S026",
+  "scenario_title": "Info promo sofás",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 53.538,
+  "num_steps": 2,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-09T14:46:58.647191+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:47:20.567992+00:00\"}]"
+}
