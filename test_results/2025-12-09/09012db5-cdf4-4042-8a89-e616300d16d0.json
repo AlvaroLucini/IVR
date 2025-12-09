@@ -1,0 +1,16 @@
+{
+  "test_id": "09012db5-cdf4-4042-8a89-e616300d16d0",
+  "timestamp_utc": "2025-12-09T14:40:44.237051+00:00",
+  "scenario_id": "S015B2B",
+  "scenario_title": "Seguimiento incidencia cocina B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 126.774,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:39:12.046073+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-09T14:39:34.826429+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"#\", \"timestamp\": \"2025-12-09T14:39:58.806654+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:40:15.406514+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:40:27.676072+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:40:43.356913+00:00\"}]"
+}
