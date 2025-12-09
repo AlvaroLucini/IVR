@@ -1,0 +1,16 @@
+{
+  "test_id": "577e83f3-3a4c-41a2-b3da-777b25ffab07",
+  "timestamp_utc": "2025-12-09T14:40:24.197827+00:00",
+  "scenario_id": "S012B2B",
+  "scenario_title": "Incidencia montaje dormitorio B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 113.537,
+  "num_steps": 12,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:38:55.327934+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:39:14.292726+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:39:15.492411+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"12\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:39:16.772284+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"121\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:39:17.726967+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1212\"}, {\"step\": 6, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:39:18.592710+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"12121\"}, {\"step\": 7, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"2\", \"timestamp\": \"2025-12-09T14:39:19.525881+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"121212\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-09T14:39:32.725656+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"121212\"}, {\"step\": 9, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:39:40.862890+00:00\"}, {\"step\": 10, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-09T14:39:43.406680+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 11, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"*\", \"timestamp\": \"2025-12-09T14:40:00.523563+00:00\"}, {\"step\": 12, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-09T14:40:23.243830+00:00\"}]"
+}
