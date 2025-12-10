@@ -1,0 +1,16 @@
+{
+  "test_id": "d8861a7a-e91c-48b4-8583-8dccb5f5f27c",
+  "timestamp_utc": "2025-12-10T09:26:15.329540+00:00",
+  "scenario_id": "S023CLI",
+  "scenario_title": "Seguimiento devolución pendiente Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 66.409,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T09:25:36.147349+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T09:25:54.406313+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-10T09:26:14.404401+00:00\"}]"
+}
