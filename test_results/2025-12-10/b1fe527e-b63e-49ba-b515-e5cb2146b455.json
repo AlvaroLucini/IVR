@@ -1,0 +1,16 @@
+{
+  "test_id": "b1fe527e-b63e-49ba-b515-e5cb2146b455",
+  "timestamp_utc": "2025-12-10T08:54:39.914620+00:00",
+  "scenario_id": "S015B2B",
+  "scenario_title": "Seguimiento incidencia cocina B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 23.692,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T08:54:29.125572+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-10T08:54:33.540330+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T08:54:39.076211+00:00\"}]"
+}
