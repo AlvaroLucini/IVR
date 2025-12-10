@@ -1,0 +1,16 @@
+{
+  "test_id": "7feffe58-7d98-46e0-ad86-39b2ac861bcc",
+  "timestamp_utc": "2025-12-10T13:28:18.178622+00:00",
+  "scenario_id": "S021",
+  "scenario_title": "Seguimiento revisión pendiente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 58.503,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T13:27:45.913767+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T13:27:58.088098+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-10T13:28:17.167901+00:00\"}]"
+}
