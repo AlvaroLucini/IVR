@@ -1,0 +1,16 @@
+{
+  "test_id": "e3f9b4e5-8f8f-4a85-93a5-b8f328bc2251",
+  "timestamp_utc": "2025-12-10T11:52:56.121071+00:00",
+  "scenario_id": "S023B2B",
+  "scenario_title": "Seguimiento devolución pendiente  B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 51.443,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T11:52:27.728190+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-10T11:52:42.735890+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T11:52:55.303070+00:00\"}]"
+}
