@@ -1,0 +1,16 @@
+{
+  "test_id": "32664499-3d4e-41d5-aa89-c7671a59d4c6",
+  "timestamp_utc": "2025-12-10T11:52:01.683475+00:00",
+  "scenario_id": "S017",
+  "scenario_title": "Producto dañado en pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "Global_TransferToCoWorkerDelivery",
+  "end_node_type": "TRANSFER",
+  "result": "WRONG_END_TRANSFER",
+  "duration_seconds": 70.065,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T11:51:13.397742+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T11:51:22.301461+00:00\"}, {\"step\": 3, \"node_id\": \"Global_MenuOrderManMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T11:52:00.704493+00:00\"}]"
+}
