@@ -231,31 +231,71 @@ def load_all_results() -> pd.DataFrame:
 df = load_all_results()
 
 # =========================
+# COMPROBAR QUE HAY DATA
+# =========================
+
+if df.empty:
+    st.info("Todavía no hay resultados para mostrar.")
+    st.stop()
+
+# =========================
 # NORMALIZAR reached_queue_id PARA SMS
 # =========================
 
-if not df.empty and "end_node_type" in df.columns:
-    # Si el nodo final es SMS y reached_queue_id está vacío → mostrar "SMS"
+if "end_node_type" in df.columns:
     end_type_upper = df["end_node_type"].astype(str).str.upper()
     rq_stripped = df["reached_queue_id"].astype(str).str.strip()
     mask_sms = (end_type_upper == "SMS") & (rq_stripped == "")
     df.loc[mask_sms, "reached_queue_id"] = "SMS"
 
 # =========================
-# SOLO BOTÓN EN LA BARRA IZQUIERDA
+# CONTROLES LATERALES (RECARGAR + RANGO DE FECHAS)
 # =========================
+
+has_dates = "timestamp_utc" in df.columns and df["timestamp_utc"].notna().any()
+if has_dates:
+    min_date = df["timestamp_utc"].min().date()
+    max_date = df["timestamp_utc"].max().date()
+else:
+    min_date = max_date = None
 
 with st.sidebar:
     if st.button("🔄 Recargar resultados"):
         st.rerun()
 
-# =========================
-# SI NO HAY DATOS
-# =========================
+    st.markdown("---")
+    st.markdown("### Filtro de fechas")
 
-if df.empty:
-    st.info("Todavía no hay resultados para mostrar.")
+    if has_dates:
+        date_range = st.date_input(
+            "Rango de fechas",
+            value=(min_date, max_date),
+            min_value=min_date,
+            max_value=max_date,
+        )
+
+        # st.date_input puede devolver una date o una tupla
+        if isinstance(date_range, tuple) or isinstance(date_range, list):
+            start_date, end_date = date_range
+        else:
+            start_date = end_date = date_range
+    else:
+        st.info("Los JSON no tienen timestamp_utc, no se puede filtrar por fecha.")
+        start_date = end_date = None
+
+# Aplicamos el filtro de fechas (si procede)
+if has_dates and start_date and end_date:
+    mask = df["timestamp_utc"].dt.date.between(start_date, end_date)
+    df_filtered = df[mask].copy()
+else:
+    df_filtered = df.copy()
+
+if df_filtered.empty:
+    st.info("No hay resultados en el rango de fechas seleccionado.")
     st.stop()
+
+# A partir de aquí trabajamos siempre con df_filtered
+df = df_filtered
 
 # =========================
 # MAPEO RESULTADOS → Éxito / Fallo
@@ -444,7 +484,7 @@ st.dataframe(tabla, width="stretch")
 st.markdown("---")
 st.subheader("Detalle de rutas por escenario")
 
-# Opciones de escenario para el desplegable
+# Escenarios disponibles SOLO en el rango filtrado
 escenarios_disponibles = sorted(df["scenario_id"].unique())
 
 def scenario_label(sid: str) -> str:
@@ -463,7 +503,7 @@ selected_scenario = st.selectbox(
 df_scenario = df[df["scenario_id"] == selected_scenario].copy()
 
 if df_scenario.empty:
-    st.info("No hay resultados para este escenario.")
+    st.info("No hay resultados para este escenario en el rango seleccionado.")
 else:
     # -------- Cola correcta (sacada de scenarios.csv) --------
     st.markdown("#### Cola correcta")
@@ -474,7 +514,6 @@ else:
         primary_q = str(cfg.get("expected_queue_id", "")).strip()
         alt_q = str(cfg.get("expected_alt_queue_ids", "")).strip()
     else:
-        # Fallback por si algún día no está en el csv
         primary_q = ""
         alt_q = ""
 
@@ -499,6 +538,8 @@ else:
         correct_route_str = build_route_str(steps, NODE_LABELS)
 
         st.markdown(f"**Ruta de éxito más frecuente:** {correct_route_str}")
+    else:
+        st.warning("Este escenario no tiene tests con Éxito en el rango seleccionado.")
 
     # -------- Tabla de llamadas del escenario (éxito + fallo) --------
     st.markdown("#### Llamadas de este escenario")
