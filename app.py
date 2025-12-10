@@ -25,7 +25,7 @@ st.set_page_config(page_title="IVR Tester", page_icon="📞", layout="centered")
 # MODO DEBUG (para ti)
 # =========================
 
-DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
+DEBUG_MODE = bool(st.secrets.get("debug_mode", True))
 
 # =========================
 # MODO MANTENIMIENTO
@@ -1355,6 +1355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
