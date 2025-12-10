@@ -1,0 +1,16 @@
+{
+  "test_id": "d647ba25-7936-4092-8136-407605c4c2b0",
+  "timestamp_utc": "2025-12-10T07:19:42.610586+00:00",
+  "scenario_id": "S022B2B",
+  "scenario_title": "Cambio datos de factura B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "",
+  "reached_queue_name": "",
+  "end_node_id": "Global_SMSSent",
+  "end_node_type": "SMS",
+  "result": "WRONG_END_SMS",
+  "duration_seconds": 113.562,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T07:18:27.224799+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-10T07:18:46.961840+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-10T07:19:12.056069+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T07:19:20.249296+00:00\"}, {\"step\": 5, \"node_id\": \"Global_MenuOrderManMobileOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-10T07:19:41.882992+00:00\"}]"
+}
