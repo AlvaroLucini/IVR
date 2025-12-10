@@ -274,10 +274,16 @@ with st.sidebar:
             max_value=max_date,
         )
 
-        # st.date_input puede devolver una date o una tupla
-        if isinstance(date_range, tuple) or isinstance(date_range, list):
-            start_date, end_date = date_range
+        # Puede devolver: una fecha sola, una lista/tupla de 1 fecha o de 2 fechas
+        if isinstance(date_range, (tuple, list)):
+            if len(date_range) == 2:
+                start_date, end_date = date_range
+            elif len(date_range) == 1:
+                start_date = end_date = date_range[0]
+            else:
+                start_date = end_date = None
         else:
+            # Un único date
             start_date = end_date = date_range
     else:
         st.info("Los JSON no tienen timestamp_utc, no se puede filtrar por fecha.")
@@ -290,12 +296,6 @@ if has_dates and start_date and end_date:
 else:
     df_filtered = df.copy()
 
-if df_filtered.empty:
-    st.info("No hay resultados en el rango de fechas seleccionado.")
-    st.stop()
-
-# A partir de aquí trabajamos siempre con df_filtered
-df = df_filtered
 
 # =========================
 # MAPEO RESULTADOS → Éxito / Fallo
