@@ -296,6 +296,8 @@ if has_dates and start_date and end_date:
 else:
     df_filtered = df.copy()
 
+# 🔑 A partir de aquí TRABAJAMOS SIEMPRE CON df (FILTRADO)
+df = df_filtered.copy()
 
 # =========================
 # MAPEO RESULTADOS → Éxito / Fallo
@@ -355,7 +357,7 @@ with g2:
 with g3:
     st.metric("🔴 Tests con fallo", tests_fail)
 with g4:
-    st.metric("⏱ Duración media (HH:MM:SS)", avg_str)
+    st.metric("⏱ Duración media (HH:MM:SS)", avg_seconds and format_seconds_hhmmss(avg_seconds) or "N/A")
 
 st.markdown("---")
 
@@ -385,7 +387,10 @@ st.markdown("---")
 
 st.subheader("Resultados por escenario")
 
-max_count = int(agg["count"].max())
+if not agg.empty:
+    max_count = int(agg["count"].max())
+else:
+    max_count = 0
 
 chart = (
     alt.Chart(agg)
