@@ -1,0 +1,16 @@
+{
+  "test_id": "b6984742-8aba-4f5c-97d1-cca3ba577fb8",
+  "timestamp_utc": "2025-12-11T13:42:11.997439+00:00",
+  "scenario_id": "S022B2B",
+  "scenario_title": "Cambio datos de factura B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 73.434,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-11T13:41:24.320942+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-11T13:41:27.319471+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-11T13:42:11.028120+00:00\"}]"
+}
