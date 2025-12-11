@@ -1171,7 +1171,7 @@ def render_keypad():
 
 def main():
     # 🔧 MODO MANTENIMIENTO
-    # Si está activado y NO estamos en DEBUG, solo mostramos mensaje+imagen+cuenta atrás.
+    # Si está activado y NO estamos en DEBUG, solo mostramos mensaje+imagen.
     if MAINTENANCE_MODE and not DEBUG_MODE:
         st.title("📞 IVR Tester (simulador de IVR)")
         st.subheader("🔧 Plataforma en actualización")
@@ -1187,45 +1187,7 @@ def main():
             if DEBUG_MODE:
                 st.sidebar.error(f"Error mostrando imagen de mantenimiento: {e}")
 
-        # ⏳ Cuenta atrás en HTML+JS (no bloquea el servidor)
-        countdown_seconds = MAINTENANCE_COUNTDOWN_SECONDS
-        countdown_html = f"""
-        <div style="text-align:center; margin-top: 1rem;">
-          <h3>⏱️ Cuenta atrás estimada</h3>
-          <div id="ivrtimer" style="font-size:2rem; font-weight:bold; margin-top:0.5rem;"></div>
-          <div style="margin-top:0.5rem; font-size:0.9rem; opacity:0.7;">
-            El tiempo es orientativo. Si la plataforma sigue cerrada al llegar a cero, prueba a recargar.
-          </div>
-        </div>
-        <script>
-        (function() {{
-            var remaining = {countdown_seconds};
-            function formatTime(sec) {{
-                var h = Math.floor(sec / 3600);
-                var m = Math.floor((sec % 3600) / 60);
-                var s = sec % 60;
-                return (
-                    String(h).padStart(2,'0') + ':' +
-                    String(m).padStart(2,'0') + ':' +
-                    String(s).padStart(2,'0')
-                );
-            }}
-            function tick() {{
-                var el = document.getElementById('ivrtimer');
-                if (!el) return;
-                if (remaining <= 0) {{
-                    el.innerHTML = "00:00:00";
-                    return;
-                }}
-                el.innerHTML = formatTime(remaining);
-                remaining -= 1;
-                setTimeout(tick, 1000);
-            }}
-            tick();
-        }})();
-        </script>
-        """
-        components.html(countdown_html, height=160)
+        # (Sin cuenta atrás: solo mensaje estático)
         return
 
     init_session()
@@ -1355,6 +1317,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
