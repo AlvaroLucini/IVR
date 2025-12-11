@@ -13,7 +13,7 @@ Global_MenuStockMain,Autoservicio Stock,MENU,NO,"Ayúdanos a entender tus necesi
 Global_MenuNoStock,Autoservicio Stock SMS,MENU,NO,"Para recibir información cuando volvamos a tener stock en nuestra web, a través de un SMS, pulsa 1. De lo contrario, para hablar con uno de nuestros colaboradores, pulsa 2. ",,,,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_MenuPlanAppMobileOpen,Autoservicio Planificación,MENU,NO,"El lugar más fácil para solicitar una cita de planificación es la página web de IKEA. Para recibir un enlace a esa página en nuestra web, mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.",,,,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_SparePartsMobileOpen,Autoservicio Piezas y Repuestos,MENU,NO,"El mejor lugar para informarse sobre las piezas de repuesto es la web de IKEA.Para recibir un enlace a esa página de nuestra web mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.",,,,Global_SMSSent,Global_TransferToCoWorkerResGen,,,,,,,,
-Menu_ES_SalesOptions,Contacto Agente Sales,MENU,NO,"Si quieres información de horarios, disponibilidad de artículos, citas de planification, promociones y servicios, pulsa 1. Para comprar mobiliario de cocina, baño y electrodomésticos, pulsa 2. Para comprar mobiliario de salon, dormitorio u otros, pulsa 3. Para repetir este menú, pulsa asterisco.",,,,ES_Voice_Sales_General,ES_Voice_Sales_Kitchen,ES_Voice_Sales_Sales,,,,,,,
+Menu_ES_SalesOptions,Contacto Agente Sales,MENU,NO,"Si quieres información de horarios, disponibilidad de artículos, citas de planification, promociones y servicios, pulsa 1. Para comprar mobiliario de cocina, baño y electrodomésticos, pulsa 2. Para comprar mobiliario de salon, dormitorio u otros, pulsa 3. Si quieres volver a escuchar estas opciones, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.",,,,ES_Voice_Sales_General,ES_Voice_Sales_Kitchen,ES_Voice_Sales_Sales,,,,,,,
 ES_Voice_Sales_Kitchen,Cola pedidos Sales Kitchen,QUEUE,NO,Te vamos a pasar con un agente especializado ventas cocinas.,,ES_Voice_Sales_Kitchen,Sales Kitchen,,,,,,,,,,
 ES_Voice_Sales_Sales,Cola pedidos Sales Home,QUEUE,NO,Te vamos a pasar con un agente especializado ventas hogar.,,ES_Voice_Sales_Sales,Sales Home,,,,,,,,,,
 ES_Voice_Sales_General,Cola pedidos Sales General,QUEUE,NO,Te vamos a pasar con un agente especializado teleperformance.,,ES_Voice_Sales_General,Sales General,,,,,,,,,,
@@ -33,5 +33,6 @@ Global_TransferToCoWorkerDelivery,Transferencia a Delivery,TRANSFER,NO,Voy a tra
 Global_TransferToCoWorkerSalesGen,Transferencia a Sales General,TRANSFER,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Sales_General,Sales General,,,,,,,,,,
 Global_TransferToCoWorkerResGen,Transferencia a Resolution General,TRANSFER,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Res_General,Resolution General,,,,,,,,,,
 Global_SMSSent,Envio SMS autoservicio,SMS,NO,"Te acabamos de enviar un mensaje de texto, comprueba tu teléfono móvil. Gracias por llamar a IKEA. Hasta pronto.",,,,,,,,,,,,,
+
 
 
