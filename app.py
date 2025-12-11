@@ -1174,7 +1174,7 @@ def main():
     # Si está activado y NO estamos en DEBUG, solo mostramos mensaje+imagen.
     if MAINTENANCE_MODE and not DEBUG_MODE:
         st.title("📞 IVR Tester (simulador de IVR)")
-        st.subheader("🔧 Plataforma en actualización + Test #3 a partir del 11/12/25")
+        st.subheader("🔧 Plataforma en actualización - Test #3")
         st.info(MAINTENANCE_MESSAGE)
 
         # Imagen centrada si existe
@@ -1317,6 +1317,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
