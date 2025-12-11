@@ -32,7 +32,7 @@ DEBUG_MODE = bool(st.secrets.get("debug_mode", False))
 # =========================
 # Si MAINTENANCE_MODE está a True (o en secrets), la app muestra solo
 # un mensaje + imagen y NO permite lanzar tests (salvo que estés en DEBUG).
-MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", True))
+MAINTENANCE_MODE = bool(st.secrets.get("maintenance_mode", False))
 
 MAINTENANCE_MESSAGE = (
     "Estamos actualizando la IVR para testar una nueva estructura. "
@@ -1317,6 +1317,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
