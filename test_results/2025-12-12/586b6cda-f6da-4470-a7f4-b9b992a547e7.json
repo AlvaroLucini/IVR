@@ -1,0 +1,16 @@
+{
+  "test_id": "586b6cda-f6da-4470-a7f4-b9b992a547e7",
+  "timestamp_utc": "2025-12-12T12:47:10.373639+00:00",
+  "scenario_id": "S019",
+  "scenario_title": "Piezas pequeñas faltantes",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 52.71,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T12:46:41.371815+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-12T12:46:44.987254+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"3\", \"timestamp\": \"2025-12-12T12:46:55.687296+00:00\"}, {\"step\": 4, \"node_id\": \"Global_SparePartsMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T12:47:09.547950+00:00\"}]"
+}
