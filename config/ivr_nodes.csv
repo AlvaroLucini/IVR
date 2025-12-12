@@ -4,7 +4,7 @@ Global_EnterAccountNumber,Filtrado clientes B2B,ACCOUNT,NO,"Esta línea es exclu
 Global_Menu_B2B,Menú B2B,MENU,NO,"Bienvenido al servicio de IKEA para Empresas. Si  quieres comprar con un agente pulsa 1. Si has realizado una compra y necesitas ayuda, pulsa 2. Para volver a escuchar este menú, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.",,,,ES_Voice_Sales_Business,ES_Voice_Res_Business,,,,,,,,
 ES_Voice_Sales_Business,Cola pedidos Venta B2B,QUEUE,NO,Te vamos a pasar con un agente especializado venta business.,,ES_Voice_Sales_Business,Ventas B2B,,,,,,,,,,
 ES_Voice_Res_Business,Cola pedidos Resolution B2B,QUEUE,NO,Te vamos a pasar con un agente especializado postventa business.,,ES_Voice_Res_Business,Resolution B2B,,,,,,,,,,
-Menu_ES_SalesOpen,Autoservicio Sales,MENU,NO,"Para gestionar tu consulta con nuestras herramientas de autoservicio, pulsa 1. Para comprar con un agente, pulsa 2",,,,Menu_Autoservicio_Sales,Menu_ES_SalesOptions,,,,,,,," "
+Menu_ES_SalesOpen,Autoservicio Sales,MENU,NO,"Si quieres gestionarlo tú mismo, pulsa 1.  Para comprar con un agente, pulsa 2. Si quieres volver a escuchar estas opciones, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.",,,,Menu_Autoservicio_Sales,Menu_ES_SalesOptions,,,,,,,," "
 Menu_Autoservicio_Sales,Autoservicio Sales,MENU,NO,"Si quieres saber la disponibilidad de un artículo , pulsa 1
 Para reservar tu mismo una cita de planificación, pulsa 2 
 Para solicitar piezas y tornillería , pulsa 3.
@@ -17,7 +17,7 @@ Menu_ES_SalesOptions,Contacto Agente Sales,MENU,NO,"Si quieres información de h
 ES_Voice_Sales_Kitchen,Cola pedidos Sales Kitchen,QUEUE,NO,Te vamos a pasar con un agente especializado ventas cocinas.,,ES_Voice_Sales_Kitchen,Sales Kitchen,,,,,,,,,,
 ES_Voice_Sales_Sales,Cola pedidos Sales Home,QUEUE,NO,Te vamos a pasar con un agente especializado ventas hogar.,,ES_Voice_Sales_Sales,Sales Home,,,,,,,,,,
 ES_Voice_Sales_General,Cola pedidos Sales General,QUEUE,NO,Te vamos a pasar con un agente especializado teleperformance.,,ES_Voice_Sales_General,Sales General,,,,,,,,,,
-Menu_ES_ResolutionOpen,Opciones Resolution,MENU,NO,"Para gestionar tu consulta con nuestras herramientas de autoservicio, pulsa 1. Para hablar con un agente, pulsa 2.  Para volver al menú principal, pulsa almohadilla.",,,,Menu_Autoservicio_Resolution,Menu_ES_ResolutionOptions,,,,,,,," "
+Menu_ES_ResolutionOpen,Opciones Resolution,MENU,NO,"Si quieres gestionarlo tú mismo, pulsa 1.  Para hablar con un agente, pulsa 2. Si quieres volver a escuchar estas opciones, pulsa asterisco. Para volver al menú principal, pulsa almohadilla.",,,,Menu_Autoservicio_Resolution,Menu_ES_ResolutionOptions,,,,,,,," "
 Menu_Autoservicio_Resolution,Autoservicio Resolution,MENU,NO,"Para realizar el seguimiento de tu pedido, pulsa 1.
 Para realizar una devolución, pulsa 2.
 Para solicitar piezas y tornillería , pulsa 3.
@@ -33,6 +33,7 @@ Global_TransferToCoWorkerDelivery,Transferencia a Delivery,QUEUE,NO,Voy a transf
 Global_TransferToCoWorkerSalesGen,Transferencia a Sales General,QUEUE,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Sales_General,Sales General,,,,,,,,,,
 Global_TransferToCoWorkerResGen,Transferencia a Resolution General,QUEUE,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Res_General,Resolution General,,,,,,,,,,
 Global_SMSSent,Envio SMS autoservicio,SMS,NO,"Te acabamos de enviar un mensaje de texto, comprueba tu teléfono móvil. Gracias por llamar a IKEA. Hasta pronto.",,,,,,,,,,,,,
+
 
 
 
