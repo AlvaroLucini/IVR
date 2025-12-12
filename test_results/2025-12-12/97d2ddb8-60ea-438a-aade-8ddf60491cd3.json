@@ -1,0 +1,16 @@
+{
+  "test_id": "97d2ddb8-60ea-438a-aade-8ddf60491cd3",
+  "timestamp_utc": "2025-12-12T11:11:21.837896+00:00",
+  "scenario_id": "S025",
+  "scenario_title": "Compra dormitorio hogar",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_name": "Sales Home",
+  "end_node_id": "ES_Voice_Sales_Sales",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 107.787,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T11:10:21.200776+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-12T11:10:35.848632+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-12T11:10:53.960673+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T11:11:02.331129+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-12T11:11:21.038290+00:00\"}]"
+}
