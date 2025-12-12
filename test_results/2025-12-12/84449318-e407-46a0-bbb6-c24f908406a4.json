@@ -1,0 +1,16 @@
+{
+  "test_id": "84449318-e407-46a0-bbb6-c24f908406a4",
+  "timestamp_utc": "2025-12-12T07:22:04.671314+00:00",
+  "scenario_id": "S011",
+  "scenario_title": "Seguimiento entrega pedido B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 62.261,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T07:21:20.188882+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T07:21:29.773203+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"#\", \"timestamp\": \"2025-12-12T07:21:48.406921+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-12T07:21:51.644280+00:00\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-12T07:21:54.855432+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 6, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-12T07:22:03.784699+00:00\"}]"
+}
