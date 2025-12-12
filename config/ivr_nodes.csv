@@ -9,7 +9,7 @@ Menu_Autoservicio_Sales,Autoservicio Sales,MENU,NO,"Si quieres saber la disponib
 Para reservar tu mismo una cita de planificación, pulsa 2 
 Para solicitar piezas y tornillería , pulsa 3.
 Para volver al menú principal, pulsa #",,,,Global_MenuStockMain,Global_MenuPlanAppMobileOpen,Global_SparePartsMobileOpen,,,,,,,
-Global_MenuStockMain,Autoservicio Stock,MENU,NO,"Ayúdanos a entender tus necesidades seleccionando una de las siguientes opciones. Si deseas saber si hay existencias de un artículo concreto en alguna de nuestras tiendas, pulsa 1.Si ya has consultado en línea, pero no hay existencias y deseas saber cuándo estará disponible la próxima vez, Pulsa 2. O si sabes que el producto que quieres no está disponible y buscas una alternativa, pulsa 3.",,,,Global_SMSSent,Global_TransferToCoWorkerDelivery,,,,,,,,
+Global_MenuStockMain,Autoservicio Stock,MENU,NO,"Ayúdanos a entender tus necesidades seleccionando una de las siguientes opciones. Si deseas saber si hay existencias de un artículo concreto en alguna de nuestras tiendas, pulsa 1.Si ya has consultado en línea, pero no hay existencias y deseas saber cuándo estará disponible la próxima vez, Pulsa 2. O si sabes que el producto que quieres no está disponible y buscas una alternativa, pulsa 3.",,,,Global_SMSSent,Global_TransferToCoWorkerSalesGen,Global_TransferToCoWorkerSalesGen,,,,,,,
 Global_MenuNoStock,Autoservicio Stock SMS,MENU,NO,"Para recibir información cuando volvamos a tener stock en nuestra web, a través de un SMS, pulsa 1. De lo contrario, para hablar con uno de nuestros colaboradores, pulsa 2. ",,,,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_MenuPlanAppMobileOpen,Autoservicio Planificación,MENU,NO,"El lugar más fácil para solicitar una cita de planificación es la página web de IKEA. Para recibir un enlace a esa página en nuestra web, mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.",,,,Global_SMSSent,Global_TransferToCoWorkerSalesGen,,,,,,,,
 Global_SparePartsMobileOpen,Autoservicio Piezas y Repuestos,MENU,NO,"El mejor lugar para informarse sobre las piezas de repuesto es la web de IKEA.Para recibir un enlace a esa página de nuestra web mediante un SMS, pulsa 1. Para hablar con uno de nuestros colaboradores, pulsa 2.",,,,Global_SMSSent,Global_TransferToCoWorkerResGen,,,,,,,,
@@ -33,6 +33,7 @@ Global_TransferToCoWorkerDelivery,Transferencia a Delivery,TRANSFER,NO,Voy a tra
 Global_TransferToCoWorkerSalesGen,Transferencia a Sales General,TRANSFER,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Sales_General,Sales General,,,,,,,,,,
 Global_TransferToCoWorkerResGen,Transferencia a Resolution General,TRANSFER,NO,Voy a transferirte a uno de nuestros colaboradores para que te ayude.,,ES_Voice_Res_General,Resolution General,,,,,,,,,,
 Global_SMSSent,Envio SMS autoservicio,SMS,NO,"Te acabamos de enviar un mensaje de texto, comprueba tu teléfono móvil. Gracias por llamar a IKEA. Hasta pronto.",,,,,,,,,,,,,
+
 
 
 
