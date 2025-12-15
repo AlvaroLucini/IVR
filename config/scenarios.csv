@@ -6,7 +6,7 @@ S012B2B,Incidencia montaje dormitorio B2B,Soy cliente B2B y me han dejado sin mo
 S013,Cita de montaje no realizada,Soy un cliente particular y el montador no ha aparecido en la cita acordada.,ROOT,ES_Voice_Res_Delivery,,,TRUE,1
 S014,Montaje cocina incompleto,Soy un cliente particular y no han terminado de montar mi cocina.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,1
 S015CLI,Seguimiento incidencia cocina Cliente,Soy un cliente particular y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Kitchen,,,TRUE,0
-S015B2B,Seguimiento incidencia cocina B2B,Soy cliente B2B y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia  pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Business,,,TRUE,0
+S015B2B,Seguimiento incidencia cocina B2B,Soy cliente B2B y el instalador de mi cocina me dijo que se pondrían en contacto conmigo por una incidencia  pero no he vuelto a tener noticias.,ROOT,ES_Voice_Res_Business,,,TRUE,1
 S016,Bulto faltante en pedido,Soy un cliente particular y falta un paquete en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,1
 S017,Producto dañado en pedido,Soy un cliente particular y me ha llegado un artículo dañado en mi pedido.,ROOT,ES_Voice_Res_Delivery,,,TRUE,1
 S018,Artículo equivocado en tienda,Soy un cliente particular y fui a comprar a la tienda; al llegar a casa uno de los artículos no se corresponde con lo que pedí.,ROOT,ES_Voice_Res_General,,,TRUE,0
