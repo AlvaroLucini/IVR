@@ -1,0 +1,16 @@
+{
+  "test_id": "2b55f6d4-4649-44b3-b36f-e838eb1a8f94",
+  "timestamp_utc": "2025-12-15T09:50:06.365134+00:00",
+  "scenario_id": "S010",
+  "scenario_title": "Seguimiento entrega pedido Cliente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 53.102,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T09:49:45.527099+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T09:49:53.118959+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T09:50:05.500730+00:00\"}]"
+}
