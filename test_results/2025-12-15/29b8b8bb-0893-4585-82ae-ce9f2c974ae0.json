@@ -1,0 +1,16 @@
+{
+  "test_id": "29b8b8bb-0893-4585-82ae-ce9f2c974ae0",
+  "timestamp_utc": "2025-12-15T10:01:41.781292+00:00",
+  "scenario_id": "S021",
+  "scenario_title": "Seguimiento revisión pendiente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 109.339,
+  "num_steps": 7,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:00:29.362284+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:01:00.676766+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:01:04.389688+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:01:08.278263+00:00\"}, {\"step\": 5, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T10:01:16.120380+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T10:01:23.970712+00:00\"}, {\"step\": 7, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:01:41.009376+00:00\"}]"
+}
