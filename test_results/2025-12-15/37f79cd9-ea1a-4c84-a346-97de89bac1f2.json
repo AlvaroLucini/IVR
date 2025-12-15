@@ -1,0 +1,16 @@
+{
+  "test_id": "37f79cd9-ea1a-4c84-a346-97de89bac1f2",
+  "timestamp_utc": "2025-12-15T10:47:06.873985+00:00",
+  "scenario_id": "S026",
+  "scenario_title": "Info promo sofás",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "",
+  "reached_queue_name": "",
+  "end_node_id": "Global_SMSSent",
+  "end_node_type": "SMS",
+  "result": "WRONG_END_SMS",
+  "duration_seconds": 73.116,
+  "num_steps": 9,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:46:10.330016+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:46:11.842871+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:46:24.651411+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:46:30.917151+00:00\"}, {\"step\": 5, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:46:31.607723+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:46:42.692699+00:00\"}, {\"step\": 7, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T10:46:46.612391+00:00\"}, {\"step\": 8, \"node_id\": \"Global_MenuPlanAppMobileOpen\", \"digit\": \"*\", \"timestamp\": \"2025-12-15T10:47:01.127596+00:00\"}, {\"step\": 9, \"node_id\": \"Global_MenuPlanAppMobileOpen\", \"digit\": \"0\", \"timestamp\": \"2025-12-15T10:47:05.953051+00:00\"}]"
+}
