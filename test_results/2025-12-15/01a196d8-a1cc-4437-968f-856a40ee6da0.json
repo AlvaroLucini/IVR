@@ -1,0 +1,16 @@
+{
+  "test_id": "01a196d8-a1cc-4437-968f-856a40ee6da0",
+  "timestamp_utc": "2025-12-15T19:59:53.241539+00:00",
+  "scenario_id": "S027CLI",
+  "scenario_title": "Compra cocina hogar Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Kitchen",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 66.662,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T19:59:16.042651+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T19:59:25.431946+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:59:36.904406+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuPlanAppMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:59:52.430810+00:00\"}]"
+}
