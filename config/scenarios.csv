@@ -13,7 +13,7 @@ S018,Artículo equivocado en tienda,Soy un cliente particular y fui a comprar a 
 S019,Piezas pequeñas faltantes,Soy un cliente particular y me falta la bolsita de tornillos de la mesita que compré.,ROOT,ES_Voice_Res_General,,,TRUE,4
 S020,Devolución parcial de pedido,Soy un cliente particular y quiero devolver solo una parte de mi pedido.,ROOT,ES_Voice_Res_General,,,TRUE,4
 S021,Seguimiento revisión pendiente,Soy un cliente particular y vinisteis a hacer una revisión de mi mueble  pero no he vuelto a saber nada más.,ROOT,ES_Voice_Res_General,,,TRUE,4
-S022CLI,Cambio datos de factura Particular,Soy un cliente particular y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_General,,,TRUE,3
+S022CLI,Cambio datos de factura Particular,Soy un cliente particular y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_General,,,TRUE,4
 S022B2B,Cambio datos de factura B2B,Soy cliente B2B y quiero modificar los datos de mi factura.,ROOT,ES_Voice_Res_Business,,,TRUE,4
 S023CLI,Seguimiento devolución pendiente Particular,Soy un cliente particular y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_General,,,TRUE,4
 S023B2B,Seguimiento devolución pendiente  B2B,Soy cliente B2B y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_Business,,,TRUE,4
