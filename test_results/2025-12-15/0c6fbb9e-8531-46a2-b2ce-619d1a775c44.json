@@ -1,0 +1,16 @@
+{
+  "test_id": "0c6fbb9e-8531-46a2-b2ce-619d1a775c44",
+  "timestamp_utc": "2025-12-15T18:26:03.418471+00:00",
+  "scenario_id": "S027CLI",
+  "scenario_title": "Compra cocina hogar Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Kitchen",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 58.704,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T18:25:47.218108+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T18:25:54.621179+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T18:26:02.465467+00:00\"}]"
+}
