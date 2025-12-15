@@ -1,0 +1,16 @@
+{
+  "test_id": "277abb99-6bc1-4480-aca5-a07beb26fd92",
+  "timestamp_utc": "2025-12-15T21:49:48.042956+00:00",
+  "scenario_id": "S022B2B",
+  "scenario_title": "Cambio datos de factura B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 17.684,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T21:49:31.737333+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T21:49:41.013137+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T21:49:45.171603+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuStockMain\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T21:49:47.205523+00:00\"}]"
+}
