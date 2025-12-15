@@ -1,0 +1,16 @@
+{
+  "test_id": "81f465e2-2066-4ccb-b14f-fb5f116e68aa",
+  "timestamp_utc": "2025-12-15T20:10:06.594032+00:00",
+  "scenario_id": "S031",
+  "scenario_title": "Contratar servicio de montaje",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_name": "Sales Home",
+  "end_node_id": "ES_Voice_Sales_Sales",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 93.791,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"*\", \"timestamp\": \"2025-12-15T20:09:10.940953+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T20:09:37.926421+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T20:09:45.051928+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T20:10:05.764958+00:00\"}]"
+}
