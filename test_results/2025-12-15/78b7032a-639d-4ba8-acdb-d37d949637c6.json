@@ -1,0 +1,16 @@
+{
+  "test_id": "78b7032a-639d-4ba8-acdb-d37d949637c6",
+  "timestamp_utc": "2025-12-15T15:06:14.095256+00:00",
+  "scenario_id": "S024",
+  "scenario_title": "Seguimiento incidencia pendiente Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 79.699,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T15:05:26.160551+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T15:05:34.707946+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"*\", \"timestamp\": \"2025-12-15T15:05:58.051693+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T15:06:13.122236+00:00\"}]"
+}
