@@ -1,0 +1,16 @@
+{
+  "test_id": "ab4f0d95-1ea2-4f5d-b407-f8b2d8b0c2c2",
+  "timestamp_utc": "2025-12-15T17:52:54.464078+00:00",
+  "scenario_id": "S027B2B",
+  "scenario_title": "Compra cocina hogar B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 126.746,
+  "num_steps": 7,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T17:51:23.275732+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T17:51:33.464783+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T17:51:53.489091+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T17:52:18.146775+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T17:52:21.814369+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T17:52:36.959166+00:00\"}, {\"step\": 7, \"node_id\": \"Global_MenuPlanAppMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T17:52:53.428866+00:00\"}]"
+}
