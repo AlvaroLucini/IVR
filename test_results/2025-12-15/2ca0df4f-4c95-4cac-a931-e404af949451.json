@@ -1,0 +1,16 @@
+{
+  "test_id": "2ca0df4f-4c95-4cac-a931-e404af949451",
+  "timestamp_utc": "2025-12-15T17:55:12.796096+00:00",
+  "scenario_id": "S031",
+  "scenario_title": "Contratar servicio de montaje",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 129.043,
+  "num_steps": 7,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T17:53:36.974102+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T17:53:54.993112+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T17:54:15.813527+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T17:54:25.449992+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"*\", \"timestamp\": \"2025-12-15T17:54:43.197650+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T17:54:53.267550+00:00\"}, {\"step\": 7, \"node_id\": \"Global_SparePartsMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T17:55:11.900121+00:00\"}]"
+}
