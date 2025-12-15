@@ -1,0 +1,16 @@
+{
+  "test_id": "58421ded-368f-4451-b55f-9816a54603f1",
+  "timestamp_utc": "2025-12-15T17:54:04.375613+00:00",
+  "scenario_id": "S012CLI",
+  "scenario_title": "Incidencia montaje dormitorio Cliente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 23.966,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T17:53:55.260821+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-15T17:53:59.669748+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T17:54:03.460603+00:00\"}]"
+}
