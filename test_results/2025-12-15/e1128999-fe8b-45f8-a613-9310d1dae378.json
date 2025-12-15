@@ -1,0 +1,16 @@
+{
+  "test_id": "e1128999-fe8b-45f8-a613-9310d1dae378",
+  "timestamp_utc": "2025-12-15T11:24:16.758426+00:00",
+  "scenario_id": "S012B2B",
+  "scenario_title": "Incidencia montaje dormitorio B2B",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 14.785,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T11:24:07.525669+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T11:24:12.319273+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T11:24:15.866522+00:00\"}]"
+}
