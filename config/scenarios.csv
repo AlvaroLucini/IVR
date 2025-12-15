@@ -1,5 +1,5 @@
 SCENARIO_ID,TITLE,MISSION_TEXT,ENTRY_NODE_ID,EXPECTED_QUEUE_ID,EXPECTED_ALT_QUEUE_IDS,EXPECTED_OK_TYPES,ACTIVE,EXECUTIONS
-S010,Seguimiento entrega pedido Cliente,Soy un cliente particular y estoy esperando un pedido que todavía no me ha llegado.,ROOT,ES_Voice_Res_Delivery,,SMS,TRUE,0
+S010,Seguimiento entrega pedido Cliente,Soy un cliente particular y estoy esperando un pedido que todavía no me ha llegado.,ROOT,ES_Voice_Res_Delivery,,SMS,TRUE,1
 S011,Seguimiento entrega pedido B2B,Soy cliente B2B y estoy esperando un pedido que todavía no me ha llegado.,ROOT,ES_Voice_Res_Business,,,TRUE,0
 S012CLI,Incidencia montaje dormitorio Cliente,Soy un cliente particular y me han dejado sin montar parte de un armario de dormitorio.,ROOT,ES_Voice_Res_Delivery,,,TRUE,0
 S012B2B,Incidencia montaje dormitorio B2B,Soy cliente B2B y me han dejado sin montar parte de un armario de dormitorio.,ROOT,ES_Voice_Res_Business,,,TRUE,0
