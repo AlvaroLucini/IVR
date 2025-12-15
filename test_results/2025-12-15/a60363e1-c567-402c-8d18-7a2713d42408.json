@@ -1,0 +1,16 @@
+{
+  "test_id": "a60363e1-c567-402c-8d18-7a2713d42408",
+  "timestamp_utc": "2025-12-15T12:35:25.863029+00:00",
+  "scenario_id": "S019",
+  "scenario_title": "Piezas pequeñas faltantes",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_Kitchen",
+  "reached_queue_name": "Sales Kitchen",
+  "end_node_id": "ES_Voice_Sales_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 84.649,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T12:34:10.518680+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T12:34:26.107347+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T12:34:36.008801+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"1\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T12:34:58.912047+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T12:35:06.644437+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T12:35:24.970435+00:00\"}]"
+}
