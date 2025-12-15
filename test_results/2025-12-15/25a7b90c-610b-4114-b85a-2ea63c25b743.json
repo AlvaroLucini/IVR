@@ -1,0 +1,16 @@
+{
+  "test_id": "25a7b90c-610b-4114-b85a-2ea63c25b743",
+  "timestamp_utc": "2025-12-15T19:44:23.818687+00:00",
+  "scenario_id": "S014",
+  "scenario_title": "Montaje cocina incompleto",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 126.644,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T19:43:02.175365+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"*\", \"timestamp\": \"2025-12-15T19:43:33.285440+00:00\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:44:05.990582+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:44:16.235260+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T19:44:22.953942+00:00\"}]"
+}
