@@ -1,0 +1,16 @@
+{
+  "test_id": "1c381d23-c6ad-430b-8b79-38bdfa0dda6c",
+  "timestamp_utc": "2025-12-15T10:17:14.701850+00:00",
+  "scenario_id": "S018",
+  "scenario_title": "Artículo equivocado en tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_name": "Sales Home",
+  "end_node_id": "ES_Voice_Sales_Sales",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 116.498,
+  "num_steps": 5,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:16:03.077922+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:16:21.662515+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:16:46.333516+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T10:16:55.261837+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:17:13.860607+00:00\"}]"
+}
