@@ -1,0 +1,16 @@
+{
+  "test_id": "a3c5a56f-2865-470c-88ce-b4269807bf86",
+  "timestamp_utc": "2025-12-15T13:09:38.457556+00:00",
+  "scenario_id": "S026",
+  "scenario_title": "Info promo sofás",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 83.329,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T13:08:18.865006+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T13:08:36.921984+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T13:09:00.942585+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T13:09:08.030722+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T13:09:21.115090+00:00\"}, {\"step\": 6, \"node_id\": \"Global_SparePartsMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T13:09:37.670520+00:00\"}]"
+}
