@@ -1,0 +1,16 @@
+{
+  "test_id": "87526c6f-0920-4dda-a19f-ae4515e5d748",
+  "timestamp_utc": "2025-12-15T16:34:05.620878+00:00",
+  "scenario_id": "S020",
+  "scenario_title": "Devolución parcial de pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 51.475,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T16:33:40.832018+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T16:33:48.072954+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T16:34:04.737144+00:00\"}]"
+}
