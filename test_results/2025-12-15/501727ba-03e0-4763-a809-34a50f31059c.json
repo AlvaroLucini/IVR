@@ -1,0 +1,16 @@
+{
+  "test_id": "501727ba-03e0-4763-a809-34a50f31059c",
+  "timestamp_utc": "2025-12-15T11:25:03.454890+00:00",
+  "scenario_id": "S020",
+  "scenario_title": "Devolución parcial de pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 30.677,
+  "num_steps": 12,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:37.906493+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:38.818591+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:38.983533+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"11\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:42.760960+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"111\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:45.676551+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1111\"}, {\"step\": 6, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:45.861396+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"11111\"}, {\"step\": 7, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:50.832772+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"111111\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:51.001696+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1111111\"}, {\"step\": 9, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:24:51.719022+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"11111111\"}, {\"step\": 10, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"0\", \"timestamp\": \"2025-12-15T11:24:55.247527+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"111111110\"}, {\"step\": 11, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-15T11:24:57.410627+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"111111110\"}, {\"step\": 12, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T11:25:02.494817+00:00\"}]"
+}
