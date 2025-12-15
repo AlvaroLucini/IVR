@@ -1,0 +1,16 @@
+{
+  "test_id": "47a23bdf-014c-4ef0-9253-4e109365151d",
+  "timestamp_utc": "2025-12-15T10:33:12.726816+00:00",
+  "scenario_id": "S024",
+  "scenario_title": "Seguimiento incidencia pendiente Particular",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Sales_Business",
+  "reached_queue_name": "Ventas B2B",
+  "end_node_id": "ES_Voice_Sales_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 21.533,
+  "num_steps": 9,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:32:53.358303+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:32:54.941670+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:32:55.246459+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"11\"}, {\"step\": 4, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:32:56.469434+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"111\"}, {\"step\": 5, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-15T10:33:01.136917+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"111\"}, {\"step\": 6, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T10:33:03.303926+00:00\"}, {\"step\": 7, \"node_id\": \"ROOT\", \"digit\": \"0\", \"timestamp\": \"2025-12-15T10:33:04.760272+00:00\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-15T10:33:07.879396+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 9, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"0\", \"timestamp\": \"2025-12-15T10:33:11.811044+00:00\"}]"
+}
