@@ -1,0 +1,16 @@
+{
+  "test_id": "f5773723-9ca9-4a41-9301-e36289d36428",
+  "timestamp_utc": "2025-12-15T10:12:52.618816+00:00",
+  "scenario_id": "S028",
+  "scenario_title": "Consulta horario tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 48.213,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-15T10:12:34.764159+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T10:12:46.173375+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T10:12:51.726152+00:00\"}]"
+}
