@@ -1,0 +1,16 @@
+{
+  "test_id": "94ab25c3-0e1a-4ee6-a274-4aa5f97b2e73",
+  "timestamp_utc": "2025-12-15T19:46:42.063794+00:00",
+  "scenario_id": "S019",
+  "scenario_title": "Piezas pequeñas faltantes",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Kitchen",
+  "reached_queue_name": "Resolution Kitchen",
+  "end_node_id": "ES_Voice_Res_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 99.898,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"#\", \"timestamp\": \"2025-12-15T19:45:52.461237+00:00\"}, {\"step\": 2, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:46:13.845447+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-15T19:46:21.202431+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-15T19:46:41.273615+00:00\"}]"
+}
