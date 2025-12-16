@@ -672,7 +672,7 @@ def handle_key(key: str):
 
     node_type_current = str(current_node.get("NODE_TYPE", "")).strip().upper()
 
-    # Nodos ACCOUNT tienen lógica especial
+    # Nodos ACCOUNT tienen lógica especial (aquí sí vale el 0)
     if node_type_current == "ACCOUNT":
         handle_account_key(key, current_node)
         return
@@ -690,9 +690,7 @@ def handle_key(key: str):
         ss.last_action = "repeat"
         ss.last_message = "Repitiendo el mensaje del nodo."
 
-        # Reproducimos directamente el audio del nodo aquí
         play_node_audio(current_node)
-        # No tocamos last_played_node_id para no interferir con cambios de nodo
         return
 
     # '#': ir al ROOT
@@ -722,12 +720,15 @@ def handle_key(key: str):
         ss.last_message = "Tecla no reconocida."
         return
 
-    # Opciones “corridas”: la opción del 1 está en OPT_0, la del 2 en OPT_1, etc.
-    d = int(key)
-    if d == 0:
-        lookup_digit = "0"
-    else:
-        lookup_digit = str(d - 1)
+    # 0 SOLO permitido en ACCOUNT (aquí estamos fuera de ACCOUNT)
+    if key == "0":
+        ss.last_action = "invalid"
+        ss.last_message = "Opción no válida en este menú."
+        return
+
+    # Opciones “corridas”: 1->OPT_0, 2->OPT_1, ... 9->OPT_8
+    d = int(key)                 # aquí key es 1..9
+    lookup_digit = str(d - 1)
 
     next_id = current_node["NEXT"].get(lookup_digit, "")
 
@@ -765,6 +766,8 @@ def handle_key(key: str):
     node_type = str(new_node["NODE_TYPE"]).strip().upper()
     if node_type in ("QUEUE", "SMS", "TRANSFER"):
         finish_test(new_node)
+
+
 
 
 # =========================
@@ -1317,6 +1320,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
