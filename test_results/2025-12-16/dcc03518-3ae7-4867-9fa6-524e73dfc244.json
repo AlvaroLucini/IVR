@@ -1,0 +1,16 @@
+{
+  "test_id": "dcc03518-3ae7-4867-9fa6-524e73dfc244",
+  "timestamp_utc": "2025-12-16T07:49:05.696612+00:00",
+  "scenario_id": "S031",
+  "scenario_title": "Contratar servicio de montaje",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_Sales",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 66.232,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T07:48:39.026137+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T07:48:49.419324+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T07:49:04.770554+00:00\"}]"
+}
