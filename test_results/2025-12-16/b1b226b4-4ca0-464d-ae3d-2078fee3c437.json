@@ -1,0 +1,16 @@
+{
+  "test_id": "b1b226b4-4ca0-464d-ae3d-2078fee3c437",
+  "timestamp_utc": "2025-12-16T11:41:52.915285+00:00",
+  "scenario_id": "S023B2B",
+  "scenario_title": "Seguimiento devolución pendiente  EMPRESA",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_General",
+  "reached_queue_name": "Resolution General",
+  "end_node_id": "ES_Voice_Res_General",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 50.938,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T11:41:26.288902+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T11:41:35.060611+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"3\", \"timestamp\": \"2025-12-16T11:41:52.212621+00:00\"}]"
+}
