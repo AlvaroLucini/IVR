@@ -1,0 +1,16 @@
+{
+  "test_id": "3eb47faa-090f-476b-a503-943f5c1358d3",
+  "timestamp_utc": "2025-12-16T11:46:42.556977+00:00",
+  "scenario_id": "S029",
+  "scenario_title": "Consulta disponibilidad fregadero",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "",
+  "reached_queue_name": "",
+  "end_node_id": "Global_SMSSent",
+  "end_node_type": "SMS",
+  "result": "WRONG_END_SMS",
+  "duration_seconds": 65.818,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-16T11:46:06.158738+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T11:46:16.042534+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T11:46:20.358607+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuStockMain\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T11:46:41.763855+00:00\"}]"
+}
