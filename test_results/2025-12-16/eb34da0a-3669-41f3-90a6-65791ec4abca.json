@@ -1,0 +1,16 @@
+{
+  "test_id": "eb34da0a-3669-41f3-90a6-65791ec4abca",
+  "timestamp_utc": "2025-12-16T11:47:50.134105+00:00",
+  "scenario_id": "S017",
+  "scenario_title": "Producto dañado en pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "",
+  "reached_queue_name": "",
+  "end_node_id": "Global_SMSSent",
+  "end_node_type": "SMS",
+  "result": "WRONG_END_SMS",
+  "duration_seconds": 59.49,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T11:47:14.303178+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T11:47:21.488994+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T11:47:32.446596+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuReturnsMobileOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T11:47:49.300623+00:00\"}]"
+}
