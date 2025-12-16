@@ -1225,8 +1225,8 @@ def main():
     # Bloque: misión
     st.subheader("📝 Tu misión")
     if DEBUG_MODE:
-        st.write(f"**{scenario['TITLE']}**")
-    st.info(scenario["MISSION_TEXT"])
+        st.write(scenario["TITLE"])  # sin **bold**
+     st.write(scenario["MISSION_TEXT"])  # <- en vez de st.info
 
     # =========================
     # TEST TERMINADO
@@ -1317,6 +1317,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
