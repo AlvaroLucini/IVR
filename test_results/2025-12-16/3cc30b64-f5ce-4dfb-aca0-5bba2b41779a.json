@@ -1,0 +1,16 @@
+{
+  "test_id": "3cc30b64-f5ce-4dfb-aca0-5bba2b41779a",
+  "timestamp_utc": "2025-12-16T21:40:55.686124+00:00",
+  "scenario_id": "S018",
+  "scenario_title": "Artículo equivocado en tienda",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 439.106,
+  "num_steps": 17,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T21:33:57.862753+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-16T21:34:11.457761+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:34:26.798474+00:00\"}, {\"step\": 4, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T21:34:31.037460+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"*\", \"timestamp\": \"2025-12-16T21:35:04.628089+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"#\", \"timestamp\": \"2025-12-16T21:35:31.738290+00:00\"}, {\"step\": 7, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T21:35:43.283354+00:00\"}, {\"step\": 8, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"#\", \"timestamp\": \"2025-12-16T21:35:52.833098+00:00\", \"event\": \"ACCOUNT_BACK_TO_ROOT\", \"account_buffer\": \"\"}, {\"step\": 9, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:35:55.758097+00:00\"}, {\"step\": 10, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T21:35:59.527698+00:00\"}, {\"step\": 11, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"#\", \"timestamp\": \"2025-12-16T21:37:12.515880+00:00\"}, {\"step\": 12, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:37:33.713443+00:00\"}, {\"step\": 13, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-16T21:37:53.632841+00:00\"}, {\"step\": 14, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"#\", \"timestamp\": \"2025-12-16T21:40:18.623028+00:00\"}, {\"step\": 15, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:40:27.313583+00:00\"}, {\"step\": 16, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:40:33.288439+00:00\"}, {\"step\": 17, \"node_id\": \"Menu_ES_ResolutionOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-16T21:40:54.889572+00:00\"}]"
+}
