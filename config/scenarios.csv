@@ -19,7 +19,7 @@ S023CLI,Seguimiento devolución pendiente Particular,Soy un cliente particular y
 S023B2B,Seguimiento devolución pendiente  EMPRESA,Soy cliente EMPRESA y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una devolución de dinero pendiente pero aún no me habéis llamado.,ROOT,ES_Voice_Res_Business,,,TRUE,7
 S024,Seguimiento incidencia pendiente Particular,Soy un cliente particular y me dijisteis que me llamaríais en 3 días para darme una respuesta sobre una incidencia pero aún no me habéis llamado.,ROOT,ES_Voice_Res_General,,,TRUE,7
 S025,Compra dormitorio hogar,Soy un cliente particular y quiero comprar un dormitorio para mi hogar.,ROOT,ES_Voice_Sales_Sales,,,TRUE,7
-S026,Info promo sofás,Soy un cliente particular y quiero informarme sobre la promoción de sofás.,ROOT,ES_Voice_Sales_General,,,TRUE,7
+S026,Info promo sofás,Soy un cliente particular y quiero informarme sobre la promoción de sofás.,ROOT,ES_Voice_Sales_General,,,TRUE,8
 S027CLI,Compra cocina hogar Particular,Soy un cliente particular y quiero comprar una cocina para mi hogar.,ROOT,ES_Voice_Sales_Kitchen,,,TRUE,7
 S027B2B,Compra cocina hogar EMPRESA,Soy cliente EMPRESA y quiero comprar una cocina para mi negocio.,ROOT,ES_Voice_Sales_Business,,,TRUE,7
 S028,Consulta horario tienda,Soy un cliente particular y no encuentro el horario de apertura de la tienda de Valencia.,ROOT,ES_Voice_Sales_General,,,TRUE,7
