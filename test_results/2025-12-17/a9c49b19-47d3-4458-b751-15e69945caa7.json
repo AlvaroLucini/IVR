@@ -1,0 +1,16 @@
+{
+  "test_id": "a9c49b19-47d3-4458-b751-15e69945caa7",
+  "timestamp_utc": "2025-12-17T11:46:13.315913+00:00",
+  "scenario_id": "S029",
+  "scenario_title": "Consulta disponibilidad fregadero",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Sales_Kitchen",
+  "reached_queue_name": "Sales Kitchen",
+  "end_node_id": "ES_Voice_Sales_Kitchen",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 126.06,
+  "num_steps": 6,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-17T11:44:37.275554+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"*\", \"timestamp\": \"2025-12-17T11:44:48.038341+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"#\", \"timestamp\": \"2025-12-17T11:45:12.739066+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-17T11:45:30.436652+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T11:45:49.370227+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T11:46:12.520315+00:00\"}]"
+}
