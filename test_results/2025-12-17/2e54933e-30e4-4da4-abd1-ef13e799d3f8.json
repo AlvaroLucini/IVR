@@ -1,0 +1,16 @@
+{
+  "test_id": "2e54933e-30e4-4da4-abd1-ef13e799d3f8",
+  "timestamp_utc": "2025-12-17T09:28:40.552558+00:00",
+  "scenario_id": "S020",
+  "scenario_title": "Devolución parcial de pedido",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_General",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "WRONG_QUEUE",
+  "duration_seconds": 62.849,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T09:28:00.156779+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T09:28:11.488704+00:00\", \"event\": \"ACCOUNT_DIGIT\", \"account_buffer\": \"1\"}, {\"step\": 3, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-17T09:28:14.688619+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"1\"}, {\"step\": 4, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T09:28:39.736047+00:00\"}]"
+}
