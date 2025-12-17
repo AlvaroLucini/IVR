@@ -1,0 +1,16 @@
+{
+  "test_id": "04afdd17-4f65-4e90-95f2-d8cffb5ad4e4",
+  "timestamp_utc": "2025-12-17T12:13:38.746104+00:00",
+  "scenario_id": "S010",
+  "scenario_title": "Seguimiento entrega pedido Cliente",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_id": "ES_Voice_Res_Delivery",
+  "reached_queue_name": "Resolution Delivery",
+  "end_node_id": "ES_Voice_Res_Delivery",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 56.131,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T12:13:07.661546+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_ResolutionOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T12:13:11.028309+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Resolution\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T12:13:17.299719+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuOrderManMobileOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T12:13:37.828705+00:00\"}]"
+}
