@@ -24,5 +24,5 @@ S027CLI,Compra cocina hogar Particular,Soy un cliente particular y quiero compra
 S027B2B,Compra cocina hogar EMPRESA,Soy cliente EMPRESA y quiero comprar una cocina para mi negocio.,ROOT,ES_Voice_Sales_Business,,,TRUE,8
 S028,Consulta horario tienda,Soy un cliente particular y no encuentro el horario de apertura de la tienda de Valencia.,ROOT,ES_Voice_Sales_General,,,TRUE,8
 S029,Consulta disponibilidad fregadero,Soy un cliente particular y quiero saber cuándo volverá a haber stock del fregadero que necesito.,ROOT,ES_Voice_Sales_General,ES_Voice_Sales_Business,,TRUE,8
-S030,Problema código descuento,Soy un cliente particular y no me funciona el código de descuento al hacer la compra.,ROOT,ES_Voice_Sales_General,,,TRUE,8
+S030,Problema código descuento,Soy un cliente particular y no me funciona el código de descuento al hacer la compra.,ROOT,ES_Voice_Sales_General,,,TRUE,9
 S031,Contratar servicio de montaje,Soy un cliente particular y necesito contratar el servicio de montaje para mi pedido de salón.,ROOT,ES_Voice_Sales_Sales,ES_Voice_Sales_Business,,TRUE,8
