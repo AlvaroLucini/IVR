@@ -1,0 +1,16 @@
+{
+  "test_id": "952e976e-2169-47da-8bbb-0aea549e421e",
+  "timestamp_utc": "2025-12-17T11:35:52.706317+00:00",
+  "scenario_id": "S023B2B",
+  "scenario_title": "Seguimiento devolución pendiente  EMPRESA",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 65.651,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T11:35:07.474174+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"TIMEOUT\", \"timestamp\": \"2025-12-17T11:35:24.546796+00:00\", \"event\": \"ACCOUNT_TIMEOUT\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"*\", \"timestamp\": \"2025-12-17T11:35:41.089289+00:00\"}, {\"step\": 4, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T11:35:51.965656+00:00\"}]"
+}
