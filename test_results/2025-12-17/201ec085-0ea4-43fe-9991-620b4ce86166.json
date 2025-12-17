@@ -1,0 +1,16 @@
+{
+  "test_id": "201ec085-0ea4-43fe-9991-620b4ce86166",
+  "timestamp_utc": "2025-12-17T06:11:53.730063+00:00",
+  "scenario_id": "S030",
+  "scenario_title": "Problema código descuento",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_id": "ES_Voice_Sales_General",
+  "reached_queue_name": "Sales General",
+  "end_node_id": "ES_Voice_Sales_General",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 161.27,
+  "num_steps": 10,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-17T06:09:42.603704+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T06:09:49.145534+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"#\", \"timestamp\": \"2025-12-17T06:10:12.326978+00:00\"}, {\"step\": 4, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-17T06:10:31.526744+00:00\"}, {\"step\": 5, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T06:10:40.732747+00:00\"}, {\"step\": 6, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"*\", \"timestamp\": \"2025-12-17T06:10:58.723742+00:00\"}, {\"step\": 7, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"#\", \"timestamp\": \"2025-12-17T06:11:16.305763+00:00\"}, {\"step\": 8, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-17T06:11:35.253986+00:00\"}, {\"step\": 9, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T06:11:41.768956+00:00\"}, {\"step\": 10, \"node_id\": \"Menu_ES_SalesOptions\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T06:11:52.901224+00:00\"}]"
+}
