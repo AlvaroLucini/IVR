@@ -1,0 +1,16 @@
+{
+  "test_id": "cb3333c8-7f9f-4d69-a91a-de0bd80642e7",
+  "timestamp_utc": "2025-12-17T06:27:38.096206+00:00",
+  "scenario_id": "S011",
+  "scenario_title": "Seguimiento entrega pedido EMPRESA",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_name": "Resolution B2B",
+  "end_node_id": "ES_Voice_Res_Business",
+  "end_node_type": "QUEUE",
+  "result": "SUCCESS",
+  "duration_seconds": 42.915,
+  "num_steps": 3,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"1\", \"timestamp\": \"2025-12-17T06:27:15.151688+00:00\"}, {\"step\": 2, \"node_id\": \"Global_EnterAccountNumber\", \"digit\": \"*\", \"timestamp\": \"2025-12-17T06:27:24.476190+00:00\", \"event\": \"ACCOUNT_OK\", \"account_buffer\": \"\"}, {\"step\": 3, \"node_id\": \"Global_Menu_B2B\", \"digit\": \"2\", \"timestamp\": \"2025-12-17T06:27:37.353365+00:00\"}]"
+}
