@@ -1,0 +1,16 @@
+{
+  "test_id": "c6ba9d9d-1e9c-4c0f-9ce0-516941f8d798",
+  "timestamp_utc": "2025-12-26T07:20:59.255348+00:00",
+  "scenario_id": "S011",
+  "scenario_title": "Seguimiento entrega pedido EMPRESA",
+  "entry_node_id": "ROOT",
+  "expected_queue_id": "ES_Voice_Res_Business",
+  "reached_queue_id": "",
+  "reached_queue_name": "",
+  "end_node_id": "Global_SMSSent",
+  "end_node_type": "SMS",
+  "result": "WRONG_END_SMS",
+  "duration_seconds": 50.333,
+  "num_steps": 4,
+  "route_json": "[{\"step\": 1, \"node_id\": \"ROOT\", \"digit\": \"3\", \"timestamp\": \"2025-12-26T07:20:38.381518+00:00\"}, {\"step\": 2, \"node_id\": \"Menu_ES_SalesOpen\", \"digit\": \"1\", \"timestamp\": \"2025-12-26T07:20:42.243711+00:00\"}, {\"step\": 3, \"node_id\": \"Menu_Autoservicio_Sales\", \"digit\": \"1\", \"timestamp\": \"2025-12-26T07:20:46.539530+00:00\"}, {\"step\": 4, \"node_id\": \"Global_MenuStockMain\", \"digit\": \"1\", \"timestamp\": \"2025-12-26T07:20:58.374288+00:00\"}]"
+}
